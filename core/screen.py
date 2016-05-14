@@ -1,9 +1,9 @@
 # dimensions: (height) 45
 #             (width) 80
-from utils import *
+from core.utils import *
+from core.errors import *
 import curses
 import signal
-from errors import AVEQuit
 HEIGHT = 25
 WIDTH = 80
 
@@ -97,7 +97,7 @@ class Screen:
 
     def menu(self, ls, y=4, py=None, selected=0):
         if py is None:
-            py = HEIGHT - y
+            py = HEIGHT - y - 1
         self.show_menu(ls, y, py, selected)
         key = ""
         while key is not None:

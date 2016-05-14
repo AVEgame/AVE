@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-from ave import AVE
-from time import sleep
+from core.ave import AVE
 from curses import wrapper
-from errors import AVEQuit
+from core.errors import *
 try:
     ave = AVE()
     ave.start()
 except AVEQuit:
-    pass
+    ave.exit()
+    print("Goodbye...")
 finally:
     ave.exit()

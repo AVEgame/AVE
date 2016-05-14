@@ -9,4 +9,16 @@ Get up => up
 # up
 You bash your head and fall back on the bed. What do you want to do?
 Go back to sleep => start
-Get up => up
+Get up => up2
+
+# up2
+You bash your head and fall back on the bed.
+Your head really hurts. What do you want to do?
+Go back to sleep => start
+Run => this_is_not_real
+Get up => up3
+
+# up3
+You bash your head.
+Your head smashes. GAME OVER.
+Continue => __GAMEOVER__

@@ -1,11 +1,11 @@
-from utils import *
-from errors import *
+from core.utils import *
+from core.errors import *
 
 class AVE:
     def __init__(self, folder="games"):
         from screen import Screen
-        self.games = Games(folder)
         self.screen = Screen()
+        self.games = Games(folder, self.screen)
 
     def start(self):
         self.screen.print_titles()
@@ -20,13 +20,14 @@ class AVE:
         self.screen.close()
 
 class Games:
-    def __init__(self, folder):
+    def __init__(self, folder, screen):
         import os
-        self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), folder)
-        self.games = []#gg("1"),gg("2"),gg("3"),gg("4"),gg("5"),gg("6"),gg("7"),gg("8"),gg("9"),gg("10"),gg("11"),gg("12"),gg("13"),gg("14"),gg("15"),gg("16")]
+        self.screen = screen
+        self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join("..",folder))
+        self.games = []
         for game in os.listdir(self.path):
             if ".ave" in game:
-                self.games.append(Game(os.path.join(self.path,game)))
+                self.games.append(Game(os.path.join(self.path,game), self.screen))
 
     def titles(self):
         return [g.title for g in self.games]
@@ -43,13 +44,9 @@ class Games:
     def __getitem__(self,n):
         return self.games[n]
 
-def gg(string):
-    g = Game("/home/matt/python/AVE/games/test.ave")
-    g.title = string
-    return g
-
 class Game:
-    def __init__(self, path):
+    def __init__(self, path, screen):
+        self.screen = screen
         self.path = path
         self.title = ""
         self.description = ""
@@ -71,7 +68,7 @@ class Game:
             for line in f.readlines() + ["#"]:
                 if line[0]=="#":
                     if not preamb:
-                        rooms[c_room] = Room(c_room, " ".join(c_txt), c_opts)
+                        rooms[c_room] = Room(c_room, " ".join(c_txt), c_opts, self.screen)
                     preamb = False
                     while len(line) > 0 and line[0] in ["#"]:
                         line = line[1:]
@@ -81,29 +78,52 @@ class Game:
                 elif not preamb and clean(line) != "":
                     if "=>" in line:
                         lsp = line.split("=>")
-                        c_opts[clean(lsp[0])] = clean(lsp[1])
+                        c_opts[clean(lsp[1])] = clean(lsp[0])
                     else:
                         c_txt.append(clean(line))
         self.rooms = rooms
 
+    def __getitem__(self, id):
+        return self.load_room(id)
+
     def load_room(self, id):
+        if id == "__GAMEOVER__":
+            raise AVEGameOver
         try:
-            return self.room[id]
-        except IndexError:
-            return fail_room
+            return self.rooms[id]
+        except KeyError:
+            return self.fail_room()
 
     def begin(self):
-        pass
+        room = self['start']
+        while True:
+            next = room.show()
+            room = self[next]
+
+    def fail_room(self):
+        return Room("fail", "You fall off the edge of the game. GAME OVER", {"__GAMEOVER__":"Continue"}, self.screen)
+
 
 class Room:
-    def __init__(self, id, text, options, gameover=False):
+    def __init__(self, id, text, options, screen):
         self.id = id
         self.text = text
-        self.options = options
-        self.gameover = gameover
+        self.options = []
+        self.option_keys = []
+        for a,b in options.items():
+            self.option_keys.append(a)
+            self.options.append(b)
+        self.screen = screen
 
     def __str__(self):
         return "Room with id " + self.id
 
-fail_room = Room("","You fall off the edge of the game. GAME OVER",{},True)
+    def show(self):
+        from core.screen import WIDTH
+        stuff = []
+        for i,c in enumerate(self.text):
+            stuff.append((i / WIDTH, i % WIDTH, c))
+        self.screen.type(stuff)
 
+        num = self.screen.menu(self.options, min(8,len(self.options)))
+        return self.option_keys[num]
