@@ -1,11 +1,11 @@
 # 345678 1 2345678 2 2345678 3 2345678 4 2345678 5 2345678 6 2345678 7 2345678 8
 
-   @@@@@  ADVENTURE!        ^^    ^ VILLAINY!         ====== EXCITEMENT!
-  @@    @ ADVENTURE!        ^^    ^ VILLAINY!         ==     EXCITEMENT!
-  @@@@@@@ ADVENTURE!         ^^   ^ VILLAINY!         =====  EXCITEMENT!
-  @@    @ ADVENTURE!          ^^  ^ VILLAINY!         ==     EXCITEMENT!
-  @@    @ ADVENTURE!           ^^^  VILLAINY!         ====== EXCITEMENT!
-
+   @@@@@  ADVENTURE!        ^^    ^ VILLAINY!         ====== EXCITEMENT!   %v%
+  @@    @ ADVENTURE!        ^^    ^ VILLAINY!         ==     EXCITEMENT!   %v%
+  @@@@@@@ ADVENTURE!         ^^   ^ VILLAINY!         =====  EXCITEMENT!   %v%
+  @@    @ ADVENTURE!          ^^  ^ VILLAINY!         ==     EXCITEMENT!   %v%
+  @@    @ ADVENTURE!           ^^^^ VILLAINY!         ====== EXCITEMENT!   %v%
+                                                                   version %v%
 # type
 AVE: Adventure! Villainy! Excitement!
                             A text-based game engine written by Matthew Scroggs.
