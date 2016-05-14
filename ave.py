@@ -1,8 +1,29 @@
+from utils import *
+from errors import *
+
+class AVE:
+    def __init__(self, folder="games"):
+        from screen import Screen
+        self.games = Games(folder)
+        self.screen = Screen()
+
+    def start(self):
+        self.screen.print_titles()
+        game_to_load = self.screen.menu(self.games.titles(), 8)
+        self.games[game_to_load].load()
+        try:
+            self.games[game_to_load].begin()
+        except AVEGameOver:
+            pass
+
+    def exit(self):
+        self.screen.close()
+
 class Games:
     def __init__(self, folder):
         import os
         self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), folder)
-        self.games = []
+        self.games = []#gg("1"),gg("2"),gg("3"),gg("4"),gg("5"),gg("6"),gg("7"),gg("8"),gg("9"),gg("10"),gg("11"),gg("12"),gg("13"),gg("14"),gg("15"),gg("16")]
         for game in os.listdir(self.path):
             if ".ave" in game:
                 self.games.append(Game(os.path.join(self.path,game)))
@@ -18,6 +39,14 @@ class Games:
 
     def game(self,n):
         return self.games[n]
+
+    def __getitem__(self,n):
+        return self.games[n]
+
+def gg(string):
+    g = Game("/home/matt/python/AVE/games/test.ave")
+    g.title = string
+    return g
 
 class Game:
     def __init__(self, path):
@@ -63,6 +92,9 @@ class Game:
         except IndexError:
             return fail_room
 
+    def begin(self):
+        pass
+
 class Room:
     def __init__(self, id, text, options, gameover=False):
         self.id = id
@@ -75,11 +107,3 @@ class Room:
 
 fail_room = Room("","You fall off the edge of the game. GAME OVER",{},True)
 
-def clean(string):
-    while len(string) > 0 and string[0] == " ":
-        string = string[1:]
-    while len(string) > 0 and string[-1] == " ":
-        string = string[:-1]
-    while "\n" in string:
-        string = string.strip("\n")
-    return string
