@@ -1,3 +1,2 @@
-ADVENTURE
-    VILLAINY
-         EXCITEMENT
+[A]DVENTURE [V]ILLAINY [E]XCITEMENT
+-----------------------------------
