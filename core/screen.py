@@ -25,6 +25,9 @@ class Screen:
         curses.init_pair(3, -1, curses.COLOR_BLUE)
         curses.init_pair(4, -1, curses.COLOR_YELLOW)
         curses.init_pair(5, -1, curses.COLOR_RED)
+        curses.init_pair(6, curses.COLOR_RED, -1)
+        curses.init_pair(7, curses.COLOR_GREEN, -1)
+        curses.init_pair(8, curses.COLOR_BLUE, -1)
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
@@ -64,6 +67,12 @@ class Screen:
                             stuff.append((y, x, " ", curses.color_pair(2)))
                         elif c == "=":
                             stuff.append((y, x, " ", curses.color_pair(3)))
+                        elif c == "A" and len(line) > x+1 and line[x+1] == "V" and len(line) > x+2 and line[x+2] == "E":
+                            stuff.append((y, x, "A", curses.color_pair(6)))
+                        elif x >= 1 and line[x-1] == "A" and c == "V" and len(line) > x+1 and line[x+1] == "E":
+                            stuff.append((y, x, "V", curses.color_pair(7)))
+                        elif x >= 2 and line[x-2] == "A" and line[x-1] == "V" and c == "E":
+                            stuff.append((y, x, "E", curses.color_pair(8)))
                         else:
                             stuff.append((y, x, c, curses.color_pair(0)))
                     y += 1
