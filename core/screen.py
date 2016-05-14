@@ -1,5 +1,6 @@
 # dimensions: (height) 45
-#             (width) 80
+#             (width)  80
+from __future__ import division
 from core.utils import *
 from core.errors import *
 import curses
@@ -83,6 +84,20 @@ class Screen:
                     y = 0
         self.type(stuff,py=y_beg,y=y)
 
+    def gameover(self):
+        pad = self.newpad(8, WIDTH-20)
+        gst = " "*((WIDTH-29)//2) + "GAME OVER"
+        gst += " " * (WIDTH - len(gst))
+        pad.addstr(0,0," "*(WIDTH-20),curses.color_pair(3))
+        pad.addstr(1,0,gst,curses.color_pair(3))
+        pad.addstr(2,0," "*(WIDTH-20),curses.color_pair(3))
+        pad.addstr(3,0," "*(WIDTH-20),curses.color_pair(3))
+        pad.addstr(4,0," "*(WIDTH-20),curses.color_pair(3))
+        pad.addstr(5,0," "*(WIDTH-20),curses.color_pair(3))
+        pad.addstr(6,0," "*(WIDTH-20),curses.color_pair(3))
+        pad.refresh(0,0, 3,10, 9,WIDTH-10)
+        return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False)
+        
     def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH):
         from time import sleep
         pad = self.newpad(y, x)
@@ -104,10 +119,10 @@ class Screen:
                 pad.addch(char[0], char[1], char[2], char[3])
         pad.refresh(0,0, py,px, y+py,x+px)
 
-    def menu(self, ls, y=4, py=None, selected=0):
+    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True):
         if py is None:
             py = HEIGHT - y - 1
-        self.show_menu(ls, y, py, selected)
+        self.show_menu(ls, y, py, selected, wx, controls)
         key = ""
         while key is not None:
             key = self.stdscr.getch()
@@ -117,18 +132,22 @@ class Screen:
                 selected -= 1
                 if selected < 0:
                     selected += len(ls)
-                self.show_menu(ls, y, py, selected)
+                self.show_menu(ls, y, py, selected, wx, controls)
             if key == curses.KEY_DOWN:
                 selected += 1
                 if selected >= len(ls):
                     selected -= len(ls)
-                self.show_menu(ls, y, py, selected)
+                self.show_menu(ls, y, py, selected, wx, controls)
             if key == ord('q'):
                 raise AVEQuit
 
-    def show_menu(self, ls, y, py, selected):
-        start = min(max(0,selected-y/2),max(0,len(ls)-y))
-        pad = self.newpad(y)
+    def show_menu(self, ls, y, py, selected, wx, controls):
+        if controls:
+            wide = wx-4
+        else:
+            wide = wx
+        start = min(max(0,selected-y//2),max(0,len(ls)-y))
+        pad = self.newpad(y+1,wx)
         for y_pos in range(y):
             if start + y_pos < len(ls):
                 title = ls[start+y_pos]
@@ -137,9 +156,10 @@ class Screen:
             col = curses.color_pair(4)
             if y_pos+start == selected:
                 col = curses.color_pair(5)
-            pad.addstr(y_pos,1,title[:WIDTH-5] + " "*(WIDTH-5-len(title)),col)
-        if start > 0:
-            pad.addch(0,WIDTH-2,"^")
-        if start < max(0,len(ls) - y):
-            pad.addch(y-1,WIDTH-2,"v")
-        pad.refresh(0,0, py,0, py+y,WIDTH)
+            pad.addstr(y_pos,0," "+title[:wide-1] + " "*(wide-1-len(title)),col)
+        if controls:
+            if start > 0:
+                pad.addch(0,wx-2,"^")
+            if start < max(0,len(ls) - y):
+                pad.addch(y-1,wx-2,"v")
+        pad.refresh(0,0, py,(WIDTH-wx)//2, py+y-1,wx+(WIDTH-wx)//2)

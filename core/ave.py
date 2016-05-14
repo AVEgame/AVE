@@ -1,3 +1,4 @@
+from __future__ import division
 from core.utils import *
 from core.errors import *
 
@@ -11,10 +12,18 @@ class AVE:
         self.screen.print_titles()
         game_to_load = self.screen.menu(self.games.titles(), 8)
         self.games[game_to_load].load()
-        try:
-            self.games[game_to_load].begin()
-        except AVEGameOver:
-            pass
+        again = True
+        while again:
+            again = False
+            try:
+                self.games[game_to_load].begin()
+            except AVEGameOver:
+                next = self.screen.gameover()
+                if next == 0:
+                    again = True
+                if next == 2:
+                    raise AVEQuit
+                
 
     def exit(self):
         self.screen.close()
@@ -122,7 +131,7 @@ class Room:
         from core.screen import WIDTH
         stuff = []
         for i,c in enumerate(self.text):
-            stuff.append((i / WIDTH, i % WIDTH, c))
+            stuff.append((i // WIDTH, i % WIDTH, c))
         self.screen.type(stuff)
 
         num = self.screen.menu(self.options, min(8,len(self.options)))
