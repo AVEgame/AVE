@@ -1,0 +1,6 @@
+syntax "ave" "\.ave$"
+
+color red "#.*"
+color blue "=="
+color blue "--"
+color blue "=>"
