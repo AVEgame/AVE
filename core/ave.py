@@ -36,7 +36,9 @@ class Games:
         self.games = []
         for game in os.listdir(self.path):
             if ".ave" in game:
-                self.games.append(Game(os.path.join(self.path,game), self.screen))
+                g = Game(os.path.join(self.path,game), self.screen)
+                if g.active:
+                    self.games.append(Game(os.path.join(self.path,game), self.screen))
 
     def titles(self):
         return [g.title for g in self.games]
@@ -59,6 +61,7 @@ class Game:
         self.path = path
         self.title = ""
         self.description = ""
+        self.active = True
         self.rooms = {}
         with open(path) as f:
             for line in f.readlines():
@@ -69,6 +72,9 @@ class Game:
                     self.title = clean(line[2:-2])
                 if line[:2] == "--" == line[-2:]:
                     self.description = clean(line[2:-2])
+                if line[:2] == "~~" == line[-2:]:
+                    if clean(line[2:-2]) == "off":
+                        self.active = False
 
     def load(self):
         rooms = {}
