@@ -1,0 +1,12 @@
+== Test Game ==
+-- Test description --
+
+# start
+You wake up. What do you want to do?
+Go back to sleep => start
+Get up => up
+
+# up
+You bash your head and fall back on the bed. What do you want to do?
+Go back to sleep => start
+Get up => up
