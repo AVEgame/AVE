@@ -78,11 +78,11 @@ class Screen:
                             stuff.append((y, x, c, curses.color_pair(0)))
                     y += 1
                 elif comment(line) == "type":
-                    self.show(stuff,y=y+1)
+                    self.show(stuff,y=y+1,x=WIDTH)
                     y_beg = y
                     stuff = []
                     y = 0
-        self.type(stuff,py=y_beg,y=y)
+        self.type(stuff,py=y_beg,y=y,x=WIDTH)
 
     def gameover(self):
         pad = self.newpad(8, WIDTH-20)
@@ -98,7 +98,17 @@ class Screen:
         pad.refresh(0,0, 3,10, 9,WIDTH-10)
         return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False)
         
-    def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH):
+    def show_inventory(self, inventory):
+        pad = self.newpad(11, 20)
+        pad.addstr(0,0,"INVENTORY" + " "*11,curses.color_pair(3))
+        for i,item in enumerate(inventory):
+            if i < 10:
+                pad.addstr(i+1,0,"  " + item.name[:18] + " " * (18-len(item.name)),curses.color_pair(3))
+            else:
+                pad.addstr(i+1,0,"  " * 20,curses.color_pair(3))
+        pad.refresh(0,0, 1,WIDTH-20, 11,WIDTH)
+        
+    def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
         from time import sleep
         pad = self.newpad(y, x)
         for char in stuff:
@@ -110,7 +120,7 @@ class Screen:
                 pad.addch(char[0], char[1], char[2], char[3])
             pad.refresh(0,0, py,px, y+py,x+px)
 
-    def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH):
+    def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
         pad = self.newpad(y, x)
         for char in stuff:
             if len(char)==3:
@@ -119,7 +129,7 @@ class Screen:
                 pad.addch(char[0], char[1], char[2], char[3])
         pad.refresh(0,0, py,px, y+py,x+px)
 
-    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True):
+    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True, add=None, character=None):
         if py is None:
             py = HEIGHT - y - 1
         self.show_menu(ls, y, py, selected, wx, controls)
@@ -127,6 +137,8 @@ class Screen:
         while key is not None:
             key = self.stdscr.getch()
             if key in [curses.KEY_ENTER,ord("\n"),ord("\r")]:
+                if character is not None and add is not None:
+                    character.add_items(add[selected])
                 return selected
             if key == curses.KEY_UP:
                 selected -= 1

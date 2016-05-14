@@ -2,11 +2,58 @@ from __future__ import division
 from core.utils import *
 from core.errors import *
 
+attrs = {"+":"adds","?":"needs","?!":"unneeds"}
+
+class Item:
+    def __init__(self,name):
+        self.name = name
+
+class Character:
+    def __init__(self, screen):
+        self.reset()
+        self.screen = screen
+
+    def reset(self):
+        self.inventory = []
+        self.name = ""
+
+    def _add_item(self, item):
+        self.inventory.append(Item(item))
+
+    def add_items(self, items):
+        for item in items:
+            self._add_item(item)
+
+    def has(self, item):
+        if type(item) == list:
+            for a in item:
+                if a not in self.inventory_ids():
+                    return False
+            return True
+        else:
+            return item in self.inventory_ids()
+
+    def unhas(self, item):
+        if type(item) == list:
+            for a in item:
+                if a in self.inventory_ids():
+                    return False
+            return True
+        else:
+            return item not in self.inventory_ids()
+
+    def show_inventory(self):
+        self.screen.show_inventory(self.inventory)
+
+    def inventory_ids(self):
+        return [item.name for item in self.inventory]
+
 class AVE:
     def __init__(self, folder="games"):
         from screen import Screen
         self.screen = Screen()
-        self.games = Games(folder, self.screen)
+        self.character = Character(self.screen)
+        self.games = Games(folder, self.screen, self.character)
 
     def start(self):
         self.screen.print_titles()
@@ -29,16 +76,17 @@ class AVE:
         self.screen.close()
 
 class Games:
-    def __init__(self, folder, screen):
+    def __init__(self, folder, screen, character):
         import os
         self.screen = screen
+        self.character = character
         self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join("..",folder))
         self.games = []
         for game in os.listdir(self.path):
             if ".ave" in game:
-                g = Game(os.path.join(self.path,game), self.screen)
+                g = Game(os.path.join(self.path,game), self.screen, self.character)
                 if g.active:
-                    self.games.append(Game(os.path.join(self.path,game), self.screen))
+                    self.games.append(Game(os.path.join(self.path,game), self.screen, self.character))
 
     def titles(self):
         return [g.title for g in self.games]
@@ -56,8 +104,9 @@ class Games:
         return self.games[n]
 
 class Game:
-    def __init__(self, path, screen):
+    def __init__(self, path, screen, character):
         self.screen = screen
+        self.character = character
         self.path = path
         self.title = ""
         self.description = ""
@@ -83,19 +132,37 @@ class Game:
             for line in f.readlines() + ["#"]:
                 if line[0]=="#":
                     if not preamb:
-                        rooms[c_room] = Room(c_room, " ".join(c_txt), c_opts, self.screen)
+                        rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
                     preamb = False
                     while len(line) > 0 and line[0] in ["#"]:
                         line = line[1:]
                     c_room = clean(line)
                     c_txt = []
-                    c_opts = {}
+                    c_options = []
                 elif not preamb and clean(line) != "":
                     if "=>" in line:
                         lsp = line.split("=>")
-                        c_opts[clean(lsp[1])] = clean(lsp[0])
+                        next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[]}
+                        next_option['option'] = clean(lsp[0])
+                        lsp = clean(lsp[1]).split()
+                        next_option['id'] = clean(lsp[0])
+                        for i in range(1,len(lsp),2):
+                            for a,b in attrs.items():
+                                if lsp[i] == a:
+                                    next_option[b].append(lsp[i+1])
+                        c_options.append(next_option)
                     else:
-                        c_txt.append(clean(line))
+                        next_line = {'text':"",'needs':[],'unneeds':[],'adds':[]}
+                        text = line
+                        for a in attrs:
+                            text = text.split(" "+a)[0]
+                        next_line['text'] = clean(text)
+                        lsp = line.split()
+                        for i in range(len(lsp)-1):
+                            for a,b in attrs.items():
+                                if lsp[i] == a:
+                                    next_line[b].append(lsp[i+1])
+                        c_txt.append(next_line)
         self.rooms = rooms
 
     def __getitem__(self, id):
@@ -120,15 +187,12 @@ class Game:
 
 
 class Room:
-    def __init__(self, id, text, options, screen):
+    def __init__(self, id, text, options, screen, character):
         self.id = id
         self.text = text
-        self.options = []
-        self.option_keys = []
-        for a,b in options.items():
-            self.option_keys.append(a)
-            self.options.append(b)
+        self.options = options
         self.screen = screen
+        self.character = character
 
     def __str__(self):
         return "Room with id " + self.id
@@ -136,9 +200,23 @@ class Room:
     def show(self):
         from core.screen import WIDTH
         stuff = []
-        for i,c in enumerate(self.text):
-            stuff.append((i // WIDTH, i % WIDTH, c))
+        included_lines = []
+        for line in self.text:
+            if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
+                self.character.add_items(line['adds'])
+                included_lines.append(line['text'])
+        for i,c in enumerate(" ".join(included_lines)):
+            stuff.append((i // (WIDTH-22), i % (WIDTH-22), c))
         self.screen.type(stuff)
 
-        num = self.screen.menu(self.options, min(8,len(self.options)))
-        return self.option_keys[num]
+        opts = []
+        adds = []
+        ids = []
+        for option in self.options:
+            if self.character.has(option['needs']) and self.character.unhas(option['unneeds']):
+                opts.append(option['option'])
+                adds.append(option['adds'])
+                ids.append(option['id'])
+        self.character.show_inventory()
+        num = self.screen.menu(opts, add=adds, y=min(8,len(self.options)), character=self.character)
+        return ids[num]

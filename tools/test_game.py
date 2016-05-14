@@ -4,11 +4,11 @@ import sys
 sys.path.insert(0,'..')
 from core.ave import Game
 
-game = Game(sys.argv[1],"")
+game = Game(sys.argv[1],"",None)
 game.load()
 not_inc = []
 for id in game.rooms:
-    for key in game[id].option_keys:
+    for key in game[id].options['id']:
         if key not in game.rooms and key != "__GAMEOVER__":
             not_inc.append(key)
 

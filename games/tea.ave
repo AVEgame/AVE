@@ -1,0 +1,66 @@
+== The Wonderful Tea Journey ==
+
+# start
+You wake up. You feel very groggy. You really need a cup of lovely warm tea. Then you'll be ready to begin your epic quest.
+What do you want to do?
+Look in the wardrobe => wardrobe ?! hat
+Examine your desk => desk
+Look in the bin => bin ?! bin
+Leave your room => stairs
+
+# bin
+There's nothing in the bin. No point looking here again. + bin
+Continue => start
+
+# wardrobe
+You find a hat and take it with you. + hat
+Continue => start
+
+# desk
+There is a mug of tea on your desk.
+There is also a pencil on your desk. ?! pencil
+Drink the tea => cold_tea
+Pick up the pencil => desk + pencil ?! pencil
+Step away from the desk => start
+
+# cold_tea
+The tea is cold. It's disgusting. You can't take it any more.
+Continue => __GAMEOVER__
+
+# stairs
+You are faced with a terrifyingly long flight of stairs. You're not sure you can make it down without tea first.
+Cover your eyes with your hat and go down the stairs => hall ? hat
+Walk down the stairs => fall_stairs
+Head to the bathroom => bathroom
+Go back to your room => start
+
+# fall_stairs
+You trip and fall down the stairs. Luckily you're not hurt any more than you are already hurting for tea. You get up.
+Continue => hall
+
+# hall
+You find a tea bag in your hat. The sweet smelling tea gives you the strength you need to get down the stairs. ? hat + teabag
+You are standing in the hall.
+Go to the kitchen => kitchen
+Go to the living room => livingroom
+Go outside => garden
+
+# kitchen
+You walk into the kitchen. There is a kettle.
+Turn on the kettle => kettle
+
+# kettle
+The kettle doesn't turn on. ?! kettleplug
+The kettle explodes in a shower of sparks. How could you forget that your kettle is broken? That's why you left it unplugged. The sparks prove fatal. ? kettleplug
+Check that the kettle is plugged in => kettle + kettleplug ?! kettleplug
+Continue => __GAMEOVER__ ? kettleplug
+Give up => kitchen ?! kettleplug
+# livingroom
+# garden
+# bathroom
+
+% pencil
+Sharp Pencil
+
+% bin
+__HIDDEN__
