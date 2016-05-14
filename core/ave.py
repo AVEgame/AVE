@@ -126,6 +126,7 @@ class Game:
                         self.active = False
 
     def load(self):
+        self.screen.clear()
         rooms = {}
         preamb = True
         with open(self.path) as f:
@@ -179,6 +180,7 @@ class Game:
     def begin(self):
         room = self['start']
         while True:
+            self.screen.clear()
             next = room.show()
             room = self[next]
 

@@ -36,6 +36,10 @@ class Screen:
         curses.resizeterm(HEIGHT,WIDTH)
         self.stdscr.refresh()
 
+    def clear(self):
+        pad = self.newpad()
+        pad.refresh(0,0, 0,0, HEIGHT,WIDTH)
+
     def close(self):
         curses.nocbreak()
         curses.curs_set(1)
