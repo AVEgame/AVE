@@ -19,7 +19,9 @@ Items can be added to a users inventory with the + symbol at the end of a line. 
 
     Here is a bucket. + bucket
 
-will add a bucket to the players inventory.
+will add a bucket to the players inventory. You can also remove items from a player's inventory with '~':
+
+    Screw you and your bucket. It's mine. ~ bucket
 
 Options and lines of dialog can be conditionally displayed based upon items in the players inventory. For example:
 
@@ -49,5 +51,11 @@ Will change the display name of an item depending on the presence of water in th
 If you need to check whether the player has an empty or a full bucket, you will need to check both item ID's:
 
     You need water in the bucket. ? bucket ?! water
+
+Eventually you'll want the game to end. You can do this by sending the player to the special __GAMEOVER__ room, which offers the player the chance to play again or choose another game. You should not do this immediately on failure, but rather send the player to a room with a some kind of game over text, for example:
+
+    # headbucket
+    You accidentally put the bucket on your head and fall down the stairs. You die.
+    Continue => __GAMEOVER__
 
 Have fun writing amazing games.
