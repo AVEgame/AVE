@@ -46,7 +46,10 @@ Will display the bucket in the user's inventory as "Empty Bucket". The '?' and '
     Empty Bucket !? water
     Full Bucket ? water
 
-Will change the display name of an item depending on the presence of water in the player's inventory. Only the first 18 characters will be displayed in the player's inventory.
+Will change the display name of an item depending on the presence of water in the player's inventory. Only the first 18 characters will be displayed in the player's inventory. In the above example, it's likely that you don't want the player to have water visible in their inventory separately to the bucket. You can avoid this with the __HIDDEN__ tag:
+
+    % water
+    __HIDDEN__
 
 If you need to check whether the player has an empty or a full bucket, you will need to check both item ID's:
 
