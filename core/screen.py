@@ -103,14 +103,15 @@ class Screen:
         return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False)
         
     def show_inventory(self, inventory):
-        pad = self.newpad(11, 20)
+        pad = self.newpad(14, 20)
         pad.addstr(0,0,"INVENTORY" + " "*11,curses.color_pair(3))
-        for i,item in enumerate(inventory):
-            if i < 10:
-                pad.addstr(i+1,0,"  " + item.name[:18] + " " * (18-len(item.name)),curses.color_pair(3))
+        for i in range(12):
+            if i < len(inventory):
+                item = inventory[i]
+                pad.addstr(i+1,0,"  " + item[:18] + " " * (18-len(item)),curses.color_pair(3))
             else:
-                pad.addstr(i+1,0,"  " * 20,curses.color_pair(3))
-        pad.refresh(0,0, 1,WIDTH-20, 11,WIDTH)
+                pad.addstr(i+1,0," " * 20,curses.color_pair(3))
+        pad.refresh(0,0, 1,WIDTH-20, 13,WIDTH)
         
     def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
         from time import sleep

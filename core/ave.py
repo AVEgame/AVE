@@ -5,20 +5,39 @@ from core.errors import *
 attrs = {"+":"adds","?":"needs","?!":"unneeds"}
 
 class Item:
-    def __init__(self,name):
+    def __init__(self, name, character):
         self.name = name
+        self.character = character
+
+    def get_name(self):
+        if self.name in self.character.items:
+            name = []
+            for line in self.character.items[self.name][0]:
+                if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
+                    #self.character.add_items(line['adds'])
+                    name.append(line['name'])
+            name = " ".join(name)
+            if name != "":
+                return name
+        return self.name
+
+    def is_hidden(self):
+        if self.name in self.character.items:
+            return self.character.items[self.name][1]
+        return False
 
 class Character:
     def __init__(self, screen):
         self.reset()
         self.screen = screen
+        self.items = []
 
     def reset(self):
         self.inventory = []
         self.name = ""
 
     def _add_item(self, item):
-        self.inventory.append(Item(item))
+        self.inventory.append(Item(item,self))
 
     def add_items(self, items):
         for item in items:
@@ -43,7 +62,11 @@ class Character:
             return item not in self.inventory_ids()
 
     def show_inventory(self):
-        self.screen.show_inventory(self.inventory)
+        inv = []
+        for i in self.inventory:
+            if not i.is_hidden():
+                inv.append(i.get_name())
+        self.screen.show_inventory(inv)
 
     def inventory_ids(self):
         return [item.name for item in self.inventory]
@@ -128,19 +151,49 @@ class Game:
     def load(self):
         self.screen.clear()
         rooms = {}
+        items = {}
         preamb = True
+        firstitem = True
+        mode = "PREA"
         with open(self.path) as f:
-            for line in f.readlines() + ["#"]:
-                if line[0]=="#":
-                    if not preamb:
+            for line in f.readlines() + ['#']:
+                if line[0]=="#" or line[0] == '%':
+                    if not preamb and mode == "ROOM":
                         rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
-                    preamb = False
-                    while len(line) > 0 and line[0] in ["#"]:
-                        line = line[1:]
-                    c_room = clean(line)
-                    c_txt = []
-                    c_options = []
-                elif not preamb and clean(line) != "":
+                    if not firstitem and mode == "ITEM":
+                        items[c_item] = [c_texts, c_hidden]
+                    if line[0] == "#":
+                        mode = "ROOM"
+                        preamb = False
+                        while len(line) > 0 and line[0] == "#":
+                            line = line[1:]
+                        c_room = clean(line)
+                        c_txt = []
+                        c_options = []
+                    elif line[0]=="%":
+                        mode = "ITEM"
+                        firstitem = False
+                        while len(line) > 0 and line[0] == "%":
+                            line = line[1:]
+                        c_item = clean(line)
+                        c_hidden = False
+                        c_texts = []
+                elif mode == "ITEM":
+                    if clean(line) == "__HIDDEN__":
+                        c_hidden = True
+                    elif clean(line) != "":
+                        next_item = {'name':"",'needs':[],'unneeds':[],'adds':[]}
+                        text = line
+                        for a in attrs:
+                            text = text.split(" "+a)[0]
+                        next_item['name'] = clean(text)
+                        lsp = line.split()
+                        for i in range(len(lsp)-1):
+                            for a,b in attrs.items():
+                                if lsp[i] == a:
+                                    next_item[b].append(lsp[i+1])
+                        c_texts.append(next_item)
+                elif mode == "ROOM":
                     if "=>" in line:
                         lsp = line.split("=>")
                         next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[]}
@@ -152,7 +205,7 @@ class Game:
                                 if lsp[i] == a:
                                     next_option[b].append(lsp[i+1])
                         c_options.append(next_option)
-                    else:
+                    elif clean(line) != "":
                         next_line = {'text':"",'needs':[],'unneeds':[],'adds':[]}
                         text = line
                         for a in attrs:
@@ -165,6 +218,7 @@ class Game:
                                     next_line[b].append(lsp[i+1])
                         c_txt.append(next_line)
         self.rooms = rooms
+        self.character.items = items
 
     def __getitem__(self, id):
         return self.load_room(id)
@@ -220,5 +274,6 @@ class Room:
                 adds.append(option['adds'])
                 ids.append(option['id'])
         self.character.show_inventory()
-        num = self.screen.menu(opts, add=adds, y=min(8,len(self.options)), character=self.character)
+        num = self.screen.menu(opts, add=adds, y=min(8,len(opts)), character=self.character)
         return ids[num]
+
