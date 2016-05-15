@@ -1,9 +1,8 @@
 Making Your Own AVE Game
 ------------------------
+To make your own game for AVE, create a file with the extension `.ave` in this folder.
 
-To make your own AVE game, have a look at the examples
-in this folder. At some point this help file will be
-more helpful...
+If you use the text editor nano, the file `ave.nanorc` will enable useful syntax highlighting in `.ave` files.
 
 Rooms are started with #. There must be a space following this and then the unique ID of the room.
 
