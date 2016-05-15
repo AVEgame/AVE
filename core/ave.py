@@ -80,7 +80,7 @@ class AVE:
 
     def start(self):
         self.screen.print_titles()
-        game_to_load = self.screen.menu(self.games.titles(), 8)
+        game_to_load = self.screen.menu(self.games.titles(), 8, titles=True)
         self.games[game_to_load].load()
         again = True
         while again:
@@ -93,7 +93,8 @@ class AVE:
                     again = True
                 if next == 2:
                     raise AVEQuit
-                
+            except AVEToMenu:
+                pass
 
     def exit(self):
         self.screen.close()

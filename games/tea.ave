@@ -35,7 +35,9 @@ Head to the bathroom => bathroom
 Go back to your room => start
 
 # fall_stairs
-You trip and fall down the stairs. Luckily you're not hurt any more than you are already hurting for tea. You get up.
+You trip and fall down the stairs. Luckily you're not hurt any more than you are already hurting for tea.
+As you lie on the floor, you notice a pencil sharpner under the bureau. You reach out and pick it up. ?! sharpener + sharpener
+You get up.
 Continue => hall
 
 # hall
@@ -44,6 +46,7 @@ You are standing in the hall.
 Go to the kitchen => kitchen
 Go to the living room => livingroom
 Go outside => garden
+Go back up the stairs => stairs
 
 # kitchen
 You walk into the kitchen. There is a kettle.
@@ -60,10 +63,14 @@ Give up => kitchen ?! kettleplug
 # bathroom
 
 % pencil
-Sharp Pencil
+Blunt Pencil ?! sharpener
+Sharp Pencil ? sharpener
 
 % bin
 __HIDDEN__
 
 % hat
 Wollen Hat
+
+% sharpener
+__HIDDEN__

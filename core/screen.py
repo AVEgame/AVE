@@ -57,11 +57,18 @@ class Screen:
         return curses.newpad(y, x)
 
     def print_titles(self):
+        self.print_file("title")
+
+    def print_credits(self):
+        self.print_file("credits")
+
+    def print_file(self, filename):
         import os
         stuff = []
         stuff2 = []
-        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),"title")) as f:
+        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),filename)) as f:
             y = 0
+            y_beg = None
             for line in f.readlines():
                 if line[0]!="#":
                     line = clean_newlines(line)
@@ -86,7 +93,10 @@ class Screen:
                     y_beg = y
                     stuff = []
                     y = 0
-        self.type(stuff,py=y_beg,y=y,x=WIDTH)
+        if y_beg is None:
+            self.show(stuff,y=y+1,x=WIDTH)
+        else:
+            self.type(stuff,py=y_beg,y=y,x=WIDTH)
 
     def gameover(self):
         pad = self.newpad(8, WIDTH-20)
@@ -134,7 +144,15 @@ class Screen:
                 pad.addch(char[0], char[1], char[2], char[3])
         pad.refresh(0,0, py,px, y+py,x+px)
 
-    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True, add=None, character=None):
+    def credit_menu(self):
+        key = ""
+        while key is not None:
+            key = self.stdscr.getch()
+            if key == ord('q') or key == ord('c'):
+                break
+        self.print_titles()
+
+    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True, add=None, character=None, titles=False):
         if py is None:
             py = HEIGHT - y - 1
         self.show_menu(ls, y, py, selected, wx, controls)
@@ -156,7 +174,14 @@ class Screen:
                     selected -= len(ls)
                 self.show_menu(ls, y, py, selected, wx, controls)
             if key == ord('q'):
-                raise AVEQuit
+                if titles:
+                    raise AVEQuit
+                else:
+                    raise AVEToMenu
+            if key == ord('c') and titles:
+                self.print_credits()
+                self.credit_menu()
+                self.show_menu(ls, y, py, selected, wx, controls)
 
     def show_menu(self, ls, y, py, selected, wx, controls):
         if controls:
