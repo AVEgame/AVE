@@ -13,7 +13,9 @@ def catch_resize(dummy=None,dummy2=None):
 
 signal.signal(signal.SIGWINCH, catch_resize)
 
-
+class DummyScreen:
+    def clear(self):
+        pass
 
 class Screen:
     def __init__(self):
@@ -152,7 +154,7 @@ class Screen:
                 break
         self.print_titles()
 
-    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True, add=None, character=None, titles=False):
+    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True, add=None, rem=None, character=None, titles=False):
         if py is None:
             py = HEIGHT - y - 1
         self.show_menu(ls, y, py, selected, wx, controls)
@@ -162,6 +164,8 @@ class Screen:
             if key in [curses.KEY_ENTER,ord("\n"),ord("\r")]:
                 if character is not None and add is not None:
                     character.add_items(add[selected])
+                if character is not None and rem is not None:
+                    character.remove_items(rem[selected])
                 return selected
             if key == curses.KEY_UP:
                 selected -= 1
