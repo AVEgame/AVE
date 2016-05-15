@@ -2,7 +2,7 @@ from __future__ import division
 from core.utils import *
 from core.errors import *
 
-attrs = {"+":"adds","?":"needs","?!":"unneeds","--":"rems"}
+attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
 
 class Item:
     def __init__(self, name, character):
