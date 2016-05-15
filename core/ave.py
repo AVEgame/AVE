@@ -158,7 +158,7 @@ class Game:
         with open(self.path) as f:
             for line in f.readlines() + ['#']:
                 if line[0]=="#" or line[0] == '%':
-                    if not preamb and mode == "ROOM":
+                    if not preamb and mode == "ROOM" and len(c_options) > 0:
                         rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
                     if not firstitem and mode == "ITEM":
                         items[c_item] = [c_texts, c_hidden]
@@ -226,12 +226,13 @@ class Game:
     def load_room(self, id):
         if id == "__GAMEOVER__":
             raise AVEGameOver
-        try:
+        if id in self.rooms:
             return self.rooms[id]
-        except KeyError:
+        else:
             return self.fail_room()
 
     def begin(self):
+        import curses
         room = self['start']
         while True:
             self.screen.clear()
@@ -239,7 +240,9 @@ class Game:
             room = self[next]
 
     def fail_room(self):
-        return Room("fail", "You fall off the edge of the game. GAME OVER", {"__GAMEOVER__":"Continue"}, self.screen)
+        options = [{'id':"__GAMEOVER__",'option':"Continue",'needs':[],'unneeds':[],'adds':[]}]
+        text = [{'text':"You fall off the edge of the game... (404 Error)",'needs':[],'unneeds':[],'adds':[]}]
+        return Room("fail", text, options, self.screen, self.character)
 
 
 class Room:
