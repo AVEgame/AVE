@@ -2,7 +2,7 @@ from __future__ import division
 from core.utils import *
 from core.errors import *
 
-attrs = {"+":"adds","?":"needs","?!":"unneeds"}
+attrs = {"+":"adds","?":"needs","?!":"unneeds","--":"rems"}
 
 class Item:
     def __init__(self, name, character):
@@ -15,6 +15,7 @@ class Item:
             for line in self.character.items[self.name][0]:
                 if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
                     #self.character.add_items(line['adds'])
+                    #self.character.remove_items(line['rems'])
                     name.append(line['name'])
             name = " ".join(name)
             if name != "":
@@ -39,9 +40,20 @@ class Character:
     def _add_item(self, item):
         self.inventory.append(Item(item,self))
 
+    def _remove_item(self, item):
+        if item in self.inventory_ids():
+            for a,b in enumerate(self.inventory):
+                if b.name == item:
+                    self.inventory = self.inventory[:a] + self.inventory[a+1:]
+                    break
+
     def add_items(self, items):
         for item in items:
             self._add_item(item)
+
+    def remove_items(self, items):
+        for item in items:
+            self._remove_item(item)
 
     def has(self, item):
         if type(item) == list:
@@ -89,6 +101,7 @@ class AVE:
                 self.games[game_to_load].begin()
             except AVEGameOver:
                 next = self.screen.gameover()
+                self.character.reset()
                 if next == 0:
                     again = True
                 if next == 2:
@@ -183,7 +196,7 @@ class Game:
                     if clean(line) == "__HIDDEN__":
                         c_hidden = True
                     elif clean(line) != "":
-                        next_item = {'name':"",'needs':[],'unneeds':[],'adds':[]}
+                        next_item = {'name':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
                         text = line
                         for a in attrs:
                             text = text.split(" "+a)[0]
@@ -197,7 +210,7 @@ class Game:
                 elif mode == "ROOM":
                     if "=>" in line:
                         lsp = line.split("=>")
-                        next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[]}
+                        next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
                         next_option['option'] = clean(lsp[0])
                         lsp = clean(lsp[1]).split()
                         next_option['id'] = clean(lsp[0])
@@ -207,7 +220,7 @@ class Game:
                                     next_option[b].append(lsp[i+1])
                         c_options.append(next_option)
                     elif clean(line) != "":
-                        next_line = {'text':"",'needs':[],'unneeds':[],'adds':[]}
+                        next_line = {'text':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
                         text = line
                         for a in attrs:
                             text = text.split(" "+a)[0]
@@ -241,8 +254,8 @@ class Game:
             room = self[next]
 
     def fail_room(self):
-        options = [{'id':"__GAMEOVER__",'option':"Continue",'needs':[],'unneeds':[],'adds':[]}]
-        text = [{'text':"You fall off the edge of the game... (404 Error)",'needs':[],'unneeds':[],'adds':[]}]
+        options = [{'id':"__GAMEOVER__",'option':"Continue",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
+        text = [{'text':"You fall off the edge of the game... (404 Error)",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
         return Room("fail", text, options, self.screen, self.character)
 
 
@@ -263,6 +276,7 @@ class Room:
         for line in self.text:
             if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
                 self.character.add_items(line['adds'])
+                self.character.remove_items(line['rems'])
                 included_lines.append(line['text'])
         y = 0
         x = 0
@@ -281,13 +295,15 @@ class Room:
 
         opts = []
         adds = []
+        rems = []
         ids = []
         for option in self.options:
             if self.character.has(option['needs']) and self.character.unhas(option['unneeds']):
                 opts.append(option['option'])
                 adds.append(option['adds'])
+                rems.append(option['rems'])
                 ids.append(option['id'])
         self.character.show_inventory()
-        num = self.screen.menu(opts, add=adds, y=min(8,len(opts)), character=self.character)
+        num = self.screen.menu(opts, add=adds, rem=rems, y=min(8,len(opts)), character=self.character)
         return ids[num]
 
