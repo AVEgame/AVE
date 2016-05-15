@@ -258,14 +258,24 @@ class Room:
 
     def show(self):
         from core.screen import WIDTH
-        stuff = []
         included_lines = []
         for line in self.text:
             if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
                 self.character.add_items(line['adds'])
                 included_lines.append(line['text'])
-        for i,c in enumerate(" ".join(included_lines)):
-            stuff.append((i // (WIDTH-22), i % (WIDTH-22), c))
+        y = 0
+        x = 0
+        stuff = []
+        text = " ".join(included_lines)
+        for word in text.split():
+            if x+len(word) > WIDTH-22:
+                y += 1
+                x = 0
+            for i,c in enumerate(word):
+                stuff.append((y,x,c))
+                x += 1
+            stuff.append((y,x," "))
+            x += 1
         self.screen.type(stuff)
 
         opts = []
