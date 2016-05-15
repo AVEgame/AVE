@@ -29,19 +29,23 @@ Continue => __GAMEOVER__
 
 # stairs
 You are faced with a terrifyingly long flight of stairs. You're not sure you can make it down without tea first.
-Cover your eyes with your hat and go down the stairs => hall ? hat
+Cover your eyes with your hat and go down the stairs => hall ? hat ? teabag
+Cover your eyes with your hat and go down the stairs => get_teabag ? hat ?! teabag
 Walk down the stairs => fall_stairs
 Head to the bathroom => bathroom
 Go back to your room => start
 
 # fall_stairs
 You trip and fall down the stairs. Luckily you're not hurt any more than you are already hurting for tea.
-As you lie on the floor, you notice a pencil sharpner under the bureau. You reach out and pick it up. ?! sharpener + sharpener
+As you lie on the floor, you notice a pencil sharpner stuck under the bureau. You use it to sharpen your pencil. ?! sharpener + sharpener ? pencil
 You get up.
 Continue => hall
 
-# hall
+# get_teabag
 You find a tea bag in your hat. The sweet smelling tea gives you the strength you need to get down the stairs. ? hat + teabag
+Continue => hall
+
+# hall
 You are standing in the hall.
 Go to the kitchen => kitchen
 Go to the living room => livingroom
@@ -51,14 +55,78 @@ Go back up the stairs => stairs
 # kitchen
 You walk into the kitchen. There is a kettle.
 Turn on the kettle => kettle
+Go to the hall => hall
+Examine the fridge => fridge
 
 # kettle
-The kettle doesn't turn on. ?! kettleplug
+The kettle doesn't turn on. ?! kettleplug ?! kettle_works
 The kettle explodes in a shower of sparks. How could you forget that your kettle is broken? That's why you left it unplugged. The sparks prove fatal. ? kettleplug
-Check that the kettle is plugged in => kettle + kettleplug ?! kettleplug
+Check that the kettle is plugged in => kettle + kettleplug ?! kettleplug ?! kettle_works
 Continue => __GAMEOVER__ ? kettleplug
+Plug your kettle lead into the kettle => kettle_on ?! kettleplug ? kettle_lead ~ kettle_lead + kettle_works ?! kettle_works
+Boil the kettle => kettle_on ? kettle_works
 Give up => kitchen ?! kettleplug
+
+# in_fridge
+It's cold and cramped inside the fridge. The door slowly closes behind you.
+As the fridge light turns off, you notice that the ceiling of the fridge is glowing.
+There appears to be a portal to another universe in the roof of your fridge.
+You wonder if there will be any tea in the other universe.
+Climb through the portal => portal_in
+Get out of the fridge => kitchen
+
+# out_fridge
+The dark interior of your fridge materialises around you.
+Climb through the portal => portal_in
+Get out of the fridge => kitchen
+
+# portal_in
+You enter the portal. Everything goes blurry.
+Continue => through_portal
+
+# portal_out
+You enter the portal. Everything goes blurry.
+Continue => out_fridge
+
+# through_portal
+As everything comes back into focus, you find you are in a small orange room.
+Lying around the room are all the missing plug adapters for your old electrical goods.
+Pick up a kettle lead => through_portal ?! kettle_lead + kettle_lead
+Pick up a large AC adapter => through_portal ?! ac_adapt + ac_adapt
+Go back through the portal => portal_out
+
+# fridge
+You look inside the fridge.
+There is a bottle of water inside. ?! water
+There is an opened pint of milk inside. ?! milk
+Take the milk => fridge ?! milk + milk
+Take the water => fridge ?! water + water
+Climb into the fridge => in_fridge
+Back away from the fridge with caution => kitchen
+
+# kettle_on
+The kettle works. Slowly the water comes to the boil. ?! mug_water ?! mug_teabag ?! mug_milk
+You put the teabag into the mug. ?! mug_water ? mug_teabag ?! mug_milk
+You pour the water into the mug. ? mug_water ? mug_teabag ?! mug_milk
+You pour the water into the mug. You should've put the tea bag in first though. You pour away the water and boil the kettle again. ? mug_water ?! mug_teabag ?! mug_milk
+You pour the milk into the tea. You've done it! You take a sip of tea... ? mug_water ? mug_teabag ? mug_milk
+It tastes... of peppermint! You've put milk in herbal tea. This will not do. ? mug_water ? mug_teabag ? mug_milk
+You smash the mug in disgust. ? mug_water ? mug_teabag ? mug_milk ~ mug ~ mug_teabag ~ mug_milk ~ mug_water
+Pour the water => kitchen_spill ?! mug
+Pour the water into the mug => kettle_on ? mug ?! mug_water + mug_water
+Put the tea bag into the mug => kettle_on ? mug ? teabag ?! mug_teabag ~ teabag + mug_teabag
+Put the milk in the tea => kettle_on ? mug_water ? mug_teabag ~ milk ?! mug_milk + mug_milk
+Go back to the kitchen => kitchen ~ mug_teabag ~ mug_milk ~ mug_water
+
+# kitchen_spill
+You pour the boiling water all over the floor. You really should've found a mug before trying to make tea...
+You'll have to stay out of the kitchen for a few minutes until the floor dries.
+Go back to the hall => hall
+
 # livingroom
+You find a mug. The mug should not be here. Hopefully Gin will hide it for me... There should also be a second mug as this one gets smashed. + mug
+Go back => hall
+
 # garden
 # bathroom
 
@@ -69,8 +137,26 @@ Sharp Pencil ? sharpener
 % bin
 __HIDDEN__
 
+% sharpener
+__HIDDEN__
+
+% kettle_works
+__HIDDEN__
+
 % hat
 Wollen Hat
 
-% sharpener
-__HIDDEN__
+% teabag
+Tea Bag
+
+% water
+Bottled Water
+
+% milk
+Half Pint of Milk
+
+% kettle_lead
+Kettle Lead
+
+% ac_adapt
+AC Adapter
