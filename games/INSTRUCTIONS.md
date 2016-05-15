@@ -32,3 +32,22 @@ will only be displayed if the user already has the bucket in their inventory. Wh
 will only be displayed if the player does not have a bucket in their dictionary.
 
 The '+', '?', and '?!' symbols must have leading and trailing whitespace in order to function, so it is possible to have questions in your script.
+
+Items can be described in your game file using the '%' key. Similar to the '#' key for rooms, there must be a space following the key and then the item id. For example:
+
+    % bucket
+    Empty Bucket
+
+Will display the bucket in the user's inventory as "Empty Bucket". The '?' and '?!' can be used for items as well so:
+
+    % bucket
+    Empty Bucket !? water
+    Full Bucket ? water
+
+Will change the display name of an item depending on the presence of water in the player's inventory. Only the first 18 characters will be displayed in the player's inventory.
+
+If you need to check whether the player has an empty or a full bucket, you will need to check both item ID's:
+
+    You need water in the bucket. ? bucket ?! water
+
+Have fun writing amazing games.
