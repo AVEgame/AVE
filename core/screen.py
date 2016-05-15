@@ -23,14 +23,28 @@ class Screen:
         self.stdscr = curses.initscr()
         curses.start_color()
         curses.use_default_colors()
+
+        # @ in title and credits
         curses.init_pair(1, -1, curses.COLOR_RED)
+        # ^ in title and credits
         curses.init_pair(2, -1, curses.COLOR_GREEN)
+        # = in title and credits
         curses.init_pair(3, -1, curses.COLOR_BLUE)
-        curses.init_pair(4, -1, curses.COLOR_YELLOW)
+        # menu unselected
+        curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
+        # menu selected
         curses.init_pair(5, -1, curses.COLOR_RED)
+        # A in title
         curses.init_pair(6, curses.COLOR_RED, -1)
+        # V in title
         curses.init_pair(7, curses.COLOR_GREEN, -1)
+        # E in title
         curses.init_pair(8, curses.COLOR_BLUE, -1)
+        # inventory
+        curses.init_pair(9, -1, curses.COLOR_BLUE)
+        # gameover
+        curses.init_pair(10, -1, curses.COLOR_BLUE)
+
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
@@ -98,44 +112,49 @@ class Screen:
         if y_beg is None:
             self.show(stuff,y=y+1,x=WIDTH)
         else:
-            self.type(stuff,py=y_beg,y=y,x=WIDTH)
+            self.type(stuff,py=y_beg,y=y,x=WIDTH, title=True)
 
     def gameover(self):
         pad = self.newpad(8, WIDTH-20)
         gst = " "*((WIDTH-29)//2) + "GAME OVER"
         gst += " " * (WIDTH - len(gst))
-        pad.addstr(0,0," "*(WIDTH-20),curses.color_pair(3))
-        pad.addstr(1,0,gst,curses.color_pair(3))
-        pad.addstr(2,0," "*(WIDTH-20),curses.color_pair(3))
-        pad.addstr(3,0," "*(WIDTH-20),curses.color_pair(3))
-        pad.addstr(4,0," "*(WIDTH-20),curses.color_pair(3))
-        pad.addstr(5,0," "*(WIDTH-20),curses.color_pair(3))
-        pad.addstr(6,0," "*(WIDTH-20),curses.color_pair(3))
+        pad.addstr(0,0," "*(WIDTH-20),curses.color_pair(10))
+        pad.addstr(1,0,gst,curses.color_pair(10))
+        pad.addstr(2,0," "*(WIDTH-20),curses.color_pair(10))
+        pad.addstr(3,0," "*(WIDTH-20),curses.color_pair(10))
+        pad.addstr(4,0," "*(WIDTH-20),curses.color_pair(10))
+        pad.addstr(5,0," "*(WIDTH-20),curses.color_pair(10))
+        pad.addstr(6,0," "*(WIDTH-20),curses.color_pair(10))
         pad.refresh(0,0, 3,10, 9,WIDTH-10)
         return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False)
         
     def show_inventory(self, inventory):
         pad = self.newpad(14, 20)
-        pad.addstr(0,0,"INVENTORY" + " "*11,curses.color_pair(3))
+        pad.addstr(0,0,"INVENTORY" + " "*11,curses.color_pair(9))
         for i in range(12):
             if i < len(inventory):
                 item = inventory[i]
-                pad.addstr(i+1,0,"  " + item[:18] + " " * (18-len(item)),curses.color_pair(3))
+                pad.addstr(i+1,0,"  " + item[:18] + " " * (18-len(item)),curses.color_pair(9))
             else:
-                pad.addstr(i+1,0," " * 20,curses.color_pair(3))
+                pad.addstr(i+1,0," " * 20,curses.color_pair(9))
         pad.refresh(0,0, 1,WIDTH-20, 13,WIDTH)
         
-    def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
+    def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
         from time import sleep
         pad = self.newpad(y, x)
+        delay = True
+        self.stdscr.nodelay(1)
         for char in stuff:
-            if char[2]!=" ":
+            if self.stdscr.getch() != -1:
+                delay = False
+            if char[2]!=" " and (delay or title):
                 sleep(.01)
             if len(char)==3:
                 pad.addch(char[0], char[1], char[2])
             if len(char)==4:
                 pad.addch(char[0], char[1], char[2], char[3])
             pad.refresh(0,0, py,px, y+py,x+px)
+        self.stdscr.nodelay(0)
 
     def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
         pad = self.newpad(y, x)
