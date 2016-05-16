@@ -1,0 +1,175 @@
+== The Murder Mystery ==
+
+# start
+You wake up with a start. It's 2am. You hear a loud noise from outside. That must be what woke you up.
+Look out of the window => window
+Stay in bed and listen => listen
+Head downstairs => downstairs
+Go back to sleep => morning
+
+# window
+ ?! seen + seen
+A light is on in a broken upstairs window of the house opposite. In the light from the window, you can see bits of glass shimmering on the lawn around a large unmoving object. ? murder
+You creep over to the window. Just as you look out, there is a crash and something very large breaks through the window of the house opposite. + murder ?! murder
+Look out of the window => window
+Sit and listen => listen
+Head downstairs => downstairs
+Go back to bed => morning
+
+# listen
+You hear nothing but silence. ? murder
+You can hear muffled voices coming from the house across the road. There is a loud crash then the noise stops. + murder ?! murder
+Look out of the window => window
+Sit and listen => listen
+Head downstairs => downstairs
+Go back to bed => morning
+
+# downstairs
+As you head down the stairs you hear a large crash. + murder ?! murder
+You are standing at the bottom of the stairs in your house.
+Your neighbour's body is lying next to you. ? neighbours_body_in_hall
+Head outside => outside
+Go into the kitchen => kitchen
+Go into the living room => livingroom
+Go back upstairs and look out of the window => window
+Go back to bed => morning
+Stab your neighbour => downstairs ? knife ? sidekick + neighbours_body_in_hall ~ sidekick
+Drag your neighbour's body into the living room => livingroom ? neighbours_body_in_hall ~ neighbours_body_in_hall + neighbours_body_in_livingroom
+
+# kitchen
+You are in the kitchen.
+Take a knife from the worktop => kitchen + knife ?! knife ?! knife_gone + knife_gone
+Put the knife down on the worktop => kitchen ~ knife ? knife ~ knife_gone
+Look in the fridge => fridge
+Go back to the bottom of the stairs => downstairs
+
+# fridge
+You open the fridge.
+Take the knife out of the fridge => fridge + knife ?! knife ? knife_fridge ~ knife_fridge
+Put the knife in the fridge => fridge ~ knife ? knife + knife_fridge
+Go back to the kitchen => kitchen
+
+# livingroom
+You cut open the sofa. The television remote is inside. ? sofacut + show_once ?! show_once + tv_remote
+You are in the living room.
+Your sofa has been cut open. ? sofacut
+Your neighbour's body is lying next to you. ? neighbours_body_in_livingroom
+Your neighbour's body is hidden inside the sofa. ? neighbours_body_in_sofa
+Cut open the sofa => livingroom ? knife + sofacut ?! sofacut
+Turn on the television => tv_morning ? tv_remote
+Go back to the bottom of the stairs => downstairs
+Stab your neighbour => livingroom ? knife ? sidekick + neighbours_body_in_livingroom ~ sidekick
+Hide your neighbour's body in the sofa => livingroom ? sofacut ? neighbours_body_in_livingroom ~ neighbours_body_in_livingroom + neighbours_body_in_sofa
+
+# outside
+You are outside. There is an eerie silence. You can see
+a ?! seen
+the ? seen
+large mass lying on the lawn of the house opposite.
+Knock the your neighbour's door => neigh ?! sidekick ?! neighbour_dead
+Knock the your neighbour's door => neigh_kill ? neighbour_dead
+Go see what the mass is => opposite_lawn
+Go back inside => downstairs
+
+# neigh
+You knock on your neighbour's door. Slowly, you see lights turn on upstairs in the house, then downstairs, then the door opens.
+Ask your neighbour if they saw anything => neigh_talk
+Stab your neighbour => neigh_kill ? knife
+Ask your neighbour to come with you => outside + sidekick
+Leave your neighbour alone => outside
+
+# neigh_kill
+You are at the door to your neighbour's house ? neighbour_dead
+A look of horror overcomes your neighbour's face as you murder him. + neighbour_dead ?! neighbour_dead ~ sidekick
+Go into your neighbour's house => in_neigh
+Carry your neighbour's body back to your house => downstairs ?! neighbours_body_in_hall + neighbours_body_in_hall
+Leave your neighbour alone => outside
+
+# opposite_lawn
+You look at the mass on the lawn. It is the body of the man who lived opposite.
+Your neighbour's body lies next to the man's body. ? neighbours_body_opposite
+Ask your neighbour to call the police => 999 ? sidekick
+Head towards the house => opposite_house
+Drag your neighbour's body next to the man's body => opposite_lawn ? neighbour_dead ?! neighbours_body_opposite + neighbours_body_opposite ~ neighbours_body_in_hall
+Head home => downstairs
+
+# in_neigh
+You are inside your neighbour's house.
+Go into the kitchen => neigh_kit
+Go into the living room => neigh_livingroom
+Go upstairs => neigh_up
+Go back to the hall => in_neigh
+Go back outside => neigh_kill
+
+# neigh_livingroom
+You are in your neighbour's living room.
+There is a ceremonial sword hanging on the wall. ?! sword
+Take the sword => neigh_livingroom + sword ?! sword
+Go back to the hall => in_neigh
+
+# neigh_kit
+You are in your neighbour's kitchen. 
+Turn the gas on => neigh_kit + gas_on ?! gas_on
+Turn the gas off => neigh_kit ~ gas_on ? gas_on
+Stab the fridge => stab_fridge ? knife
+Go back to the hall => in_neigh
+
+# stab_fridge
+The knife gets stuck in the fridge ~ knife
+Continue => neigh_kit
+
+# 999
+Your neighbour calls 999. The police arrive 10 minutes later. They tell you to go home and talk to them in the morning.
+Head home with your neighbour => downstairs
+Head home alone => downstairs ~ sidekick
+
+% murder
+__HIDDEN__
+
+% murderer
+__HIDDEN__
+
+% sidekick
+__HIDDEN__
+
+% seen
+__HIDDEN__
+
+% knife_gone
+__HIDDEN__
+
+% show_once
+__HIDDEN__
+
+% sofacut
+__HIDDEN__
+
+% knife_fridge
+__HIDDEN__
+
+% knife
+Carving Knife
+
+% sword
+Ceremonial Sword
+
+% tv_remote
+TV Remote Control
+
+% neighbour_dead
+__HIDDEN__
+
+% neighbours_body_in_hall
+__HIDDEN__
+
+% neighbours_body_in_livingroom
+__HIDDEN__
+
+% neighbours_body_in_sofa
+__HIDDEN__
+
+% neighbours_body_opposite
+__HIDDEN__
+
+% gas_on
+__HIDDEN__
