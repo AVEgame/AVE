@@ -78,6 +78,10 @@ class Screen:
     def print_credits(self):
         self.print_file("credits")
 
+    def put_ave_logo(self):
+        stuff = [(0,0,"A",curses.color_pair(6)), (0,1,"V",curses.color_pair(7)), (0,2,"E",curses.color_pair(8))]
+        self.show(stuff,0,WIDTH-3,2,3)
+
     def print_file(self, filename):
         import os
         self.clear()

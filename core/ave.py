@@ -263,6 +263,7 @@ class Game:
         room = self['start']
         while True:
             self.screen.clear()
+            self.screen.put_ave_logo()
             next = room.show()
             room = self[next]
 
