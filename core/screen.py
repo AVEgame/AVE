@@ -80,6 +80,7 @@ class Screen:
 
     def print_file(self, filename):
         import os
+        self.clear()
         stuff = []
         stuff2 = []
         with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),filename)) as f:
@@ -89,6 +90,8 @@ class Screen:
                 if line[0]!="#":
                     line = clean_newlines(line)
                     for x,c in enumerate(line):
+                        if x>=WIDTH:
+                            break
                         if c == "@":
                             stuff.append((y, x, " ", curses.color_pair(1)))
                         elif c == "^":
@@ -104,6 +107,9 @@ class Screen:
                         else:
                             stuff.append((y, x, c, curses.color_pair(0)))
                     y += 1
+                    if y >= HEIGHT:
+                        y -= 1
+                        break
                 elif comment(line) == "type":
                     self.show(stuff,y=y+1,x=WIDTH)
                     y_beg = y
@@ -115,8 +121,14 @@ class Screen:
             self.type(stuff,py=y_beg,y=y,x=WIDTH, title=True)
 
     def gameover(self):
+        return self.gameend("GAME OVER")
+        
+    def winner(self):
+        return self.gameend("YOU WIN!")
+        
+    def gameend(self,text):
         pad = self.newpad(8, WIDTH-20)
-        gst = " "*((WIDTH-29)//2) + "GAME OVER"
+        gst = " "*((WIDTH-29)//2) + text
         gst += " " * (WIDTH - len(gst))
         pad.addstr(0,0," "*(WIDTH-20),curses.color_pair(10))
         pad.addstr(1,0,gst,curses.color_pair(10))
@@ -228,3 +240,65 @@ class Screen:
             if start < max(0,len(ls) - y):
                 pad.addch(y-1,wx-2,"v")
         pad.refresh(0,0, py,(WIDTH-wx)//2, py+y-1,wx+(WIDTH-wx)//2)
+
+    def show_titles(self, title, description, author):
+        stuff = []
+        y = 0
+        for y in range(HEIGHT):
+            if y == 0 or y == HEIGHT-1:
+                xs = range(0,WIDTH-3,4)
+            else:
+                xs = [0,WIDTH - 4]
+            for x in xs:
+                stuff.append((y, x, "A", curses.color_pair(6)))
+                stuff.append((y, x+1, "V", curses.color_pair(7)))
+                stuff.append((y, x+2, "E", curses.color_pair(8)))
+        self.show(stuff, x=WIDTH)
+
+        stuff = []
+        pad, y, x = self.pad_with_coloured_dashes(title,0,0,HEIGHT-2,WIDTH-11)
+        stuff += pad
+        y += 1
+        txt = "Written by: "+author
+        for st in range(0,len(txt),WIDTH-9):
+            for x,c in enumerate(txt[st:st+WIDTH-9]):
+                stuff.append((y, x, c))
+            y += 1
+        y += 1
+        x = 0
+        for word in description.split():
+            if x + len(word) > WIDTH-9:
+                x = 0
+                y += 1
+                if y > HEIGHT-5:
+                    break
+            for c in word:
+                stuff.append((y, x, c))
+                x += 1
+            x += 1
+        pad, y, x = self.pad_with_coloured_dashes("Press <Enter> to begin. Press <q> to return to the menu.",HEIGHT-4,0,HEIGHT-2,WIDTH-11)
+        stuff += pad
+
+        self.show(stuff,x=WIDTH-9,y=HEIGHT-2,px=4,py=1)
+        key = ""
+        while key not in [curses.KEY_ENTER,ord("\n"),ord("\r")]:
+            key = self.stdscr.getch()
+            if key == ord('q'):
+                raise AVEToMenu
+
+    def pad_with_coloured_dashes(self, text, y=0, x=0, yw=HEIGHT, xw=WIDTH):
+        temp_stuff = []
+        text = [" "+text[st:st+WIDTH-11]+ " " for st in range(0,len(text),xw)]
+        cols = [curses.color_pair(6), curses.color_pair(7), curses.color_pair(8)]
+        for t in text[:yw]:
+            half = (WIDTH-9-len(t))//2
+            for x in range(WIDTH-9):
+                if half <= x < half + len(t):
+                    temp_stuff.append((y, x, t[x-half]))
+                elif x%4 != 3:
+                    temp_stuff.append((y, x, "~", cols[x%4]))
+                else:
+                    temp_stuff.append((y, x, " "))
+            y += 1
+        return temp_stuff, y, x
+

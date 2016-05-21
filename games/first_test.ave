@@ -1,25 +1,28 @@
 == Test Game ==
--- Test description --
-~~ off ~~
+-- This game is very boring and so should only be used to test features. --
+** Matthew Scroggs **
+~~ on ~~
 
 # start
 You wake up. What do you want to do?
 Go back to sleep => start
+Pick up the hammer => start + hammer ?! hammer
+Put down the hammer => start ~ hammer ? hammer
+Hit yourself on the head with the hammer => hammer ? hammer
 Get up => up
 
 # up
-You bash your head and fall back on the bed. What do you want to do?
-Go back to sleep => start
-Get up => up2
-
-# up2
 You bash your head and fall back on the bed.
 Your head really hurts. What do you want to do?
 Go back to sleep => start
-Run => this_is_not_real
-Get up => up3
+Pick up the hammer => start + hammer ?! hammer
+Put down the hammer => start ~ hammer ? hammer
+Hit yourself on the head with the hammer => hammer ? hammer
+Run => __WINNER__
 
-# up3
-You bash your head.
+# hammer
 Your head smashes. GAME OVER.
 Continue => __GAMEOVER__
+
+% hammer
+A Hammer

@@ -11,3 +11,6 @@ class AVEToMenu(BaseException):
 
 class AVEGameOver(BaseException):
     pass
+
+class AVEWinner(BaseException):
+    pass
