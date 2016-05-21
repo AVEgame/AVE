@@ -69,23 +69,29 @@ a ?! seen
 the ? seen
 large mass lying on the lawn of the house opposite.
 Knock on your neighbour's door => neigh ?! sidekick ?! neighbour_dead
-Knock on your neighbour's door => neigh_kill ? neighbour_dead
+Go to neighbour's house => neigh ? neighbour_dead ?! sidekick
+Go to neighbour's house => neigh ? neighbour_dead ? sidekick
 Go see what the mass is => opposite_lawn
 Go back inside => downstairs
 
 # neigh
-You knock on your neighbour's door. Slowly, you see lights turn on upstairs in the house, then downstairs, then the door opens.
-Ask your neighbour if they saw anything => neigh_talk
-Stab your neighbour => neigh_kill ? knife
-Ask your neighbour to come with you => outside + sidekick
-Leave your neighbour alone => outside
+You knock on your neighbour's door. Slowly, you see lights turn on upstairs in the house, then downstairs, then the door opens. ?! neighburn ?! neigh_talk
+Your neighbour says that he saw someone visit the man opposite yesterday. It was the same visitor that he often saw. He saw nothing else out of the ordinary. ? neigh_talk ~ neigh_talk
+You are at the door to your neighbour's house ? neighbour_dead ?! neighburn
+You are standing next to the smoking remains of your neighbour's house. ? neighburn
+Go into your neighbour's house => in_neigh ? neighbour_dead ?! neighburn
+Ask your neighbour if they saw anything => neigh + neigh_talk ?! neighbour_dead ?! neignburn ?! neigh_talk
+Stab your neighbour => neigh_kill ? knife ?! neighbour_dead ?! neighburn
+Ask your neighbour to come with you => outside + sidekick ?! neighbour_dead ?! neighburn
+Carry your neighbour's body back to your house => downstairs ?! neighbours_body_in_hall + neighbours_body_in_hall ~ neighbour_body_at_door ? neighbour_body_at_door ?! neighburn
+Leave your neighbour's house => outside
+
+% neigh_talk
+__HIDDEN__
 
 # neigh_kill
-You are at the door to your neighbour's house ? neighbour_dead
-A look of horror overcomes your neighbour's face as you murder him. + neighbour_dead ?! neighbour_dead ~ sidekick
-Go into your neighbour's house => in_neigh
-Carry your neighbour's body back to your house => downstairs ?! neighbours_body_in_hall + neighbours_body_in_hall
-Leave your neighbour alone => outside
+A look of horror overcomes your neighbour's face as you murder him. + neighbour_dead ~ sidekick + neighbour_body_at_door
+Continue => neigh
 
 # opposite_lawn
 You look at the mass on the lawn. It is the body of the man who lived opposite.
@@ -103,6 +109,74 @@ Go upstairs => neigh_up
 Go back to the hall => in_neigh
 Go back outside => neigh_kill
 
+# neigh_up
+You are at the top of the stairs of your neighbour's house.
+A police officer is climbing the stairs. ? police_after_you
+Shoot the police officer => neigh_stair_gun ? gun ? police_after_you
+Attack the police officer with the knife => neigh_stair_knife ? knife ? police_after_you
+Attach the police officer with the sword => neigh_stair_sword ? sword ? police_after_you
+Allow the poice officer to arrest you => morning_prison
+Head to the bedroom => neigh_bed ?! police_after_you
+Head to the bathroom => neigh_bath ?! police_after_you
+
+# neigh_stair_gun
+You shoot the police officer.
+Both police officers are dead. ? one_dead ~ police_after_you
+ ?! one_dead + one_dead
+Continue => neigh_up
+
+# neigh_stair_knife
+You move towards the police officer with the knife
+ Before you reach him, the officer shoots you.
+Continue => __GAMEOVER__
+
+# neigh_stair_sword
+You leap at the police officer with the sword, but you leap carelessly and stumble on the stairs.
+You drop the sword. ~ sword
+The police officer arrests you.
+Continue => morning_prison
+
+% one_dead
+__HIDDEN__
+
+# neigh_bed
+As you open the door to the bedroom, your neighbour's wife leaps at you with a cricket bat. ?! neigh_wife_dead
+Your neighbour's wife lies dead on the floor. ? neigh_wife_dead ?! wife_window
+Fight with the sword => neigh_wife_sword  ?! neigh_wife_dead ? sword + neigh_wife_dead 
+Fight with the knife => neigh_wife_knife ?! neigh_wife_dead ? knife
+Fight with your bare hands => neigh_wife_hands ?! neigh_wife_dead
+Sleep in your neighbour's bed => neigh_morning ? neigh_wife_dead
+Throw your neighbour's wife's body out of the window => out_window ?! wife_window ? neigh_wife_dead + wife_window
+Shoot at the police out of the window => neigh_shoot ? wife_window ? gun
+Leave the bedroom => neigh_up ? neigh_wife_dead
+
+# out_window
+There is an almighty crash as you throw your neighbour's wife's body out of the window.
+Through the broken glass, you see that a police car and two officers have arrived outside.
+The police see the body then head towards your neighbour's house. + police_after_you
+Continue => neigh_bed
+
+% police_after_you
+__HIDDEN__
+
+% wife_window
+__HIDDEN__
+
+% neigh_wife_dead
+__HIDDEN__
+
+# neigh_wife_knife
+Your neighbour's wife knocks the knife out of your hand then knocks you out with a masive blow on the head. ~ knife
+Continue => morning_prison
+
+# neigh_wife_sword
+As your neighbour's wife jumps at you, you stab her with the sword. 
+Continue => neigh_bed
+
+# neigh_wife_hands
+Your neighbour's wife knocks you out with a masive blow on the head.
+Continue => morning_prison
+
 # neigh_livingroom
 You are in your neighbour's living room.
 There is a ceremonial sword hanging on the wall. ?! sword
@@ -112,9 +186,23 @@ Go back to the hall => in_neigh
 # neigh_kit
 You are in your neighbour's kitchen. 
 Turn the gas on => neigh_kit + gas_on ?! gas_on
+Light a candle => boom ? matches ? gas_on ?! candle + candle
+Light a candle => neigh_kit ? matches ?! gas_on ?! candle + candle
+Blow out the candle => neigh_kit ? candle
 Turn the gas off => neigh_kit ~ gas_on ? gas_on
 Stab the fridge => stab_fridge ? knife
-Go back to the hall => in_neigh
+Go back to the hall => in_neigh ?! candle
+Go back to the hall => in_neigh ? candle ?! gas_on
+Go back to the hall => neigh_fire ? candle ? gas_on + neighburn
+
+# neigh_fire
+As you leave the kitchen, the candle lights the gas. You just have enough time to get out of the house before it is engulfed by a fireball.
+The fire engulfs your neighbour's body. ? neighburn ~ neighbour_body_in_hall
+Continue => neigh
+
+# boom
+As you strike the match, the gas in the kitchen ignites. You are engulfed in a gigantic fireball.
+Continue => __GAMEOVER__
 
 # stab_fridge
 The knife gets stuck in the fridge ~ knife
@@ -176,9 +264,122 @@ Back to the kitchen => opposite_kitchen
 
 # opposite_living
 You are in the living room of the house opposite.
+The answerphone light is blinking. ?! heard
 Head upstairs => opposite_upstairs
+Listen to the answerphone message => answerphone + heard
 Head to the kitchen => opposite_kitchen
+Examine the safe => opposite_safe
 Examine the bureau => opposite_bureau
+
+# answerphone
+You press play on the answerphone machine. You hear and angry voice: "Jack. This is your brother. ?! tape
+I swear I will kill you if you don't sort this out." *click* ?! tape
+There is no tape in the answerphone ? tape
+Press redial to call Jack's brother => redial ?! tape ?! called
+Press redial to call Jack's brother => redial2 ?! tape ? called
+Take the tape out of the answerphone => answerphone + tape ?! tape
+Leave the answerphone => opposite_living
+
+% tape
+Answerphone Tape
+
+% called
+__HIDDEN__
+
+#redial2
+*ring*... *ring*... There is no answer ? called
+Continue => opposite_living
+
+# redial
+*ring*... *ring*... *click* "Hello?" + called
+"Hello!" => re_hello
+"Why did you kill your brother?" => re_kill
+"I live opposite your brother. I've just seen him murdered." => re_murder
+Say nothing => re_silence
+Hang up => opposite_living
+
+# re_hello
+"Hi. Who is this?"
+"Your brother" => re_bro
+"Why did you kill your brother?" => re_kill
+Hang up => opposite_living
+
+# re_kill
+"What? My brother isn't.... dead?... What have you done to Jack? Who is this?"
+"I live opposite your brother. I've just seen him murdered." => re_murder
+Hang up => opposite_living
+
+# re_silence
+"Hello??" The man at the other end hangs up.
+Continue => opposite_living
+
+# re_chat
+"What? Who is this?"
+The man at the other end hangs up.
+Continue => opposite_living
+
+# re_bro
+"Jack. Oh. What do you want?"
+"What was that answerphone message about?" => re_ask
+"Just calling for a chat." => re_chat
+"I want what's mine." => re_mine
+Hang up => opposite_living
+
+# opposite_safe
+The safe has a keypad which needs three digits to be entered. ?! safe_open
+You can see fingerprints on the 3, 4 and 8 buttons. ? dusted
+The door to the safe is open. ? safe_open
+There is a huge pile of cash in the safe. ?! money
+The safe is empty. ? money
+Take the money => opposite_safe ?! money + money
+Leave the safe alone => opposite_living ~ a0 ~ a1 ~ a2 ~ a3 ~ a4 ~ a5 ~ a6 ~ a7 ~ a8 ~ a9 ~ b0 ~ b1 ~ b2 ~ b3 ~ b4 ~ b5 ~ b6 ~ b7 ~ b8 ~ b9 ~ c0 ~ c1 ~ c2 ~ c3 ~ c4 ~ c5 ~ c6 ~ c7 ~ c8 ~ c9
+Dust the buttons for finger prints => opposite_safe ? fingerprint_dust ?! dusted + dusted
+Press 0 => second_number + a0 ?! safe_open
+Press 1 => second_number + a1 ?! safe_open
+Press 2 => second_number + a2 ?! safe_open
+Press 3 => second_number + a3 ?! safe_open
+Press 4 => second_number + a4 ?! safe_open
+Press 5 => second_number + a5 ?! safe_open
+Press 6 => second_number + a6 ?! safe_open
+Press 7 => second_number + a7 ?! safe_open
+Press 8 => second_number + a8 ?! safe_open
+Press 9 => second_number + a9 ?! safe_open
+
+# second_number
+The safe needs two more digits to be entered.
+Leave the safe alone => opposite_living ~ a0 ~ a1 ~ a2 ~ a3 ~ a4 ~ a5 ~ a6 ~ a7 ~ a8 ~ a9 ~ b0 ~ b1 ~ b2 ~ b3 ~ b4 ~ b5 ~ b6 ~ b7 ~ b8 ~ b9 ~ c0 ~ c1 ~ c2 ~ c3 ~ c4 ~ c5 ~ c6 ~ c7 ~ c8 ~ c9
+Press 0 => third_number + b0
+Press 1 => third_number + b1
+Press 2 => third_number + b2
+Press 3 => third_number + b3
+Press 4 => third_number + b4
+Press 5 => third_number + b5
+Press 6 => third_number + b6
+Press 7 => third_number + b7
+Press 8 => third_number + b8
+Press 9 => third_number + b9
+
+# third_number
+The safe needs one more digit to be entered.
+Leave the safe alone => opposite_living ~ a0 ~ a1 ~ a2 ~ a3 ~ a4 ~ a5 ~ a6 ~ a7 ~ a8 ~ a9 ~ b0 ~ b1 ~ b2 ~ b3 ~ b4 ~ b5 ~ b6 ~ b7 ~ b8 ~ b9 ~ c0 ~ c1 ~ c2 ~ c3 ~ c4 ~ c5 ~ c6 ~ c7 ~ c8 ~ c9
+Press 0 => open + c0
+Press 1 => open + c1
+Press 2 => open + c2
+Press 3 => open + c3
+Press 4 => open + c4
+Press 5 => open + c5
+Press 6 => open + c6
+Press 7 => open + c7
+Press 8 => open + c8
+Press 9 => open + c9
+
+# open
+The safe swings open. ? a4 ? b3 ? c8 + safe_open
+The safe remains locked. ?! a4 ? b3 ? c8
+The safe remains locked. ? a4 ?! b3 ? c8
+The safe remains locked. ? a4 ? b3 ?! c8
+Continue => opposite_safe ~ a0 ~ a1 ~ a2 ~ a3 ~ a4 ~ a5 ~ a6 ~ a7 ~ a8 ~ a9 ~ b0 ~ b1 ~ b2 ~ b3 ~ b4 ~ b5 ~ b6 ~ b7 ~ b8 ~ b9 ~ c0 ~ c1 ~ c2 ~ c3 ~ c4 ~ c5 ~ c6 ~ c7 ~ c8 ~ c9
+
 
 # opposite_bureau
 The bureau is full of papers. ?! papers
@@ -194,6 +395,12 @@ Examine the pile of papers => opposite_bureau ?! papers + papers
 Set fire to the papers => opposite_bureau ? matches ?! bureau_fire_night + bureau_fire_night ?! day
 Set fire to the papers => opposite_bureau ? matches ?! bureau_fire_day + bureau_fire_day ? day
 Close the bureau => opposite_living
+
+
+
+
+
+
 
 # solution
 The man who lived opposite has been murdered.
@@ -242,6 +449,9 @@ __HIDDEN__
 __HIDDEN__
 
 % knife_fridge
+__HIDDEN__
+
+% safe_open
 __HIDDEN__
 
 % knife
@@ -294,3 +504,79 @@ __HIDDEN__
 
 % bureau_fire_night
 __HIDDEN__
+
+% candle
+__HIDDEN__
+
+% neighbour_body_at_door
+__HIDDEN__
+
+% money
+Huge Pile of Money
+
+%a0
+__HIDDEN__
+%a1
+__HIDDEN__
+%a2
+__HIDDEN__
+%a3
+__HIDDEN__
+%a4
+__HIDDEN__
+%a5
+__HIDDEN__
+%a6
+__HIDDEN__
+%a7
+__HIDDEN__
+%a8
+__HIDDEN__
+%a9
+__HIDDEN__
+%b0
+__HIDDEN__
+%b1
+__HIDDEN__
+%b2
+__HIDDEN__
+%b3
+__HIDDEN__
+%b4
+__HIDDEN__
+%b5
+__HIDDEN__
+%b6
+__HIDDEN__
+%b7
+__HIDDEN__
+%b8
+__HIDDEN__
+%b9
+__HIDDEN__
+%c0
+__HIDDEN__
+%c1
+__HIDDEN__
+%c2
+__HIDDEN__
+%c3
+__HIDDEN__
+%c4
+__HIDDEN__
+%c5
+__HIDDEN__
+%c6
+__HIDDEN__
+%c7
+__HIDDEN__
+%c8
+__HIDDEN__
+%c9
+__HIDDEN__
+
+% dusted
+__HIDDEN__
+
+% fingerprint_dust
+Fingerprint Dusting Kit
