@@ -1,4 +1,4 @@
-== The Murder Mystery ==
+== Murder! ==
 
 # start
 You wake up with a start. It's 2am. You hear a loud noise from outside. That must be what woke you up.
@@ -66,8 +66,8 @@ You are outside. There is an eerie silence. You can see
 a ?! seen
 the ? seen
 large mass lying on the lawn of the house opposite.
-Knock the your neighbour's door => neigh ?! sidekick ?! neighbour_dead
-Knock the your neighbour's door => neigh_kill ? neighbour_dead
+Knock on your neighbour's door => neigh ?! sidekick ?! neighbour_dead
+Knock on your neighbour's door => neigh_kill ? neighbour_dead
 Go see what the mass is => opposite_lawn
 Go back inside => downstairs
 
@@ -123,7 +123,102 @@ Your neighbour calls 999. The police arrive 10 minutes later. They tell you to g
 Head home with your neighbour => downstairs
 Head home alone => downstairs ~ sidekick
 
+# opposite_house
+You knock on the door. There is no reply. ? knock ~ knock
+The door is locked. ? try_door ~ try_door
+You are standing by the front door to the house.
+Knock on the door => opposite_house + knock
+Try opening the door => opposite_house + try_door
+Head round the back of the house => opposite_back
+Head round the back of the house, leaving your neighbour to guard the front => opposite_back ? sidekick ~ sidekick + neigh_guard
+Leave the house => opposite_lawn
+
+# opposite_back
+The door is locked. ? try_door ~ try_door
+You are standing by the back door to the house.
+Try opening the door => opposite_back + try_door
+Head round to the front of the house => opposite_house
+Break a window to get into the house => opposite_back + window_broken ?! window_broken
+Climb in through the window => opposite_kitchen ? window_broken + through_window
+
+# opposite_kitchen
+You climb through the broken window. ? through_window ~ through_window
+You are in the kitchen of the house opposite.
+Climb out of the window => opposite_back ? window_broken
+Look at the fridge => opposite_fridge
+Look in the drawer => opposite_drawer
+Head into the living room => opposite_living
+
+# opposite_drawer
+You open the kitchen drawer.
+There is a box of matches in the drawer. ?! matches
+The drawer is empty ? matches
+Take the matches => opposite_drawer ?! matches + matches
+Close the drawer => opposite_kitchen
+
+# opposite_fridge
+You look at the fridge. Attached to it are many receipts for small mechanical parts, a shopping list and three expired vouchers.
+Look inside the fridge => opposite_in_fridge_hit ?! sidekick ?! day + day ?! escaped + escaped
+Look inside the fridge => opposite_in_fridge ? sidekick
+Look inside the fridge => opposite_in_fridge ? day ?! sidekick
+Look inside the fridge => opposite_in_fridge ? escaped ?! day ?! sidekick
+Leave the fridge => opposite_kitchen
+
+# opposite_in_fridge_hit
+As you open the fridge, there is a sharp blow to the back of your head.
+Continue => morning_kitchen
+
+# opposite_in_fridge
+The fridge is empty.
+Back to the kitchen => opposite_kitchen 
+
+# opposite_living
+You are in the living room of the house opposite.
+Head upstairs => opposite_upstairs
+Head to the kitchen => opposite_kitchen
+Examine the bureau => opposite_bureau
+
+# opposite_bureau
+The bureau is full of papers. ?! papers
+You look at the papers. They are old gas and council tax bills. ? papers ~ papers ?! bureau_fire
+The papers are on fire. ? bureau_fire
+The appears to be a hidden compartment at the back. ?! compartment_open
+The door to the hidden compartment lies open. ? compartment_open
+The hidden compartment is empty. ? compartment_open ? gun
+There is a gun in the hidden compartment. ? compartment_open ?! gun
+Prise the hidden compartment open with your knife => opposite_bureau ? knife ?! compartment_open + compartment_open
+Take the gun => opposite_bureau + gun ? compartment_open ?! gun
+Examine the pile of papers => opposite_bureau ?! papers + papers
+Set fire to the papers => opposite_bureau ? matches ?! bureau_fire_night + bureau_fire_night ?! day
+Set fire to the papers => opposite_bureau ? matches ?! bureau_fire_day + bureau_fire_day ? day
+Close the bureau => opposite_living
+
+# solution
+The man who lived opposite has been murdered.
+He was thrown out of his upstairs office window by the murderer.
+The murderer and the victim were business partners.
+The victim had stolen the money they had put into their business (a website selling train set stuff made by the victim).
+They had met earlier that day to discuss the business.
+The victim had made it look like the business had been losing money.
+When the victim left the room, the murderer saw a bank statement (with a little too much money) so stole it.
+He came back late that evening to confront the victim.
+He grew angry and did the murder.
+
+After the murder, the murderer hid in the house or escaped depending what you do...
+
 % murder
+__HIDDEN__
+
+% through_window
+__HIDDEN__
+
+% window_broken
+__HIDDEN__
+
+% knock
+__HIDDEN__
+
+% try_door
 __HIDDEN__
 
 % murderer
@@ -156,6 +251,12 @@ Ceremonial Sword
 % tv_remote
 TV Remote Control
 
+% matches
+Box of Matches
+
+% gun
+Revolver
+
 % neighbour_dead
 __HIDDEN__
 
@@ -171,5 +272,23 @@ __HIDDEN__
 % neighbours_body_opposite
 __HIDDEN__
 
+% neigh_guard
+__HIDDEN__
+
 % gas_on
+__HIDDEN__
+
+% day
+__HIDDEN__
+
+% escaped
+__HIDDEN__
+
+% compartment_open
+__HIDDEN__
+
+% bureau_fire_day
+__HIDDEN__
+
+% bureau_fire_night
 __HIDDEN__
