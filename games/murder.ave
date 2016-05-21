@@ -266,11 +266,42 @@ Back to the kitchen => opposite_kitchen
 You are in the living room of the house opposite.
 The answerphone light is blinking. ?! heard
 Head upstairs => opposite_upstairs
-Listen to the answerphone message => answerphone + heard
+Listen to the answerphone message => answerphone + heard ? sidekick
+Listen to the answerphone message => answerphone + heard ?! sidekick ? escaped
+Listen to the answerphone message => answerphone + heard ?! sidekick ?! escaped ? day
+Listen to the answerphone message => opposite_answerphone_hit ?! sidekick ?! escaped ?! day + day + escaped
 Head to the kitchen => opposite_kitchen
 Examine the safe => opposite_safe
 Examine the bureau => opposite_bureau
 
+# opposite_answerphone_hit
+As you lean over to look at the answerphone, there is a sharp blow to the back of your head.
+Continue => morning_answerphone
+
+# opposite_upstairs
+You are at the top of the stairs of the house opposite
+Enter the bedroom => opposite_bedroom
+Enter the office => opposite_office
+Enter the bathroom => opposite_bathroom
+
+# opposite_office
+You are in the office of the house opposite.
+Examine the window => office_window
+Examine the desk => office_desk
+Leave the office => opposite_upstairs
+
+# office_window
+Around the window, there are a few broken pieces of glass. The rest fell out when the murder was committed.
+Examine the desk => office_desk
+Lean out of the window to have a look. => office_lean
+
+# office_lean
+As you lean out of the window, you feel a strong pair of arms lift your legs up and throw you outside. You accelerate towards the ground with fatal speed. ?! sidekick ?! escaped ?! day
+You can see the victim lying on the lawn. Everything else is dark. ? sidekick ?! day
+You can see the victim lying on the lawn. Everything else is dark. ?! sidekick ? escaped ?! day
+Continue => __GAMEOVER__ ?! sidekick ?! escaped ?! day
+Go back => opposite_office ? sidekick ?! day
+Go back => opposite_office ?! sidekick ? escaped ?! day
 # answerphone
 You press play on the answerphone machine. You hear and angry voice: "Jack. This is your brother. ?! tape
 I swear I will kill you if you don't sort this out." *click* ?! tape
@@ -298,6 +329,11 @@ Continue => opposite_living
 Say nothing => re_silence
 Hang up => opposite_living
 
+# re_murder
+"What?... Oh my God!... I'm on my way." + brother_coming
+The man at the other end hangs up.
+Continue => opposite_living
+
 # re_hello
 "Hi. Who is this?"
 "Your brother" => re_bro
@@ -323,6 +359,17 @@ Continue => opposite_living
 "What was that answerphone message about?" => re_ask
 "Just calling for a chat." => re_chat
 "I want what's mine." => re_mine
+Hang up => opposite_living
+
+# re_mine
+"You've already taken too much."
+The man at the other end hangs up.
+Continue => opposite_living
+
+# re_ask
+"You're not Jack. What is the meaning of this?"
+"I live opposite your brother. I've just seen him murdered." => re_murder
+"Why did you kill your brother?" => re_kill
 Hang up => opposite_living
 
 # opposite_safe
