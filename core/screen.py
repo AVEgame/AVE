@@ -142,7 +142,7 @@ class Screen:
         pad.addstr(5,0," "*(WIDTH-20),curses.color_pair(10))
         pad.addstr(6,0," "*(WIDTH-20),curses.color_pair(10))
         pad.refresh(0,0, 3,10, 9,WIDTH-10)
-        return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False)
+        return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False, titles=True)
         
     def show_inventory(self, inventory):
         pad = self.newpad(14, 20)
