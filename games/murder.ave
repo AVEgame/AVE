@@ -70,21 +70,65 @@ the ? seen
 large mass lying on the lawn of the house opposite.
 Knock on your neighbour's door => neigh ?! sidekick ?! neighbour_dead
 Go to neighbour's house => neigh ? neighbour_dead ?! sidekick
-Go to neighbour's house => neigh ? neighbour_dead ? sidekick
+Go to neighbour's house => neigh ? sidekick
 Go see what the mass is => opposite_lawn
+Steal the police car => car ? police_car + outside + the_police_car
 Go back inside => downstairs
 
+% police_car
+__HIDDEN__
+% the_police_car
+__HIDDEN__
+% neigh_car
+__HIDDEN__
+% outside
+__HIDDEN__
+% train_station
+__HIDDEN__
+% supermarket
+__HIDDEN__
+
+# car
+You are inside
+the police ? the_police_car
+your neighbour's ? neigh_car
+car.
+ ?! escaped ?! outside + escaped
+Drive to your house => car + outside ~ supermarket ?! outside ~ train_station
+Drive to the supermarket => car + supermarket ~ outside ?! supermarket ~ train_station
+Drive to the train station => car ~ supermarket ~ outside ?! train_station + train_station
+Get out of the car => outside ? outside ~ outside
+Get out of the car => supermarket ? supermarket ~ supermarket
+Get out of the car => train_station ? train_station ~ train_station
+
+# train_station
+You are at the train station.
+According to the timetables, the first train is at 9am. Until then, the station is closed. ?! day
+Sleep on a bench by the station => morning_train + day
+Get back in the car => car + train_station
+
+# supermarket
+You are at the supermarket.
+Get back in the car => car + supermarket
+
 # neigh
-You knock on your neighbour's door. Slowly, you see lights turn on upstairs in the house, then downstairs, then the door opens. ?! neighburn ?! neigh_talk
-Your neighbour says that he saw someone visit the man opposite yesterday. It was the same visitor that he often saw. He saw nothing else out of the ordinary. ? neigh_talk ~ neigh_talk
+You knock on your neighbour's door. Slowly, you see lights turn on upstairs in the house, then downstairs, then the door opens. ?! neighburn ?! neigh_talk ?! sidekick ?! neighbour_dead
+Your neighbour says that he saw someone visit the man opposite yesterday. It was the same visitor that he often saw. He saw nothing else out of the ordinary. ? neigh_talk ~ neigh_talk ?! sidekick ?! neighbour_dead
 You are at the door to your neighbour's house ? neighbour_dead ?! neighburn
+Your neighbour's body lies by the door ? neighbour_body_at_door ?! neighburn
+You are at the door to your neighbour's house ?! neighbour_dead ?! neighburn ? sidekick
 You are standing next to the smoking remains of your neighbour's house. ? neighburn
 Go into your neighbour's house => in_neigh ? neighbour_dead ?! neighburn
 Ask your neighbour if they saw anything => neigh + neigh_talk ?! neighbour_dead ?! neignburn ?! neigh_talk
 Stab your neighbour => neigh_kill ? knife ?! neighbour_dead ?! neighburn
-Ask your neighbour to come with you => outside + sidekick ?! neighbour_dead ?! neighburn
+Ask your neighbour to come with you => neigh + sidekick ?! neighbour_dead ?! neighburn ?! sidekick
 Carry your neighbour's body back to your house => downstairs ?! neighbours_body_in_hall + neighbours_body_in_hall ~ neighbour_body_at_door ? neighbour_body_at_door ?! neighburn
+Get in your neighbour's car => car + neigh_car ? sidekick
+Get in your neighbour's car => car + neigh_car ?! sidekick ? keys
 Leave your neighbour's house => outside
+
+% keys
+Car Keys
 
 % neigh_talk
 __HIDDEN__
@@ -109,19 +153,69 @@ Go upstairs => neigh_up
 Go back to the hall => in_neigh
 Go back outside => neigh_kill
 
+# opposite_bathroom
+You are in the bathroom of the house opposite.
+Take the spider plant => opposite_bathroom + pot_plant ?! pot_plant
+Leave the bathroom => opposite_upstairs
+
+# opposite_bedroom
+As you enter the bedroom, you are confronted by a man. ?! escaped ?! murderer_knocked_out ?! murderer_killed
+You are in the bedroom of the house opposite. ? escaped
+You are in the bedroom of the house opposite. The man lies knocked out on the floor. ?! escaped ? murderer_knocked_out ?! murderer_killed
+You are in the bedroom of the house opposite. The man lies dead on the floor. ? murderer_killed
+Smash the man over the head with the pot plant => opposite_bedroom ?! murderer_knocked_out + murderer_knocked_out ?! escaped ? pot_plant ~ pot_plant
+Tackle the man => tackle ?! escaped ?! murderer_knocked_out
+Head downstairs and call the police => opposite_police ? murderer_knocked_out
+Kill the man with the sword => opposite_bedroom ? murderer_knocked_out + murderer_killed
+Leave the bedroom => opposite_upstairs ? escaped
+Leave the bedroom => opposite_upstairs ?! escaped ? murderer_knocked_out
+
+# tackle
+You try to tackle the man, but he pulls free and pushes out of the room. ?! sidekick + escaped
+You and your neighbour tackle the man to the floor. ? sidekick
+Head downstairs and call the police => opposite_police
+Tie the man's hands behind his back => tackle + tied ? rope ?! tied
+Let the man go => set_free + escaped
+Continue => opposite_bedroom ?! sidekick
+
+# opposite_police
+You call the police. They arrive within a few minutes and arrest the man. Congratulations, you have caught the murderer. ? tied
+As you pick up the phone, the man runs past you and escaped. He must have overpowered your neighbour. ?! tied
+Continue => __WINNER__ ? tied
+Continue => opposite_living ?! tied
+
+# set_free
+The man flees.
+Continue => opposite_bedroom
+
+% murderer_killed
+__HIDDEN__
+
+% murderer_knocked_out
+__HIDDEN__
+
+% tied
+__HIDDEN__
+
+% rope
+Rope
+
+% pot_plant
+Spider Plant
+
 # neigh_up
 You are at the top of the stairs of your neighbour's house.
 A police officer is climbing the stairs. ? police_after_you
 Shoot the police officer => neigh_stair_gun ? gun ? police_after_you
 Attack the police officer with the knife => neigh_stair_knife ? knife ? police_after_you
-Attach the police officer with the sword => neigh_stair_sword ? sword ? police_after_you
-Allow the poice officer to arrest you => morning_prison
+Attack the police officer with the sword => neigh_stair_sword ? sword ? police_after_you
+Allow the poice officer to arrest you => morning_prison ? police_after_you
 Head to the bedroom => neigh_bed ?! police_after_you
 Head to the bathroom => neigh_bath ?! police_after_you
 
 # neigh_stair_gun
 You shoot the police officer.
-Both police officers are dead. ? one_dead ~ police_after_you
+Both police officers are dead. ? one_dead ~ police_after_you + police_car
  ?! one_dead + one_dead
 Continue => neigh_up
 
@@ -136,6 +230,31 @@ You drop the sword. ~ sword
 The police officer arrests you.
 Continue => morning_prison
 
+# neigh_bath
+You are in your neighbour's bathroom.
+Take the bottle of talcum powder => neigh_bath ?! talc + talc
+Smash the mirror => neigh_bath ?! mirror_s + mirror_s
+Take a shard of mirror glass => neigh_bath ? mirror_s + mirror_shard
+ => secret_room ? sword
+Leave the bathroom => neigh_up
+
+# secret_room
+You use the ceremonial sword to open the secret panel in the shower and slip into the secret room.
+Pick up the hammer => secret_room ?! hammer + hammer
+Pick up the dynamite => secret_room ?! dynamite + dynamite
+Leave the secret room => neigh_bath
+
+% mirror_s
+__HIDDEN__
+% mirror_shard
+Shard of Glass
+% hammer
+Hammer
+% dynamite
+Dynamite
+
+% talc
+Talcum Powder
 % one_dead
 __HIDDEN__
 
@@ -147,8 +266,14 @@ Fight with the knife => neigh_wife_knife ?! neigh_wife_dead ? knife
 Fight with your bare hands => neigh_wife_hands ?! neigh_wife_dead
 Sleep in your neighbour's bed => neigh_morning ? neigh_wife_dead
 Throw your neighbour's wife's body out of the window => out_window ?! wife_window ? neigh_wife_dead + wife_window
-Shoot at the police out of the window => neigh_shoot ? wife_window ? gun
+Shoot at the police out of the window => neigh_shoot ? wife_window ? gun ? police_after_you ?! one_shot
 Leave the bedroom => neigh_up ? neigh_wife_dead
+
+# neigh_shoot
+You shoot one of the police officers out of the window. + one_shot
+Both police officers are now dead. ? one_dead ~ police_after_you + police_car
+You cannot see the second police officer out of the window. ?! one_dead + one_dead
+Continue => neigh_bed
 
 # out_window
 There is an almighty crash as you throw your neighbour's wife's body out of the window.
@@ -180,7 +305,9 @@ Continue => morning_prison
 # neigh_livingroom
 You are in your neighbour's living room.
 There is a ceremonial sword hanging on the wall. ?! sword
+There are some car keys on the coffee table. ?! keys
 Take the sword => neigh_livingroom + sword ?! sword
+Take the car keys => neigh_livingroom + keys ?! keys
 Go back to the hall => in_neigh
 
 # neigh_kit
@@ -242,8 +369,10 @@ Head into the living room => opposite_living
 # opposite_drawer
 You open the kitchen drawer.
 There is a box of matches in the drawer. ?! matches
+There is some rope in the drawer. ?! matches
 The drawer is empty ? matches
 Take the matches => opposite_drawer ?! matches + matches
+Take the rope => opposite_drawer ?! rope + rope
 Close the drawer => opposite_kitchen
 
 # opposite_fridge
@@ -295,6 +424,19 @@ Around the window, there are a few broken pieces of glass. The rest fell out whe
 Examine the desk => office_desk
 Lean out of the window to have a look. => office_lean
 
+# office_desk
+The bank statements are ordered by month. The statments for the second half of last year are missing. In the missing time, the balance in the account increased significantly. ? bank_s ~ bank_s
+You look at the diary. Yesterday at 4pm, the victim had a meeting with his business partner about dissolving a company. His business partner arrived on a train at midday. ? diary ~ diary
+There is a pile of bank statments and a diary on the desk.
+Look at the bank statements => office_desk + bank_s
+Look at the diary => office_desk + diary
+Leave the desk => opposite_office
+
+% bank_s
+__HIDDEN__
+% diary
+__HIDDEN__
+
 # office_lean
 As you lean out of the window, you feel a strong pair of arms lift your legs up and throw you outside. You accelerate towards the ground with fatal speed. ?! sidekick ?! escaped ?! day
 You can see the victim lying on the lawn. Everything else is dark. ? sidekick ?! day
@@ -302,6 +444,7 @@ You can see the victim lying on the lawn. Everything else is dark. ?! sidekick ?
 Continue => __GAMEOVER__ ?! sidekick ?! escaped ?! day
 Go back => opposite_office ? sidekick ?! day
 Go back => opposite_office ?! sidekick ? escaped ?! day
+
 # answerphone
 You press play on the answerphone machine. You hear and angry voice: "Jack. This is your brother. ?! tape
 I swear I will kill you if you don't sort this out." *click* ?! tape
@@ -317,7 +460,7 @@ Answerphone Tape
 % called
 __HIDDEN__
 
-#redial2
+# redial2
 *ring*... *ring*... There is no answer ? called
 Continue => opposite_living
 
@@ -380,7 +523,7 @@ There is a huge pile of cash in the safe. ?! money
 The safe is empty. ? money
 Take the money => opposite_safe ?! money + money
 Leave the safe alone => opposite_living ~ a0 ~ a1 ~ a2 ~ a3 ~ a4 ~ a5 ~ a6 ~ a7 ~ a8 ~ a9 ~ b0 ~ b1 ~ b2 ~ b3 ~ b4 ~ b5 ~ b6 ~ b7 ~ b8 ~ b9 ~ c0 ~ c1 ~ c2 ~ c3 ~ c4 ~ c5 ~ c6 ~ c7 ~ c8 ~ c9
-Dust the buttons for finger prints => opposite_safe ? fingerprint_dust ?! dusted + dusted
+Dust the buttons for finger prints with talcum powder => opposite_safe ? talc ?! dusted + dusted
 Press 0 => second_number + a0 ?! safe_open
 Press 1 => second_number + a1 ?! safe_open
 Press 2 => second_number + a2 ?! safe_open
@@ -624,6 +767,3 @@ __HIDDEN__
 
 % dusted
 __HIDDEN__
-
-% fingerprint_dust
-Fingerprint Dusting Kit
