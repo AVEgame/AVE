@@ -13,7 +13,7 @@ game.load()
 not_inc = []
 for id in game.rooms:
     for key in game[id].options:
-        if key['id'] not in game.rooms and key['id'] != "__GAMEOVER__" and key['id'] not in not_inc:
+        if key['id'] not in game.rooms and key['id'] != "__GAMEOVER__" and key['id'] != "__WINNER__" and key['id'] not in not_inc:
             not_inc.append(key['id'])
 
 if len(not_inc)>0:
