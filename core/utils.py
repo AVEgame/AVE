@@ -1,5 +1,3 @@
-from __future__ import division
-
 # For internal use
 def _clean_newlines(string):
     while "\n" in string:

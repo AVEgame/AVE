@@ -9,12 +9,19 @@ Stay in bed and listen => listen
 Head downstairs => downstairs
 Go back to sleep => morning
 
+# morning
+You wake up. It is 8am. + escaped + day
+ ?! murder + murder
+Look out of the window => window
+Head downstairs => downstairs
+
 # window
  ?! seen + seen
-A light is on in a broken upstairs window of the house opposite. In the light from the window, you can see bits of glass shimmering on the lawn around a large unmoving object. ? murder
-You creep over to the window. Just as you look out, there is a crash and something very large breaks through the window of the house opposite. + murder ?! murder
+A light is on in a broken upstairs window of the house opposite. In the light from the window, you can see bits of glass shimmering on the lawn around a large unmoving object. ? murder ?! day
+You creep over to the window. Just as you look out, there is a crash and something very large breaks through the window of the house opposite. + murder ?! murder ?! day
+ ? day
 Look out of the window => window
-Sit and listen => listen
+Sit and listen => listen 
 Head downstairs => downstairs
 Go back to bed => morning
 

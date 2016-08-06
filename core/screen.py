@@ -1,17 +1,45 @@
 # dimensions: (height) 45
 #             (width)  80
-from __future__ import division
-from core.utils import *
-from core.errors import *
-import curses
+import sys
+sys.path.append("apps/mscroggs~ave")
+
+from core import utils as u
+from core import errors as e
+import ugfx
+import buttons
+import pyb
 import signal
 HEIGHT = 25
 WIDTH = 80
 
-def catch_resize(dummy=None,dummy2=None):
-    curses.resizeterm(HEIGHT,WIDTH)
+DX=5
+DY=5
 
-signal.signal(signal.SIGWINCH, catch_resize)
+def get_colors(n):
+    if n == 1:  return ugfx.BLACK,ugfx.RED
+    if n == 2:  return ugfx.BLACK,ugfx.GREEN
+    if n == 3:  return ugfx.BLACK,ugfx.BLUE
+    if n == 4:  return ugfx.BLACK,ugfx.YELLOW
+    if n == 5:  return ugfx.BLACK,ugfx.RED
+    if n == 6:  return ugfx.RED,ugfx.BLACK
+    if n == 7:  return ugfx.GREEN,ugfx.BLACK
+    if n == 8:  return ugfx.BLUE, ugfx.BLACK
+    if n == 9:  return ugfx.BLACK,ugfx.BLUE
+    if n == 10: return ugfx.BLACK,ugfx.BLUE
+    #curses.init_pair(2, -1, curses.COLOR_GREEN)
+    #curses.init_pair(3, -1, curses.COLOR_BLUE)
+    #curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
+    #curses.init_pair(5, -1, curses.COLOR_RED)
+    #curses.init_pair(6, curses.COLOR_RED, -1)
+    #curses.init_pair(7, curses.COLOR_GREEN, -1)
+    #curses.init_pair(8, curses.COLOR_BLUE, -1)
+    #curses.init_pair(9, -1, curses.COLOR_BLUE)
+    #curses.init_pair(10, -1, curses.COLOR_BLUE)
+
+#def catch_resize(dummy=None,dummy2=None):
+#    curses.resizeterm(HEIGHT,WIDTH)
+
+#signal.signal(signal.SIGWINCH, catch_resize)
 
 class DummyScreen:
     def clear(self):
@@ -19,58 +47,49 @@ class DummyScreen:
 
 class Screen:
     def __init__(self):
-        print("\x1b[8;"+str(HEIGHT)+";"+str(WIDTH)+"t")
-        self.stdscr = curses.initscr()
-        curses.start_color()
-        curses.use_default_colors()
+        ugfx.init()
+        buttons.init()
+        self.clear()
 
         # @ in title and credits
-        curses.init_pair(1, -1, curses.COLOR_RED)
+        #curses.init_pair(1, -1, curses.COLOR_RED)
         # ^ in title and credits
-        curses.init_pair(2, -1, curses.COLOR_GREEN)
+        #curses.init_pair(2, -1, curses.COLOR_GREEN)
         # = in title and credits
-        curses.init_pair(3, -1, curses.COLOR_BLUE)
+        #curses.init_pair(3, -1, curses.COLOR_BLUE)
         # menu unselected
-        curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
+        #curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
         # menu selected
-        curses.init_pair(5, -1, curses.COLOR_RED)
+        #curses.init_pair(5, -1, curses.COLOR_RED)
         # A in title
-        curses.init_pair(6, curses.COLOR_RED, -1)
+        #curses.init_pair(6, curses.COLOR_RED, -1)
         # V in title
-        curses.init_pair(7, curses.COLOR_GREEN, -1)
+        #curses.init_pair(7, curses.COLOR_GREEN, -1)
         # E in title
-        curses.init_pair(8, curses.COLOR_BLUE, -1)
+        #curses.init_pair(8, curses.COLOR_BLUE, -1)
         # inventory
-        curses.init_pair(9, -1, curses.COLOR_BLUE)
+        #curses.init_pair(9, -1, curses.COLOR_BLUE)
         # gameover
-        curses.init_pair(10, -1, curses.COLOR_BLUE)
+        #curses.init_pair(10, -1, curses.COLOR_BLUE)
 
-        curses.noecho()
-        curses.cbreak()
-        curses.curs_set(0)
-        self.stdscr.keypad(1)
-        curses.resizeterm(HEIGHT,WIDTH)
-        self.stdscr.refresh()
+        #curses.noecho()
+        #curses.cbreak()
+        #curses.curs_set(0)
+        #self.stdscr.keypad(1)
+        #curses.resizeterm(HEIGHT,WIDTH)
+        #self.stdscr.refresh()
 
     def clear(self):
-        pad = self.newpad()
-        pad.refresh(0,0, 0,0, HEIGHT,WIDTH)
+        ugfx.clear(ugfx.BLACK)
 
     def close(self):
-        curses.nocbreak()
-        curses.curs_set(1)
-        self.stdscr.keypad(0)
-        curses.echo()
-        curses.endwin()
+        pass
 
     def print_room_desc(self,desc):
-        print desc
+        print(desc)
 
     def print_options(self,options,n):
-        print options
-
-    def newpad(self, y=HEIGHT, x=WIDTH):
-        return curses.newpad(y, x)
+        print(options)
 
     def print_titles(self):
         self.print_file("title")
@@ -79,7 +98,7 @@ class Screen:
         self.print_file("credits")
 
     def put_ave_logo(self):
-        stuff = [(0,0,"A",curses.color_pair(6)), (0,1,"V",curses.color_pair(7)), (0,2,"E",curses.color_pair(8))]
+        stuff = [(0,0,"A",(6)), (0,1,"V",(7)), (0,2,"E",(8))]
         self.show(stuff,0,WIDTH-3,2,3)
 
     def print_file(self, filename):
@@ -92,29 +111,29 @@ class Screen:
             y_beg = None
             for line in f.readlines():
                 if line[0]!="#":
-                    line = clean_newlines(line)
+                    line = u.clean_newlines(line)
                     for x,c in enumerate(line):
                         if x>=WIDTH:
                             break
                         if c == "@":
-                            stuff.append((y, x, " ", curses.color_pair(1)))
+                            stuff.append((y, x, " ", (1)))
                         elif c == "^":
-                            stuff.append((y, x, " ", curses.color_pair(2)))
+                            stuff.append((y, x, " ", (2)))
                         elif c == "=":
-                            stuff.append((y, x, " ", curses.color_pair(3)))
+                            stuff.append((y, x, " ", (3)))
                         elif c == "A" and len(line) > x+1 and line[x+1] == "V" and len(line) > x+2 and line[x+2] == "E":
-                            stuff.append((y, x, "A", curses.color_pair(6)))
+                            stuff.append((y, x, "A", (6)))
                         elif x >= 1 and line[x-1] == "A" and c == "V" and len(line) > x+1 and line[x+1] == "E":
-                            stuff.append((y, x, "V", curses.color_pair(7)))
+                            stuff.append((y, x, "V", (7)))
                         elif x >= 2 and line[x-2] == "A" and line[x-1] == "V" and c == "E":
-                            stuff.append((y, x, "E", curses.color_pair(8)))
+                            stuff.append((y, x, "E", (8)))
                         else:
-                            stuff.append((y, x, c, curses.color_pair(0)))
+                            stuff.append((y, x, c, (0)))
                     y += 1
                     if y >= HEIGHT:
                         y -= 1
                         break
-                elif comment(line) == "type":
+                elif u.comment(line) == "type":
                     self.show(stuff,y=y+1,x=WIDTH)
                     y_beg = y
                     stuff = []
@@ -134,25 +153,25 @@ class Screen:
         pad = self.newpad(8, WIDTH-20)
         gst = " "*((WIDTH-29)//2) + text
         gst += " " * (WIDTH - len(gst))
-        pad.addstr(0,0," "*(WIDTH-20),curses.color_pair(10))
-        pad.addstr(1,0,gst,curses.color_pair(10))
-        pad.addstr(2,0," "*(WIDTH-20),curses.color_pair(10))
-        pad.addstr(3,0," "*(WIDTH-20),curses.color_pair(10))
-        pad.addstr(4,0," "*(WIDTH-20),curses.color_pair(10))
-        pad.addstr(5,0," "*(WIDTH-20),curses.color_pair(10))
-        pad.addstr(6,0," "*(WIDTH-20),curses.color_pair(10))
+        pad.addstr(0,0," "*(WIDTH-20),(10))
+        pad.addstr(1,0,gst,(10))
+        pad.addstr(2,0," "*(WIDTH-20),(10))
+        pad.addstr(3,0," "*(WIDTH-20),(10))
+        pad.addstr(4,0," "*(WIDTH-20),(10))
+        pad.addstr(5,0," "*(WIDTH-20),(10))
+        pad.addstr(6,0," "*(WIDTH-20),(10))
         pad.refresh(0,0, 3,10, 9,WIDTH-10)
         return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False, titles=True)
         
     def show_inventory(self, inventory):
         pad = self.newpad(14, 20)
-        pad.addstr(0,0,"INVENTORY" + " "*11,curses.color_pair(9))
+        pad.addstr(0,0,"INVENTORY" + " "*11,(9))
         for i in range(12):
             if i < len(inventory):
                 item = inventory[i]
-                pad.addstr(i+1,0,"  " + item[:18] + " " * (18-len(item)),curses.color_pair(9))
+                pad.addstr(i+1,0,"  " + item[:18] + " " * (18-len(item)),(9))
             else:
-                pad.addstr(i+1,0," " * 20,curses.color_pair(9))
+                pad.addstr(i+1,0," " * 20,(9))
         pad.refresh(0,0, 1,WIDTH-20, 13,WIDTH)
         
     def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
@@ -173,13 +192,16 @@ class Screen:
         self.stdscr.nodelay(0)
 
     def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
-        pad = self.newpad(y, x)
+        #pad = self.newpad(y, x)
         for char in stuff:
             if len(char)==3:
-                pad.addch(char[0], char[1], char[2])
+                ugfx.text(DX*(char[1]+px)+1,DY*(char[0]+py)+1,char[2],ugfx.WHITE)
+                #pad.addch(char[0], char[1], char[2])
             if len(char)==4:
-                pad.addch(char[0], char[1], char[2], char[3])
-        pad.refresh(0,0, py,px, y+py,x+px)
+                col = get_colors(char[3])
+                ugfx.area(DX*(char[1]+px),DY*(char[0]+py)+1,DX,DY,col[1])
+                ugfx.text(DX*(char[1]+px)+1,DY*(char[0]+py)+1,char[2],col[0])
+                #ugfx.text(char[1]+px,char[0]+py,char[2],col[0])
 
     def credit_menu(self):
         key = ""
@@ -214,9 +236,9 @@ class Screen:
                 self.show_menu(ls, y, py, selected, wx, controls)
             if key == ord('q'):
                 if titles:
-                    raise AVEQuit
+                    raise e.AVEQuit
                 else:
-                    raise AVEToMenu
+                    raise e.AVEToMenu
             if key == ord('c') and titles:
                 self.print_credits()
                 self.credit_menu()
@@ -234,9 +256,9 @@ class Screen:
                 title = ls[start+y_pos]
             else:
                 title = ""
-            col = curses.color_pair(4)
+            col = (4)
             if y_pos+start == selected:
-                col = curses.color_pair(5)
+                col = (5)
             pad.addstr(y_pos,0," "+title[:wide-1] + " "*(wide-1-len(title)),col)
         if controls:
             if start > 0:
@@ -254,9 +276,9 @@ class Screen:
             else:
                 xs = [0,WIDTH - 4]
             for x in xs:
-                stuff.append((y, x, "A", curses.color_pair(6)))
-                stuff.append((y, x+1, "V", curses.color_pair(7)))
-                stuff.append((y, x+2, "E", curses.color_pair(8)))
+                stuff.append((y, x, "A", (6)))
+                stuff.append((y, x+1, "V", (7)))
+                stuff.append((y, x+2, "E", (8)))
         self.show(stuff, x=WIDTH)
 
         stuff = []
@@ -288,12 +310,12 @@ class Screen:
         while key not in [curses.KEY_ENTER,ord("\n"),ord("\r")]:
             key = self.stdscr.getch()
             if key == ord('q'):
-                raise AVEToMenu
+                raise e.AVEToMenu
 
     def pad_with_coloured_dashes(self, text, y=0, x=0, yw=HEIGHT, xw=WIDTH):
         temp_stuff = []
         text = [" "+text[st:st+WIDTH-11]+ " " for st in range(0,len(text),xw)]
-        cols = [curses.color_pair(6), curses.color_pair(7), curses.color_pair(8)]
+        cols = [(6), (7), (8)]
         for t in text[:yw]:
             half = (WIDTH-9-len(t))//2
             for x in range(WIDTH-9):
