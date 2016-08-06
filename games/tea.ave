@@ -50,7 +50,6 @@ Continue => hall
 You are standing in the hall.
 Go to the kitchen => kitchen
 Go to the living room => livingroom
-Go outside => garden
 Go back up the stairs => stairs
 
 # kitchen
@@ -125,11 +124,42 @@ You'll have to stay out of the kitchen for a few minutes until the floor dries.
 Go back to the hall => hall
 
 # livingroom
-You find a mug. The mug should not be here. Hopefully Gin will hide it for me... There should also be a second mug as this one gets smashed. + mug
+There is a sofa in the living room. There is also a coffee table and a door to the outside world.
+Sit on the sofa => sofa
+Go to the coffee table => coffee_table
+Go through the door => garden
 Go back => hall
 
+# sofa
+You sit on the sofa. It is very comfortable, but you still feel nervous... as if something is missing. ?! sofa_lying
+You lie down. ? sofa_lying
+You hit your head on something hard and wet... It's a mug that has fallen over and spilt tea over the sofa. ?! mug ? sofa_lying
+The sofa is still wet. You should probably not lie down on it. ? mug ? sofa_lying
+Pick up the mug => sofa + mug ? sofa_lying ?! mug
+Lie down => sofa + sofa_lying ?! sofa_lying
+Sit up => sofa ~ sofa_lying ? sofa_lying
+Stand up => livingroom ~ sofa_lying
+
+# coffee_table
+The coffee table is very messy. There are a bunch of receipts and various parking tickets strewn everywhere. ?! table_clear
+There is a rubber thimble on the table. ?! thimble
+You battled through the mess of papers and the desk is now organised. ? table_clear ? thimble
+You found a mysterious note amongst the papers that you don't remember writing. ?! mystery_note ? table_clear ? thimble
+You get a terribly painful papercut. It gets infected. ? table_clear ?! thimble + infection
+Tidy the papers => coffee_table ?! table_clear + table_clear ?! infection
+Pick up the thimble => coffee_table ?! thimble + thimble ?! infection
+Pick up the note => coffee_table ?! mystery_note + mystery_note ? table_clear ?! infection
+Step away from the coffee table => livingroom  ?! infection
+Continue => __GAMEOVER__ ? table_clear ?! thimble
+
 # garden
+It's a nice garden.
+Go back inside => livingroom
+
 # bathroom
+There is a sink that you can use.
+Wash your face => bathroom + face_washed ?! face_washed
+Leave the bathroom => stairs
 
 % pencil
 Blunt Pencil ?! sharpener
@@ -161,3 +191,18 @@ Kettle Lead
 
 % ac_adapt
 AC Adapter
+
+% table_clear
+__HIDDEN__
+
+% mug
+Mug
+
+% mystery_note
+Mysterious note
+
+% table_clear
+__HIDDEN__
+
+% thimble
+Rubber thimble
