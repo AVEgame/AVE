@@ -106,6 +106,13 @@ class AVE:
                     again = True
                 if next == 2:
                     raise AVEQuit
+            except AVEWinner:
+                next = self.screen.winner()
+                self.character.reset()
+                if next == 0:
+                    again = True
+                if next == 2:
+                    raise AVEQuit
             except AVEToMenu:
                 pass
 
@@ -147,6 +154,7 @@ class Game:
         self.path = path
         self.title = ""
         self.description = ""
+        self.author = ""
         self.active = True
         self.rooms = {}
         with open(path) as f:
@@ -158,6 +166,8 @@ class Game:
                     self.title = clean(line[2:-2])
                 if line[:2] == "--" == line[-2:]:
                     self.description = clean(line[2:-2])
+                if line[:2] == "**" == line[-2:]:
+                    self.author = clean(line[2:-2])
                 if line[:2] == "~~" == line[-2:]:
                     if clean(line[2:-2]) == "off":
                         self.active = False
@@ -240,6 +250,8 @@ class Game:
     def load_room(self, id):
         if id == "__GAMEOVER__":
             raise AVEGameOver
+        if id == "__WINNER__":
+            raise AVEWinner
         if id in self.rooms:
             return self.rooms[id]
         else:
@@ -247,9 +259,11 @@ class Game:
 
     def begin(self):
         import curses
+        self.show_title()
         room = self['start']
         while True:
             self.screen.clear()
+            self.screen.put_ave_logo()
             next = room.show()
             room = self[next]
 
@@ -258,6 +272,8 @@ class Game:
         text = [{'text':"You fall off the edge of the game... (404 Error)",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
         return Room("fail", text, options, self.screen, self.character)
 
+    def show_title(self):
+        self.screen.show_titles(self.title, self.description, self.author)
 
 class Room:
     def __init__(self, id, text, options, screen, character):
