@@ -1,7 +1,7 @@
 # For internal use
 def _clean_newlines(string):
     while "\n" in string:
-        string = string.strip("\n")
+        string = string.replace("\n","")
     return string
 
 def _clean(string):
