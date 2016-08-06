@@ -54,9 +54,28 @@ Go back up the stairs => stairs
 
 # kitchen
 You walk into the kitchen. There is a kettle.
-Turn on the kettle => kettle
+Turn on the kettle => kettle ?! realtea
+Turn on the kettel => realkettle ? realtea
 Go to the hall => hall
 Examine the fridge => fridge
+Go through the portal in the floor => portalstairs_in ? mug_portal
+
+# realkettle
+The kettle slowly boils. You feel that the end may be near. ?! mug_milk
+This is finally it. It smells of beauty itself. ? mug_milk
+Pour the water into the mug => realkettle + mug_water ?! mug_water
+Put the tea bag in the mug => realkettle + mug_teabag ?! mug_teabag ? mug_water
+Pour the milk into the cup => realkettle + mug_milk ?! mug_milk ? mug_teabag
+Drink the tea => win ? yorkshire
+Drink the tea => lose ?! yorkshire
+
+# win
+You drink the tea. It is everything you ever hoped for. You feel revived.
+Continue => __WINNER__
+
+# lose
+You drink the tea. It is disgusing. Why would you choose PG Tips. It's over, you've had enough. Life isn't worth it anymore.
+Continue => __GAMEOVER__
 
 # kettle
 The kettle doesn't turn on. ?! kettleplug ?! kettle_works
@@ -111,7 +130,8 @@ You pour the water into the mug. ? mug_water ? mug_teabag ?! mug_milk
 You pour the water into the mug. You should've put the tea bag in first though. You pour away the water and boil the kettle again. ? mug_water ?! mug_teabag ?! mug_milk
 You pour the milk into the tea. You've done it! You take a sip of tea... ? mug_water ? mug_teabag ? mug_milk
 It tastes... of peppermint! You've put milk in herbal tea. This will not do. ? mug_water ? mug_teabag ? mug_milk
-You smash the mug in disgust. ? mug_water ? mug_teabag ? mug_milk ~ mug ~ mug_teabag ~ mug_milk ~ mug_water
+You smash the mug in disgust. ? mug_water ? mug_teabag ? mug_milk
+The floor cracks around the smashed mug revealing a portal ? mug_water ? mug_teabag ? mug_milk ~ mug ~ mug_teabag ~ mug_milk ~ mug_water + mug_portal
 Pour the water => kitchen_spill ?! mug
 Pour the water into the mug => kettle_on ? mug ?! mug_water + mug_water
 Put the tea bag into the mug => kettle_on ? mug ? teabag ?! mug_teabag ~ teabag + mug_teabag
@@ -127,7 +147,7 @@ Go back to the hall => hall
 There is a sofa in the living room. There is also a coffee table and a door to the outside world.
 Sit on the sofa => sofa
 Go to the coffee table => coffee_table
-Go through the door => garden
+Go through the door => gardendoor
 Go back => hall
 
 # sofa
@@ -152,14 +172,118 @@ Pick up the note => coffee_table ?! mystery_note + mystery_note ? table_clear ?!
 Step away from the coffee table => livingroom  ?! infection
 Continue => __GAMEOVER__ ? table_clear ?! thimble
 
+# gardendoor
+The door is locked. You can see a key in the garden through the window. ?! key
+The door is unlocked. There is smashed glass everywhere. ? key
+Go back to the living room => livingroom
+Smash the window to get the key => keyroom ?! key + key
+Go out to the garden => garden ? key
+
+# keyroom
+You smashed the window to collect the key. You unlock the door.
+It's a nice garden. ? garden_key
+Continue => gardendoor
+
 # garden
-It's a nice garden.
+The garden is lovely.
 Go back inside => livingroom
 
 # bathroom
 There is a sink that you can use.
 Wash your face => bathroom + face_washed ?! face_washed
 Leave the bathroom => stairs
+
+# portalstairs_in
+You go through the portal, everything goes blurry.
+Continue => portalstairs
+
+# portalstairs_out
+You go through the portal, everything goes blurry.
+Continue => kitchen
+
+# portalstairs
+You are at the top of a long, candlelit, stone staircase.
+Go back through the portal => portalstairs_out
+Walk down the stairs => trollbridge
+
+# trollbridge
+You are at one end of a bridge guarded by a troll. On the other end of the bridge is a grand golden doorway.
+The troll says:
+"You look horrible, clean yourself up, you cannot pass." ?! face_washed
+"You look nice. I like your face." ? face_washed
+"Why have you given me a note from your mother?" ? troll_note ?! troll_crossed
+The troll takes pity on you and allows you to cross. ?! troll_crossed
+"You have a receipt. I want it. Please give it to me" ? receipt
+Give the troll your note => trollbridge ? face_washed ? mystery_note ~ mystery_note + troll_note
+Cross the bridge => ornate_doorway ? troll_note + troll_crossed
+Give the troll your receipt => trollbridge_mug + mug ? receipt ~ receipt
+Go back to the stairs => portalstairs ?! receipt
+Go back to the stairs => troll_kill ? receipt
+
+# troll_kill
+You have angered the troll. He bashes you over the head with a beautiful mug. You die.
+Continue => __GAMEOVER__
+
+# trollbridge_mug
+"Thank you for my receipt. Please have my mug in exchange."
+Continue => trollbridge
+
+# ornate_doorway
+The doorway has a keyhole. ?! door_opened
+It looks surprisingly similar to your garden door. ?! door_opened
+The door is unlocked. ? door_opened
+Try the Garden Key => ornate_doorway + door_opened ?! door_opened
+Open the door => tesco_in ? door_opened
+Cross the bridge => trollbridge
+
+# tesco_in
+You open the door. The light is blindingly bright. You step through.
+Continue => tea_aisle
+
+# tesco_out
+You step through the doorway into the darkness.
+Continue => ornate_doorway
+
+# tea_aisle
+As your eyes adjust, you see the telltale red, white and blue of Tesco.
+You are in the tea aisle.
+There are only two choices of tea. ?! pg_tips ?! yorkshire
+Take a box of PG Tips => tea_aisle_milk + milk + pg_tips ?! yorkshire ?! pg_tips
+Take a box of Yorkshire tea => tea_aisle_milk + milk + yorkshire ?! yorkshire ?! pg_tips
+Go back through the door => tesco_out
+Go to the checkout => checkout_choice
+
+# tea_aisle_milk
+Conveniently, there is some milk here as well. You grab it.
+Continue => tea_aisle
+
+# checkout_choice
+You need to have an item before you can check out. ?! yorkshire ?! pg_tips ?! real_tea
+You have two choices. You can either go to self-checkout or regular checkout. ? yorkshire ?! real_tea
+You have two choices. You can either go to self-checkout or regular checkout. ? pg_tips ?! real_tea
+You already paid. What are you doing? ? real_tea
+Go to the regular checkout => checkout ? pg_tips ?! real_tea
+Go to self-checkout => self_check ? pg_tips ?! real_tea
+Go to the regular checkout => checkout ? yorkshire ?! real_tea
+Go to self-checkout => self_check ? yorkshire ?! real_tea
+Go back to the tea aisle => tea_aisle
+
+# self_check
+You ring up and pay for your tea.
+Take the receipt => paid + receipt + realtea
+Leave the stupid receipt. Who needs them? => paid + realtea
+
+# paid
+You walk back to your favourite aisle.
+Continue => tea_aisle
+
+# checkout
+There is a person at the checkout. You haven't spoken today. The lack of caffeine in your body means that you can't get your words out.
+Run away => run_away
+
+# run_away
+You try to run away. Again you lack the caffeine. You trip and fall.
+Continue => __GAMEOVER__
 
 % pencil
 Blunt Pencil ?! sharpener
@@ -206,3 +330,37 @@ __HIDDEN__
 
 % thimble
 Rubber thimble
+
+% key
+Garden key
+
+% mug_portal
+__HIDDEN__
+
+% face_washed
+__HIDDEN__
+
+% troll_note
+__HIDDEN__
+
+% troll_crossed
+__HIDDEN__
+
+% realtea
+PG Tips ? pg_tips
+Yorkshire Tea ? yorkshire
+
+% pg_tips
+__HIDDEN__
+
+% yorkshire
+__HIDDEN__
+
+% paid
+__HIDDEN__
+
+% receipt
+Receipt
+
+% door_opened
+__HIDDEN__
