@@ -1,9 +1,13 @@
+import pyb
+#pyb.info()
 import sys
 sys.path.append("apps/mscroggs~ave")
 from core import utils as u
 from core import errors as e
 
+
 attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
+#pyb.info()
 
 class Item:
     def __init__(self, name, character):
@@ -86,7 +90,7 @@ class Character:
 
 class AVE:
     def __init__(self, folder="games"):
-        from screen import Screen
+        from core.screen import Screen
         self.screen = Screen()
         self.character = Character(self.screen)
         self.games = Games(folder, self.screen, self.character)
@@ -125,13 +129,13 @@ class Games:
         import os
         self.screen = screen
         self.character = character
-        self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join("..",folder))
+        self.path = "apps/mscroggs~ave/games"
         self.games = []
         for game in os.listdir(self.path):
             if ".ave" in game:
-                g = Game(os.path.join(self.path,game), self.screen, self.character)
+                g = Game(self.path+"/"+game, self.screen, self.character)
                 if g.active:
-                    self.games.append(Game(os.path.join(self.path,game), self.screen, self.character))
+                    self.games.append(Game(self.path+"/"+game, self.screen, self.character))
 
     def titles(self):
         return [g.title for g in self.games]
@@ -294,20 +298,8 @@ class Room:
                 self.character.add_items(line['adds'])
                 self.character.remove_items(line['rems'])
                 included_lines.append(line['text'])
-        y = 0
-        x = 0
-        stuff = []
         text = " ".join(included_lines)
-        for word in text.split():
-            if x+len(word) > WIDTH-22:
-                y += 1
-                x = 0
-            for i,c in enumerate(word):
-                stuff.append((y,x,c))
-                x += 1
-            stuff.append((y,x," "))
-            x += 1
-        self.screen.type(stuff)
+        self.screen.type(text)
 
         opts = []
         adds = []

@@ -8,12 +8,14 @@ from core import errors as e
 import ugfx
 import buttons
 import pyb
-import signal
-HEIGHT = 25
-WIDTH = 80
+REPEATRATE = 331
+HEIGHT = 21
+WIDTH = 36
 
-DX=5
-DY=5
+DX=9
+DY=11
+
+buttons.init()
 
 def get_colors(n):
     if n == 1:  return ugfx.BLACK,ugfx.RED
@@ -21,25 +23,12 @@ def get_colors(n):
     if n == 3:  return ugfx.BLACK,ugfx.BLUE
     if n == 4:  return ugfx.BLACK,ugfx.YELLOW
     if n == 5:  return ugfx.BLACK,ugfx.RED
-    if n == 6:  return ugfx.RED,ugfx.BLACK
-    if n == 7:  return ugfx.GREEN,ugfx.BLACK
-    if n == 8:  return ugfx.BLUE, ugfx.BLACK
+    if n == 6:  return ugfx.RED,None
+    if n == 7:  return ugfx.GREEN,None
+    if n == 8: return ugfx.BLUE, None
     if n == 9:  return ugfx.BLACK,ugfx.BLUE
     if n == 10: return ugfx.BLACK,ugfx.BLUE
-    #curses.init_pair(2, -1, curses.COLOR_GREEN)
-    #curses.init_pair(3, -1, curses.COLOR_BLUE)
-    #curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
-    #curses.init_pair(5, -1, curses.COLOR_RED)
-    #curses.init_pair(6, curses.COLOR_RED, -1)
-    #curses.init_pair(7, curses.COLOR_GREEN, -1)
-    #curses.init_pair(8, curses.COLOR_BLUE, -1)
-    #curses.init_pair(9, -1, curses.COLOR_BLUE)
-    #curses.init_pair(10, -1, curses.COLOR_BLUE)
-
-#def catch_resize(dummy=None,dummy2=None):
-#    curses.resizeterm(HEIGHT,WIDTH)
-
-#signal.signal(signal.SIGWINCH, catch_resize)
+    return ugfx.WHITE,None
 
 class DummyScreen:
     def clear(self):
@@ -50,34 +39,6 @@ class Screen:
         ugfx.init()
         buttons.init()
         self.clear()
-
-        # @ in title and credits
-        #curses.init_pair(1, -1, curses.COLOR_RED)
-        # ^ in title and credits
-        #curses.init_pair(2, -1, curses.COLOR_GREEN)
-        # = in title and credits
-        #curses.init_pair(3, -1, curses.COLOR_BLUE)
-        # menu unselected
-        #curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
-        # menu selected
-        #curses.init_pair(5, -1, curses.COLOR_RED)
-        # A in title
-        #curses.init_pair(6, curses.COLOR_RED, -1)
-        # V in title
-        #curses.init_pair(7, curses.COLOR_GREEN, -1)
-        # E in title
-        #curses.init_pair(8, curses.COLOR_BLUE, -1)
-        # inventory
-        #curses.init_pair(9, -1, curses.COLOR_BLUE)
-        # gameover
-        #curses.init_pair(10, -1, curses.COLOR_BLUE)
-
-        #curses.noecho()
-        #curses.cbreak()
-        #curses.curs_set(0)
-        #self.stdscr.keypad(1)
-        #curses.resizeterm(HEIGHT,WIDTH)
-        #self.stdscr.refresh()
 
     def clear(self):
         ugfx.clear(ugfx.BLACK)
@@ -106,9 +67,8 @@ class Screen:
         self.clear()
         stuff = []
         stuff2 = []
-        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),filename)) as f:
+        with open("apps/mscroggs~ave/core/"+filename) as f:
             y = 0
-            y_beg = None
             for line in f.readlines():
                 if line[0]!="#":
                     line = u.clean_newlines(line)
@@ -116,33 +76,17 @@ class Screen:
                         if x>=WIDTH:
                             break
                         if c == "@":
-                            stuff.append((y, x, " ", (1)))
+                            ugfx.area(DX*x,DY*y,DX,DY,ugfx.RED)
                         elif c == "^":
-                            stuff.append((y, x, " ", (2)))
+                            ugfx.area(DX*x,DY*y,DX,DY,ugfx.GREEN)
                         elif c == "=":
-                            stuff.append((y, x, " ", (3)))
-                        elif c == "A" and len(line) > x+1 and line[x+1] == "V" and len(line) > x+2 and line[x+2] == "E":
-                            stuff.append((y, x, "A", (6)))
-                        elif x >= 1 and line[x-1] == "A" and c == "V" and len(line) > x+1 and line[x+1] == "E":
-                            stuff.append((y, x, "V", (7)))
-                        elif x >= 2 and line[x-2] == "A" and line[x-1] == "V" and c == "E":
-                            stuff.append((y, x, "E", (8)))
-                        else:
-                            stuff.append((y, x, c, (0)))
+                            ugfx.area(DX*x,DY*y,DX,DY,ugfx.BLUE)
+                    line = " ".join(line.split("@"))
+                    line = " ".join(line.split("^"))
+                    line = " ".join(line.split("="))
+                    ugfx.text(0,DY*y+1,line,ugfx.WHITE)
                     y += 1
-                    if y >= HEIGHT:
-                        y -= 1
-                        break
-                elif u.comment(line) == "type":
-                    self.show(stuff,y=y+1,x=WIDTH)
-                    y_beg = y
-                    stuff = []
-                    y = 0
-        if y_beg is None:
-            self.show(stuff,y=y+1,x=WIDTH)
-        else:
-            self.type(stuff,py=y_beg,y=y,x=WIDTH, title=True)
-
+            
     def gameover(self):
         return self.gameend("GAME OVER")
         
@@ -150,58 +94,41 @@ class Screen:
         return self.gameend("YOU WIN!")
         
     def gameend(self,text):
-        pad = self.newpad(8, WIDTH-20)
-        gst = " "*((WIDTH-29)//2) + text
-        gst += " " * (WIDTH - len(gst))
-        pad.addstr(0,0," "*(WIDTH-20),(10))
-        pad.addstr(1,0,gst,(10))
-        pad.addstr(2,0," "*(WIDTH-20),(10))
-        pad.addstr(3,0," "*(WIDTH-20),(10))
-        pad.addstr(4,0," "*(WIDTH-20),(10))
-        pad.addstr(5,0," "*(WIDTH-20),(10))
-        pad.addstr(6,0," "*(WIDTH-20),(10))
-        pad.refresh(0,0, 3,10, 9,WIDTH-10)
-        return self.menu(["Play again","Play another game","Quit"], 3, 6, wx=WIDTH-30, controls=False, titles=True)
+        ugfx.text(1,1,text,ugfx.WHITE)
+        return self.menu(["Play again","Play another game","Quit"], 3, wx=WIDTH-30, controls=False, titles=True)
         
     def show_inventory(self, inventory):
-        pad = self.newpad(14, 20)
-        pad.addstr(0,0,"INVENTORY" + " "*11,(9))
+        ugfx.area(220,0,100,13*DY,ugfx.BLUE)
+        ugfx.text(220,1,"INVENTORY",ugfx.WHITE)
         for i in range(12):
-            if i < len(inventory):
-                item = inventory[i]
-                pad.addstr(i+1,0,"  " + item[:18] + " " * (18-len(item)),(9))
-            else:
-                pad.addstr(i+1,0," " * 20,(9))
-        pad.refresh(0,0, 1,WIDTH-20, 13,WIDTH)
-        
+            if i<len(inventory):
+                ugfx.text(220,1+DY*(1+i),inventory[i],ugfx.WHITE)
+                
     def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
-        from time import sleep
-        pad = self.newpad(y, x)
-        delay = True
-        self.stdscr.nodelay(1)
-        for char in stuff:
-            if self.stdscr.getch() != -1:
-                delay = False
-            if char[2]!=" " and (delay or title):
-                sleep(.01)
-            if len(char)==3:
-                pad.addch(char[0], char[1], char[2])
-            if len(char)==4:
-                pad.addch(char[0], char[1], char[2], char[3])
-            pad.refresh(0,0, py,px, y+py,x+px)
-        self.stdscr.nodelay(0)
+        linelen = 0
+        y = 0
+        line = ""
+        for word in stuff.split(" "):
+            linelen += 1+len(word)
+            if linelen < 30:
+                line += " "+word
+            else:
+                ugfx.text(1,1+y*DY,line,ugfx.WHITE)
+                y += 1
+                line = word
+                linelen = 0
+        if linelen > 0:
+            ugfx.text(1,1+y*DY,line,ugfx.WHITE)
 
     def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
-        #pad = self.newpad(y, x)
         for char in stuff:
             if len(char)==3:
                 ugfx.text(DX*(char[1]+px)+1,DY*(char[0]+py)+1,char[2],ugfx.WHITE)
-                #pad.addch(char[0], char[1], char[2])
             if len(char)==4:
                 col = get_colors(char[3])
-                ugfx.area(DX*(char[1]+px),DY*(char[0]+py)+1,DX,DY,col[1])
+                if col[1] is not None:
+                    ugfx.area(DX*(char[1]+px),DY*(char[0]+py)+1,DX,DY,col[1])
                 ugfx.text(DX*(char[1]+px)+1,DY*(char[0]+py)+1,char[2],col[0])
-                #ugfx.text(char[1]+px,char[0]+py,char[2],col[0])
 
     def credit_menu(self):
         key = ""
@@ -211,46 +138,49 @@ class Screen:
                 break
         self.print_titles()
 
-    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH, controls=True, add=None, rem=None, character=None, titles=False):
-        if py is None:
-            py = HEIGHT - y - 1
-        self.show_menu(ls, y, py, selected, wx, controls)
-        key = ""
-        while key is not None:
-            key = self.stdscr.getch()
-            if key in [curses.KEY_ENTER,ord("\n"),ord("\r")]:
+    def menu(self, ls, y=4, selected=0, wx=WIDTH, controls=True, add=None, rem=None, character=None, titles=False):
+        pyb.delay(REPEATRATE)
+        self.show_menu(ls, y, selected, wx, controls)
+
+        while True:
+            pyb.wfi()
+            if buttons.is_pressed("BTN_A"):
                 if character is not None and add is not None:
                     character.add_items(add[selected])
                 if character is not None and rem is not None:
                     character.remove_items(rem[selected])
+                self.clear()
                 return selected
-            if key == curses.KEY_UP:
+            if buttons.is_pressed("JOY_DOWN"):
                 selected -= 1
                 if selected < 0:
                     selected += len(ls)
-                self.show_menu(ls, y, py, selected, wx, controls)
-            if key == curses.KEY_DOWN:
+                self.show_menu(ls, y, selected, wx, controls)
+                pyb.delay(REPEATRATE)
+            if buttons.is_pressed("JOY_UP"):
                 selected += 1
                 if selected >= len(ls):
                     selected -= len(ls)
-                self.show_menu(ls, y, py, selected, wx, controls)
-            if key == ord('q'):
+                self.show_menu(ls, y, selected, wx, controls)
+                pyb.delay(REPEATRATE)
+            if buttons.is_pressed("BTN_MENU"):
                 if titles:
                     raise e.AVEQuit
                 else:
                     raise e.AVEToMenu
-            if key == ord('c') and titles:
+            if buttons.is_pressed("BTN_B") and titles:
+                pyb.delay(REPEATRATE)
                 self.print_credits()
                 self.credit_menu()
-                self.show_menu(ls, y, py, selected, wx, controls)
-
-    def show_menu(self, ls, y, py, selected, wx, controls):
+                self.show_menu(ls, y, selected, wx, controls)
+    def show_menu(self, ls, y, selected, wx, controls):
         if controls:
             wide = wx-4
         else:
             wide = wx
+        ugfx.area(0,240-y*DY,320,y*DY,ugfx.YELLOW)
+
         start = min(max(0,selected-y//2),max(0,len(ls)-y))
-        pad = self.newpad(y+1,wx)
         for y_pos in range(y):
             if start + y_pos < len(ls):
                 title = ls[start+y_pos]
@@ -259,13 +189,16 @@ class Screen:
             col = (4)
             if y_pos+start == selected:
                 col = (5)
-            pad.addstr(y_pos,0," "+title[:wide-1] + " "*(wide-1-len(title)),col)
+                ugfx.area(0,240-y*DY+y_pos*DY,320,DY,ugfx.RED)
+                ugfx.text(6,1+240-y*DY+y_pos*DY,title,ugfx.WHITE)
+            else:
+                ugfx.text(6,1+240-y*DY+y_pos*DY,title,ugfx.BLACK)
+        
         if controls:
             if start > 0:
-                pad.addch(0,wx-2,"^")
+                ugfx.text(320-DX-1,240-y*DY+1,"^",ugfx.WHITE)
             if start < max(0,len(ls) - y):
-                pad.addch(y-1,wx-2,"v")
-        pad.refresh(0,0, py,(WIDTH-wx)//2, py+y-1,wx+(WIDTH-wx)//2)
+                ugfx.text(320-DX-1,240-DY+1,"v",ugfx.WHITE)
 
     def show_titles(self, title, description, author):
         stuff = []
@@ -285,7 +218,7 @@ class Screen:
         pad, y, x = self.pad_with_coloured_dashes(title,0,0,HEIGHT-2,WIDTH-11)
         stuff += pad
         y += 1
-        txt = "Written by: "+author
+        txt = "By: "+author
         for st in range(0,len(txt),WIDTH-9):
             for x,c in enumerate(txt[st:st+WIDTH-9]):
                 stuff.append((y, x, c))
@@ -297,19 +230,23 @@ class Screen:
                 x = 0
                 y += 1
                 if y > HEIGHT-5:
+                    pyb.delay(REPEATRATE)
                     break
             for c in word:
                 stuff.append((y, x, c))
                 x += 1
             x += 1
-        pad, y, x = self.pad_with_coloured_dashes("Press <Enter> to begin. Press <q> to return to the menu.",HEIGHT-4,0,HEIGHT-2,WIDTH-11)
+        pad, y, x = self.pad_with_coloured_dashes("<A> begin  <B> menu",HEIGHT-4,0,HEIGHT-2,WIDTH-11)
         stuff += pad
 
         self.show(stuff,x=WIDTH-9,y=HEIGHT-2,px=4,py=1)
-        key = ""
-        while key not in [curses.KEY_ENTER,ord("\n"),ord("\r")]:
-            key = self.stdscr.getch()
-            if key == ord('q'):
+
+
+        while True:
+            pyb.wfi()
+            if buttons.is_pressed("BTN_A"):
+                break
+            if buttons.is_pressed("BTN_MENU"):
                 raise e.AVEToMenu
 
     def pad_with_coloured_dashes(self, text, y=0, x=0, yw=HEIGHT, xw=WIDTH):

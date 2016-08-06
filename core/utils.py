@@ -14,10 +14,7 @@ def _clean(string):
     return string
 
 def _replacements(string):
-    import os
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../VERSION")) as f:
-        v = _clean(f.read())
-    string = v.join(string.split("%v%"))
+    string = "0.6".join(string.split("%v%"))
     return string
 
 # For public use
