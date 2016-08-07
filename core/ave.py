@@ -315,3 +315,50 @@ class Room:
         num = self.screen.menu(opts, add=adds, rem=rems, y=min(8,len(opts)), character=self.character)
         return ids[num]
 
+class MicroGame:
+    def __init__(self, path, screen, character):
+        self.screen = screen
+        self.character = character
+        self.path = path
+        self.title = ""
+        self.description = ""
+        self.author = ""
+        self.active = True
+        with open(path, 'r') as f:
+            for line in f:
+                line = u.clean(line)
+                if len(line) > 0 and line[0] == "#":
+                    break
+                if line[:2] == "==" == line[-2:]:
+                    self.title = u.clean(line[2:-2])
+                if line[:2] == "--" == line[-2:]:
+                    self.description = u.clean(line[2:-2])
+                if line[:2] == "**" == line[-2:]:
+                    self.author = u.clean(line[2:-2])
+                if line[:2] == "~~" == line[-2:]:
+                    if u.clean(line[2:-2]) == "off":
+                        self.active = False
+
+    def find_room(self, room_name):
+        return self._find_id(room_name, '#')
+
+    def find_item(self, item_id):
+        return self._find_id(item_id, '%')
+
+    def _find_id(self, obj_id, key):
+        text = ''
+        success = False
+        with open(self.path, 'r') as f:
+            for line in f:
+                line = u.clean(line)
+                if success and len(line) > 0:
+                    if not line[0] in ['#', '%']:
+                        text += line + '\n'
+                    else:
+                        break
+                if len(line) > 0 and line[0] == key and line.split()[1] == obj_id:
+                    text += line + '\n'
+                    success = True
+            if not(success) and key == '#':
+                return self.fail_room()
+        return text
