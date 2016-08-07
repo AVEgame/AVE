@@ -1,8 +1,13 @@
-from __future__ import division
-from core.utils import *
-from core.errors import *
+import pyb
+#pyb.info()
+import sys
+sys.path.append("apps/mscroggs~ave")
+from core import utils as u
+from core import errors as e
+
 
 attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
+#pyb.info()
 
 class Item:
     def __init__(self, name, character):
@@ -85,7 +90,7 @@ class Character:
 
 class AVE:
     def __init__(self, folder="games"):
-        from screen import Screen
+        from core.screen import Screen
         self.screen = Screen()
         self.character = Character(self.screen)
         self.games = Games(folder, self.screen, self.character)
@@ -99,21 +104,21 @@ class AVE:
             again = False
             try:
                 self.games[game_to_load].begin()
-            except AVEGameOver:
+            except e.AVEGameOver:
                 next = self.screen.gameover()
                 self.character.reset()
                 if next == 0:
                     again = True
                 if next == 2:
-                    raise AVEQuit
-            except AVEWinner:
+                    raise e.AVEQuit
+            except e.AVEWinner:
                 next = self.screen.winner()
                 self.character.reset()
                 if next == 0:
                     again = True
                 if next == 2:
-                    raise AVEQuit
-            except AVEToMenu:
+                    raise e.AVEQuit
+            except e.AVEToMenu:
                 pass
 
     def exit(self):
@@ -124,13 +129,13 @@ class Games:
         import os
         self.screen = screen
         self.character = character
-        self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join("..",folder))
+        self.path = "apps/mscroggs~ave/games"
         self.games = []
         for game in os.listdir(self.path):
             if ".ave" in game:
-                g = Game(os.path.join(self.path,game), self.screen, self.character)
+                g = Game(self.path+"/"+game, self.screen, self.character)
                 if g.active:
-                    self.games.append(Game(os.path.join(self.path,game), self.screen, self.character))
+                    self.games.append(Game(self.path+"/"+game, self.screen, self.character))
 
     def titles(self):
         return [g.title for g in self.games]
@@ -159,17 +164,17 @@ class Game:
         self.rooms = {}
         with open(path) as f:
             for line in f.readlines():
-                line = clean(line)
+                line = u.clean(line)
                 if len(line) > 0 and line[0] == "#":
                     break
                 if line[:2] == "==" == line[-2:]:
-                    self.title = clean(line[2:-2])
+                    self.title = u.clean(line[2:-2])
                 if line[:2] == "--" == line[-2:]:
-                    self.description = clean(line[2:-2])
+                    self.description = u.clean(line[2:-2])
                 if line[:2] == "**" == line[-2:]:
-                    self.author = clean(line[2:-2])
+                    self.author = u.clean(line[2:-2])
                 if line[:2] == "~~" == line[-2:]:
-                    if clean(line[2:-2]) == "off":
+                    if u.clean(line[2:-2]) == "off":
                         self.active = False
 
     def load(self):
@@ -191,7 +196,7 @@ class Game:
                         preamb = False
                         while len(line) > 0 and line[0] == "#":
                             line = line[1:]
-                        c_room = clean(line)
+                        c_room = u.clean(line)
                         c_txt = []
                         c_options = []
                     elif line[0]=="%":
@@ -199,18 +204,18 @@ class Game:
                         firstitem = False
                         while len(line) > 0 and line[0] == "%":
                             line = line[1:]
-                        c_item = clean(line)
+                        c_item = u.clean(line)
                         c_hidden = False
                         c_texts = []
                 elif mode == "ITEM":
-                    if clean(line) == "__HIDDEN__":
+                    if u.clean(line) == "__HIDDEN__":
                         c_hidden = True
-                    elif clean(line) != "":
+                    elif u.clean(line) != "":
                         next_item = {'name':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
                         text = line
                         for a in attrs:
                             text = text.split(" "+a)[0]
-                        next_item['name'] = clean(text)
+                        next_item['name'] = u.clean(text)
                         lsp = line.split()
                         for i in range(len(lsp)-1):
                             for a,b in attrs.items():
@@ -221,20 +226,20 @@ class Game:
                     if "=>" in line:
                         lsp = line.split("=>")
                         next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
-                        next_option['option'] = clean(lsp[0])
-                        lsp = clean(lsp[1]).split()
-                        next_option['id'] = clean(lsp[0])
+                        next_option['option'] = u.clean(lsp[0])
+                        lsp = u.clean(lsp[1]).split()
+                        next_option['id'] = u.clean(lsp[0])
                         for i in range(1,len(lsp),2):
                             for a,b in attrs.items():
                                 if lsp[i] == a:
                                     next_option[b].append(lsp[i+1])
                         c_options.append(next_option)
-                    elif clean(line) != "":
+                    elif u.clean(line) != "":
                         next_line = {'text':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
                         text = line
                         for a in attrs:
                             text = text.split(" "+a)[0]
-                        next_line['text'] = clean(text)
+                        next_line['text'] = u.clean(text)
                         lsp = line.split()
                         for i in range(len(lsp)-1):
                             for a,b in attrs.items():
@@ -249,16 +254,15 @@ class Game:
 
     def load_room(self, id):
         if id == "__GAMEOVER__":
-            raise AVEGameOver
+            raise e.AVEGameOver
         if id == "__WINNER__":
-            raise AVEWinner
+            raise e.AVEWinner
         if id in self.rooms:
             return self.rooms[id]
         else:
             return self.fail_room()
 
     def begin(self):
-        import curses
         self.show_title()
         room = self['start']
         while True:
@@ -294,20 +298,8 @@ class Room:
                 self.character.add_items(line['adds'])
                 self.character.remove_items(line['rems'])
                 included_lines.append(line['text'])
-        y = 0
-        x = 0
-        stuff = []
         text = " ".join(included_lines)
-        for word in text.split():
-            if x+len(word) > WIDTH-22:
-                y += 1
-                x = 0
-            for i,c in enumerate(word):
-                stuff.append((y,x,c))
-                x += 1
-            stuff.append((y,x," "))
-            x += 1
-        self.screen.type(stuff)
+        self.screen.type(text)
 
         opts = []
         adds = []

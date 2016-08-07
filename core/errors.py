@@ -1,5 +1,3 @@
-from __future__ import division
-
 class AVEQuit(BaseException):
     pass
 

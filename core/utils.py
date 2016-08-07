@@ -1,9 +1,7 @@
-from __future__ import division
-
 # For internal use
 def _clean_newlines(string):
     while "\n" in string:
-        string = string.strip("\n")
+        string = string.replace("\n","")
     return string
 
 def _clean(string):
@@ -16,10 +14,7 @@ def _clean(string):
     return string
 
 def _replacements(string):
-    import os
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "../VERSION")) as f:
-        v = _clean(f.read())
-    string = v.join(string.split("%v%"))
+    string = "0.6".join(string.split("%v%"))
     return string
 
 # For public use
