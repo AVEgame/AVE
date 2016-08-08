@@ -13,24 +13,42 @@ class Item:
     def __init__(self, name, character):
         self.name = name
         self.character = character
+        text = self.character.game.find_item(name)
+        self.props = []
+        if text and "__HIDDEN__" in text:
+            self.hidden = True
+        else:
+            self.hidden = False
+        for line in text.split('\n')[1:]:
+            if u.clean(line) == "__HIDDEN__":
+                pass
+            elif u.clean(line) != "":
+                next_item = {'name':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
+                text = line
+                for a in attrs:
+                    text = text.split(" "+a)[0]
+                next_item['name'] = u.clean(text)
+                lsp = line.split()
+                for i in range(len(lsp)-1):
+                    for a,b in attrs.items():
+                        if lsp[i] == a:
+                            next_item[b].append(lsp[i+1])
+                self.props.append(next_item)
 
     def get_name(self):
-        if self.name in self.character.items:
+        if not self.hidden:
             name = []
-            for line in self.character.items[self.name][0]:
-                if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
-                    #self.character.add_items(line['adds'])
-                    #self.character.remove_items(line['rems'])
-                    name.append(line['name'])
+            for line in self.props:
+                for line in self.props:
+                    if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
+                        name.append(line['name'])
             name = " ".join(name)
             if name != "":
                 return name
         return self.name
 
     def is_hidden(self):
-        if self.name in self.character.items:
-            return self.character.items[self.name][1]
-        return False
+        return self.hidden
 
 class Character:
     def __init__(self, screen):
@@ -41,6 +59,9 @@ class Character:
     def reset(self):
         self.inventory = []
         self.name = ""
+
+    def set_game(self, game):
+        self.game = game
 
     def _add_item(self, item):
         self.inventory.append(Item(item,self))
@@ -133,9 +154,9 @@ class Games:
         self.games = []
         for game in os.listdir(self.path):
             if ".ave" in game:
-                g = Game(self.path+"/"+game, self.screen, self.character)
+                g = MicroGame(self.path+"/"+game, self.screen, self.character)
                 if g.active:
-                    self.games.append(Game(self.path+"/"+game, self.screen, self.character))
+                    self.games.append(MicroGame(self.path+"/"+game, self.screen, self.character))
 
     def titles(self):
         return [g.title for g in self.games]
@@ -151,133 +172,6 @@ class Games:
 
     def __getitem__(self,n):
         return self.games[n]
-
-class Game:
-    def __init__(self, path, screen, character):
-        self.screen = screen
-        self.character = character
-        self.path = path
-        self.title = ""
-        self.description = ""
-        self.author = ""
-        self.active = True
-        self.rooms = {}
-        with open(path) as f:
-            for line in f.readlines():
-                line = u.clean(line)
-                if len(line) > 0 and line[0] == "#":
-                    break
-                if line[:2] == "==" == line[-2:]:
-                    self.title = u.clean(line[2:-2])
-                if line[:2] == "--" == line[-2:]:
-                    self.description = u.clean(line[2:-2])
-                if line[:2] == "**" == line[-2:]:
-                    self.author = u.clean(line[2:-2])
-                if line[:2] == "~~" == line[-2:]:
-                    if u.clean(line[2:-2]) == "off":
-                        self.active = False
-
-    def load(self):
-        self.screen.clear()
-        rooms = {}
-        items = {}
-        preamb = True
-        firstitem = True
-        mode = "PREA"
-        with open(self.path) as f:
-            for line in f.readlines() + ['#']:
-                if line[0]=="#" or line[0] == '%':
-                    if not preamb and mode == "ROOM" and len(c_options) > 0:
-                        rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
-                    if not firstitem and mode == "ITEM":
-                        items[c_item] = [c_texts, c_hidden]
-                    if line[0] == "#":
-                        mode = "ROOM"
-                        preamb = False
-                        while len(line) > 0 and line[0] == "#":
-                            line = line[1:]
-                        c_room = u.clean(line)
-                        c_txt = []
-                        c_options = []
-                    elif line[0]=="%":
-                        mode = "ITEM"
-                        firstitem = False
-                        while len(line) > 0 and line[0] == "%":
-                            line = line[1:]
-                        c_item = u.clean(line)
-                        c_hidden = False
-                        c_texts = []
-                elif mode == "ITEM":
-                    if u.clean(line) == "__HIDDEN__":
-                        c_hidden = True
-                    elif u.clean(line) != "":
-                        next_item = {'name':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
-                        text = line
-                        for a in attrs:
-                            text = text.split(" "+a)[0]
-                        next_item['name'] = u.clean(text)
-                        lsp = line.split()
-                        for i in range(len(lsp)-1):
-                            for a,b in attrs.items():
-                                if lsp[i] == a:
-                                    next_item[b].append(lsp[i+1])
-                        c_texts.append(next_item)
-                elif mode == "ROOM":
-                    if "=>" in line:
-                        lsp = line.split("=>")
-                        next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
-                        next_option['option'] = u.clean(lsp[0])
-                        lsp = u.clean(lsp[1]).split()
-                        next_option['id'] = u.clean(lsp[0])
-                        for i in range(1,len(lsp),2):
-                            for a,b in attrs.items():
-                                if lsp[i] == a:
-                                    next_option[b].append(lsp[i+1])
-                        c_options.append(next_option)
-                    elif u.clean(line) != "":
-                        next_line = {'text':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
-                        text = line
-                        for a in attrs:
-                            text = text.split(" "+a)[0]
-                        next_line['text'] = u.clean(text)
-                        lsp = line.split()
-                        for i in range(len(lsp)-1):
-                            for a,b in attrs.items():
-                                if lsp[i] == a:
-                                    next_line[b].append(lsp[i+1])
-                        c_txt.append(next_line)
-        self.rooms = rooms
-        self.character.items = items
-
-    def __getitem__(self, id):
-        return self.load_room(id)
-
-    def load_room(self, id):
-        if id == "__GAMEOVER__":
-            raise e.AVEGameOver
-        if id == "__WINNER__":
-            raise e.AVEWinner
-        if id in self.rooms:
-            return self.rooms[id]
-        else:
-            return self.fail_room()
-
-    def begin(self):
-        self.show_title()
-        room = self['start']
-        while True:
-            self.screen.clear()
-            self.screen.put_ave_logo()
-            next = room.show()
-            room = self[next]
-
-    def fail_room(self):
-        options = [{'id':"__GAMEOVER__",'option':"Continue",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
-        text = [{'text':"You fall off the edge of the game... (404 Error)",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
-        return Room("fail", text, options, self.screen, self.character)
-
-    def show_title(self):
-        self.screen.show_titles(self.title, self.description, self.author)
 
 class Room:
     def __init__(self, id, text, options, screen, character):
@@ -339,8 +233,11 @@ class MicroGame:
                     if u.clean(line[2:-2]) == "off":
                         self.active = False
 
-    def find_room(self, room_name):
-        return self._find_id(room_name, '#')
+    def __getitem__(self, room_id):
+        return self.build_room(room_id)
+
+    def find_room(self, room_id):
+        return self._find_id(room_id, '#')
 
     def find_item(self, item_id):
         return self._find_id(item_id, '%')
@@ -360,5 +257,64 @@ class MicroGame:
                     text += line + '\n'
                     success = True
             if not(success) and key == '#':
-                return self.fail_room()
+                return False
         return text
+
+    def build_room(self, room_id):
+        text = self.find_room(room_id)
+        if room_id == "__GAMEOVER__":
+            raise e.AVEGameOver
+        if room_id == "__WINNER__":
+            raise e.AVEWinner
+        elif text is False:
+            return self.fail_room()
+        else:
+            c_txt = []
+            c_options = []
+            for line in text.split('\n')[1:]:
+                line = u.clean(line)
+                if "=>" in line:
+                    lsp = line.split("=>")
+                    next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
+                    next_option['option'] = u.clean(lsp[0])
+                    lsp = u.clean(lsp[1]).split()
+                    next_option['id'] = u.clean(lsp[0])
+                    for i in range(1,len(lsp),2):
+                        for a,b in attrs.items():
+                            if lsp[i] == a:
+                                next_option[b].append(lsp[i+1])
+                    c_options.append(next_option)
+                elif u.clean(line) != "":
+                    next_line = {'text':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
+                    text = line
+                    for a in attrs:
+                        text = text.split(" "+a)[0]
+                    next_line['text'] = u.clean(text)
+                    lsp = line.split()
+                    for i in range(len(lsp)-1):
+                        for a,b in attrs.items():
+                            if lsp[i] == a:
+                                next_line[b].append(lsp[i+1])
+                    c_txt.append(next_line)
+            return Room(room_id, c_txt, c_options, self.screen, self.character)
+
+    def load(self):
+        self.screen.clear()
+
+    def begin(self):
+        self.character.set_game(self)
+        self.show_title()
+        room = self['start']
+        while True:
+            self.screen.clear()
+            self.screen.put_ave_logo()
+            next = room.show()
+            room = self[next]
+
+    def fail_room(self):
+        options = [{'id':"__GAMEOVER__",'option':"Continue",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
+        text = [{'text':"You fall off the edge of the game... (404 Error)",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
+        return Room("fail", text, options, self.screen, self.character)
+
+    def show_title(self):
+        self.screen.show_titles(self.title, self.description, self.author)
