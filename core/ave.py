@@ -106,11 +106,14 @@ class Character:
         else:
             return item not in self.inventory_ids()
 
-    def show_inventory(self):
-        inv = []
-        for i in self.inventory:
-            if not i.is_hidden():
-                inv.append(i.get_name())
+    def show_inventory(self, show=False):
+        if show:
+            inv = []
+            for i in self.inventory:
+                if not i.is_hidden():
+                    inv.append(i.get_name())
+        else:
+            inv = ['<B> to show']
         self.screen.show_inventory(inv)
 
     def inventory_ids(self):
