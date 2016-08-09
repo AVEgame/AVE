@@ -1,29 +1,30 @@
 #!/usr/bin/env python
-from __future__ import division
+import sys
+sys.path.append("apps/mscroggs~ave")
+
+from core import errors as e
 from core.ave import AVE
-from curses import wrapper
-from core.errors import *
 import os
+import pyb
+import ugfx
 
-if os.getenv("DEBUG"):
-    try:
-            ave = AVE()
-            ave.start()
-    except AVEQuit:
-            ave.exit()
-            print("Goodbye...")
-    finally:
-            ave.exit()
-else:
-    while True:
-        try:
-            ave = AVE()
-            ave.start()
-        except AVEQuit:
-            ave.exit()
-            print("Goodbye...")
-            break
-        except:
-            ave.exit()
-            break
+import buttons
+buttons.init()
 
+started = False
+
+ave = AVE()
+try:
+    ave.start()
+except e.AVEQuit:
+    ave.exit()
+
+try:
+    started = True
+    ave.start()
+except e.AVEQuit:
+    ave.exit()
+    print("Goodbye...")
+finally:
+    if started:
+        ave.exit()
