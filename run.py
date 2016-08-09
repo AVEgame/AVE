@@ -5,6 +5,8 @@ sys.path.append("apps/mscroggs~ave")
 from core import errors as e
 from core.ave import AVE
 import os
+import pyb
+import ugfx
 
 import buttons
 buttons.init()
@@ -12,7 +14,10 @@ buttons.init()
 started = False
 
 ave = AVE()
-ave.start()
+try:
+    ave.start()
+except e.AVEQuit:
+    ave.exit()
 
 try:
     started = True
