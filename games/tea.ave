@@ -30,6 +30,7 @@ Continue => __GAMEOVER__
 
 # stairs
 You are faced with a terrifyingly long flight of stairs. You're not sure you can make it down without tea first.
+You also see the door to the bathroom.
 Cover your eyes with your hat and go down the stairs => hall ? hat ? teabag
 Cover your eyes with your hat and go down the stairs => get_teabag ? hat ?! teabag
 Walk down the stairs => fall_stairs
