@@ -10,16 +10,16 @@ import buttons
 buttons.init()
 
 started = False
-
-ave = AVE()
-ave.start()
-
-try:
-    started = True
-    ave.start()
-except e.AVEQuit:
-    ave.exit()
-    print("Goodbye...")
-finally:
-    if started:
+while True:
+    ave = AVE()
+    try:
+        started = True
+        ave.start()
+    except e.AVEQuit:
         ave.exit()
+        print("Goodbye...")
+        break
+    finally:
+        if started:
+            ave.exit()
+        break

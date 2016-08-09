@@ -97,7 +97,7 @@ class AVE:
 
     def start(self):
         self.screen.print_titles()
-        game_to_load = self.screen.menu(self.games.titles(), 8, titles=True)
+        game_to_load = self.screen.menu(self.games.titles(), 5, titles=True)
         self.games[game_to_load].load()
         again = True
         while again:

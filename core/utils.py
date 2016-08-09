@@ -14,7 +14,9 @@ def _clean(string):
     return string
 
 def _replacements(string):
-    string = "0.6".join(string.split("%v%"))
+    with open("apps/mscroggs~ave/VERSION") as f:
+        v = f.read()
+    string = v.join(string.split("%v%"))
     return string
 
 # For public use
