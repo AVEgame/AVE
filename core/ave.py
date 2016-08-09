@@ -14,11 +14,27 @@ class Item:
         self.name = name
         self.character = character
         text = self.character.game.find_item(name)
-        self.props = []
         if text and "__HIDDEN__" in text:
             self.hidden = True
         else:
             self.hidden = False
+        text = None
+        gc.collect()
+
+    def get_name(self):
+        if not self.hidden:
+            name = []
+            for line in self.get_props():
+                if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
+                    name.append(line['name'])
+            name = " ".join(name)
+            if name != "":
+                return name
+        return self.name
+
+    def get_props(self):
+        text = self.character.game.find_item(self.name)
+        props = []
         for line in text.split('\n')[1:]:
             if u.clean(line) == "__HIDDEN__":
                 pass
@@ -33,19 +49,10 @@ class Item:
                     for a,b in attrs.items():
                         if lsp[i] == a:
                             next_item[b].append(lsp[i+1])
-                self.props.append(next_item)
-
-    def get_name(self):
-        if not self.hidden:
-            name = []
-            for line in self.props:
-                for line in self.props:
-                    if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
-                        name.append(line['name'])
-            name = " ".join(name)
-            if name != "":
-                return name
-        return self.name
+                props.append(next_item)
+        text = None
+        gc.collect()
+        return props
 
     def is_hidden(self):
         return self.hidden
