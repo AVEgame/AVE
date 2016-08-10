@@ -1,5 +1,5 @@
-# dimensions: (height) 45
-#             (width)  80
+# dimensions: (height) 240
+#             (width)  320
 import sys
 sys.path.append("apps/mscroggs~ave")
 
@@ -9,13 +9,21 @@ import ugfx
 import buttons
 import pyb
 REPEATRATE = 331
-HEIGHT = 21
+HEIGHT = 20
 WIDTH = 36
 
 DX=9
-DY=11
+DY=12
 
 buttons.init()
+
+s=ugfx.Style()
+
+s.set_background(ugfx.BLACK)
+s.set_enabled([ugfx.WHITE,ugfx.WHITE,ugfx.WHITE,ugfx.WHITE])
+s.set_disabled([ugfx.WHITE,ugfx.WHITE,ugfx.WHITE,ugfx.WHITE])
+s.set_pressed([ugfx.WHITE,ugfx.WHITE,ugfx.WHITE,ugfx.WHITE])
+s.set_focus(ugfx.WHITE)
 
 def get_colors(n):
     if n == 1:  return ugfx.BLACK,ugfx.RED
@@ -59,8 +67,9 @@ class Screen:
         self.print_file("credits")
 
     def put_ave_logo(self):
-        stuff = [(0,0,"A",(6)), (0,1,"V",(7)), (0,2,"E",(8))]
-        self.show(stuff,0,WIDTH-3,2,3)
+        ugfx.text(320-DX*3,1,"A",ugfx.RED)
+        ugfx.text(320-DX*2,1,"V",ugfx.GREEN)
+        ugfx.text(320-DX,  1,"E",ugfx.BLUE)
 
     def print_file(self, filename):
         import os
@@ -86,7 +95,7 @@ class Screen:
                     line = " ".join(line.split("="))
                     ugfx.text(0,DY*y+1,line,ugfx.WHITE)
                     y += 1
-            
+
     def gameover(self):
         return self.gameend("GAME OVER")
         
@@ -104,37 +113,14 @@ class Screen:
             if i<len(inventory):
                 ugfx.text(220,1+DY*(1+i),inventory[i],ugfx.WHITE)
                 
-    def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
-        linelen = 0
-        y = 0
-        line = ""
-        for word in stuff.split(" "):
-            linelen += 1+len(word)
-            if linelen < 30:
-                line += " "+word
-            else:
-                ugfx.text(1,1+y*DY,line,ugfx.WHITE)
-                y += 1
-                line = word
-                linelen = 0
-        if linelen > 0:
-            ugfx.text(1,1+y*DY,line,ugfx.WHITE)
-
-    def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
-        for char in stuff:
-            if len(char)==3:
-                ugfx.text(DX*(char[1]+px)+1,DY*(char[0]+py)+1,char[2],ugfx.WHITE)
-            if len(char)==4:
-                col = get_colors(char[3])
-                if col[1] is not None:
-                    ugfx.area(DX*(char[1]+px),DY*(char[0]+py)+1,DX,DY,col[1])
-                ugfx.text(DX*(char[1]+px)+1,DY*(char[0]+py)+1,char[2],col[0])
+    def type(self, text, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
+        ugfx.Label(0,0,215,13*DY,text,style=s,justification=ugfx.Label.LEFTTOP)
 
     def credit_menu(self):
-        key = ""
-        while key is not None:
-            key = self.stdscr.getch()
-            if key == ord('q') or key == ord('c'):
+        while True:
+            pyb.wfi()
+            if buttons.is_pressed("BTN_A") or buttons.is_pressed("BTN_B"):
+                pyb.delay(REPEATRATE)
                 break
         self.print_titles()
 
@@ -150,6 +136,7 @@ class Screen:
                 if character is not None and rem is not None:
                     character.remove_items(rem[selected])
                 self.clear()
+                pyb.delay(REPEATRATE)
                 return selected
             if buttons.is_pressed("JOY_DOWN"):
                 selected -= 1
@@ -173,6 +160,7 @@ class Screen:
                 self.print_credits()
                 self.credit_menu()
                 self.show_menu(ls, y, selected, wx, controls)
+
     def show_menu(self, ls, y, selected, wx, controls):
         if controls:
             wide = wx-4
@@ -209,59 +197,21 @@ class Screen:
             else:
                 xs = [0,WIDTH - 4]
             for x in xs:
-                stuff.append((y, x, "A", (6)))
-                stuff.append((y, x+1, "V", (7)))
-                stuff.append((y, x+2, "E", (8)))
-        self.show(stuff, x=WIDTH)
+                ugfx.text(x*DX,y*DY,"A",ugfx.RED)
+                ugfx.text(x*DX+DX,y*DY,"V",ugfx.GREEN)
+                ugfx.text(x*DX+2*DX,y*DY,"E",ugfx.BLUE)
 
         stuff = []
-        pad, y, x = self.pad_with_coloured_dashes(title,0,0,HEIGHT-2,WIDTH-11)
-        stuff += pad
-        y += 1
-        txt = "By: "+author
-        for st in range(0,len(txt),WIDTH-9):
-            for x,c in enumerate(txt[st:st+WIDTH-9]):
-                stuff.append((y, x, c))
-            y += 1
-        y += 1
-        x = 0
-        for word in description.split():
-            if x + len(word) > WIDTH-9:
-                x = 0
-                y += 1
-                if y > HEIGHT-5:
-                    pyb.delay(REPEATRATE)
-                    break
-            for c in word:
-                stuff.append((y, x, c))
-                x += 1
-            x += 1
-        pad, y, x = self.pad_with_coloured_dashes("<A> begin  <B> menu",HEIGHT-4,0,HEIGHT-2,WIDTH-11)
-        stuff += pad
-
-        self.show(stuff,x=WIDTH-9,y=HEIGHT-2,px=4,py=1)
-
+        ugfx.Label(DX*4,DY,(WIDTH-8)*DX,DY,title,justification=ugfx.Label.CENTER,style=s)
+        ugfx.Label(DX*4,2*DY,(WIDTH-8)*DX,DY,"By: "+author,justification=ugfx.Label.CENTER,style=s)
+        ugfx.Label(DX*4,4*DY,(WIDTH-8)*DX,(HEIGHT-6)*DY,description,justification=ugfx.Label.LEFTTOP,style=s)
+        ugfx.Label(DX*4,(HEIGHT-2)*DY,(WIDTH-8)*DX,DY,"<A> begin  <B> menu",justification=ugfx.Label.CENTER,style=s)
 
         while True:
             pyb.wfi()
             if buttons.is_pressed("BTN_A"):
+                pyb.delay(REPEATRATE)
                 break
             if buttons.is_pressed("BTN_MENU"):
+                pyb.delay(REPEATRATE)
                 raise e.AVEToMenu
-
-    def pad_with_coloured_dashes(self, text, y=0, x=0, yw=HEIGHT, xw=WIDTH):
-        temp_stuff = []
-        text = [" "+text[st:st+WIDTH-11]+ " " for st in range(0,len(text),xw)]
-        cols = [(6), (7), (8)]
-        for t in text[:yw]:
-            half = (WIDTH-9-len(t))//2
-            for x in range(WIDTH-9):
-                if half <= x < half + len(t):
-                    temp_stuff.append((y, x, t[x-half]))
-                elif x%4 != 3:
-                    temp_stuff.append((y, x, "~", cols[x%4]))
-                else:
-                    temp_stuff.append((y, x, " "))
-            y += 1
-        return temp_stuff, y, x
-
