@@ -78,7 +78,7 @@ class Screen:
         stuff2 = []
         with open("apps/mscroggs~ave/core/"+filename) as f:
             y = 0
-            for line in f.readlines():
+            for line in f:
                 if line[0]!="#":
                     line = u.clean_newlines(line)
                     for x,c in enumerate(line):
@@ -98,21 +98,21 @@ class Screen:
 
     def gameover(self):
         return self.gameend("GAME OVER")
-        
+
     def winner(self):
         return self.gameend("YOU WIN!")
-        
+
     def gameend(self,text):
         ugfx.text(1,1,text,ugfx.WHITE)
         return self.menu(["Play again","Play another game","Quit"], 3, wx=WIDTH-30, controls=False, titles=True)
-        
+
     def show_inventory(self, inventory):
         ugfx.area(220,0,100,13*DY,ugfx.BLUE)
         ugfx.text(220,1,"INVENTORY",ugfx.WHITE)
         for i in range(12):
             if i<len(inventory):
                 ugfx.text(220,1+DY*(1+i),inventory[i],ugfx.WHITE)
-                
+
     def type(self, text, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
         ugfx.Label(0,0,215,13*DY,text,style=s,justification=ugfx.Label.LEFTTOP)
 
@@ -181,7 +181,7 @@ class Screen:
                 ugfx.text(6,1+240-y*DY+y_pos*DY,title,ugfx.WHITE)
             else:
                 ugfx.text(6,1+240-y*DY+y_pos*DY,title,ugfx.BLACK)
-        
+
         if controls:
             if start > 0:
                 ugfx.text(320-DX-1,240-y*DY+1,"^",ugfx.WHITE)
