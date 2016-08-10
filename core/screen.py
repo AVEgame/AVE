@@ -138,7 +138,7 @@ class Screen:
                 self.clear()
                 pyb.delay(REPEATRATE)
                 return selected
-            if buttons.is_pressed("JOY_DOWN"):
+            if buttons.is_pressed("JOY_UP"):
                 selected -= 1
                 if selected < 0:
                     selected += len(ls)
@@ -150,7 +150,7 @@ class Screen:
                     selected -= len(ls)
                 self.show_menu(ls, y, selected, wx, controls)
                 pyb.delay(REPEATRATE)
-            if buttons.is_pressed("JOY_UP"):
+            if buttons.is_pressed("BTN_MENU"):
                 if titles:
                     raise e.AVEQuit
                 else:
