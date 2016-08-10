@@ -1,5 +1,5 @@
 import pyb
-#pyb.info()
+import gc
 import sys
 sys.path.append("apps/mscroggs~ave")
 from core import utils as u
@@ -154,7 +154,7 @@ class AVE:
 
     def exit(self):
         self.screen.close()
-        pyb.hard_reset()
+        #pyb.hard_reset()
 
 class Games:
     def __init__(self, folder, screen, character):
