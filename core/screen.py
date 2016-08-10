@@ -107,11 +107,11 @@ class Screen:
         return self.menu(["Play again","Play another game","Quit"], 3, wx=WIDTH-30, controls=False, titles=True)
 
     def show_inventory(self, inventory):
-        ugfx.area(220,0,100,13*DY,ugfx.BLUE)
-        ugfx.text(220,1,"INVENTORY",ugfx.WHITE)
+        ugfx.area(220,DY,100,14*DY,ugfx.BLUE)
+        ugfx.text(220,DY,"INVENTORY",ugfx.WHITE)
         for i in range(12):
             if i<len(inventory):
-                ugfx.text(220,1+DY*(1+i),inventory[i],ugfx.WHITE)
+                ugfx.text(220,DY*(2+i),inventory[i],ugfx.WHITE)
 
     def type(self, text, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
         ugfx.Label(0,0,215,13*DY,text,style=s,justification=ugfx.Label.LEFTTOP)
