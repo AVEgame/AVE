@@ -160,6 +160,9 @@ class Screen:
                 self.print_credits()
                 self.credit_menu()
                 self.show_menu(ls, y, selected, wx, controls)
+            elif buttons.is_pressed("BTN_B"):
+                pyb.delay(REPEATRATE)
+                return "inv"
 
     def show_menu(self, ls, y, selected, wx, controls):
         if controls:

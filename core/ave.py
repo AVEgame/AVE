@@ -195,7 +195,7 @@ class Room:
     def __str__(self):
         return "Room with id " + self.id
 
-    def show(self):
+    def show(self, show_inv=False):
         from core.screen import WIDTH
         included_lines = []
         for line in self.text:
@@ -216,8 +216,10 @@ class Room:
                 adds.append(option['adds'])
                 rems.append(option['rems'])
                 ids.append(option['id'])
-        self.character.show_inventory()
+        self.character.show_inventory(show=show_inv)
         num = self.screen.menu(opts, add=adds, rem=rems, y=min(8,len(opts)), character=self.character)
+        if num == "inv":
+            return None
         return ids[num]
 
 class MicroGame:
@@ -320,6 +322,8 @@ class MicroGame:
             self.screen.clear()
             self.screen.put_ave_logo()
             next = room.show()
+            while next is None:
+                next = room.show(show_inv=True)
             room = self[next]
 
     def fail_room(self):
