@@ -1,5 +1,3 @@
-import pyb
-
 class AVEQuit(BaseException):
     pass
 
