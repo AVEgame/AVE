@@ -1,5 +1,17 @@
 #!/usr/bin/env python
-<<<<<<< HEAD
+### reboot-before-run: True
+
+import pyb
+
+# This block may become unnecessary if the meta-tag above is implemented
+import stm
+if stm.mem8[0x40002850] == 0:
+    with open("main.json", 'w') as f:
+        f.write('{"main":"mscroggs~ave"}')
+    stm.mem8[0x40002850] = 2
+    pyb.hard_reset()
+# end of block
+
 import sys
 sys.path.append("apps/mscroggs~ave")
 
@@ -24,8 +36,3 @@ while True:
         if started:
             ave.exit()
         break
-=======
-import pyb
-with open('/flash/main.json', 'w') as f:
-    f.write('{"main":"apps/mscroggs~ave/run.py"}')
->>>>>>> origin/emf-gin
