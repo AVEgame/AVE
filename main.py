@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+<<<<<<< HEAD
 import sys
 sys.path.append("apps/mscroggs~ave")
 
@@ -23,3 +24,8 @@ while True:
         if started:
             ave.exit()
         break
+=======
+import pyb
+with open('/flash/main.json', 'w') as f:
+    f.write('{"main":"apps/mscroggs~ave/run.py"}')
+>>>>>>> origin/emf-gin
