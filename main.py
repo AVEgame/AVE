@@ -30,9 +30,5 @@ while True:
         ave.start()
     except e.AVEQuit:
         ave.exit()
-        print("Goodbye...")
-        break
-    finally:
-        if started:
-            ave.exit()
-        break
+    except e.AVEToMenu:
+        started = False
