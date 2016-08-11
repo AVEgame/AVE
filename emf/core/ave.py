@@ -11,15 +11,15 @@ class Item:
     def __init__(self, name, character):
         self.name = name
         self.character = character
-        text = self.character.game.find_item(name)
+        text = self.character.game.find_item(name, path='apps/mscroggs~ave/games/all.items')
         if text and "__HIDDEN__" in text:
             self.hidden = True
         else:
             self.hidden = False
         if not self.hidden:
-            if text [-1] != '\n':
+            if len(text) == 0 or text[-1] != '\n':
                 text += '\n'
-            with open('apps/mscroggs~ave/games/current.items', 'a') as f:
+            with open('apps/mscroggs~ave/games/current.items', 'a+') as f:
                 f.write(text)
         text = None
         gc.collect()
@@ -134,6 +134,8 @@ class AVE:
     def start(self):
         with open('apps/mscroggs~ave/games/current.items', 'w') as f:
             f.write('')
+        with open('apps/mscroggs~ave/games/all.items','w') as f:
+            f.write('')
         self.screen.print_titles()
         game_to_load = self.screen.menu(self.games.titles(), 5, titles=True)
         self.games[game_to_load].load()
@@ -141,7 +143,7 @@ class AVE:
         while again:
             again = False
             try:
-                self.games[game_to_load].begin()
+                self.games[game_to_load].begin(again=True)
             except e.AVEGameOver:
                 next = self.screen.gameover()
                 self.character.reset()
@@ -324,7 +326,9 @@ class MicroGame:
     def load(self):
         self.screen.clear()
 
-    def begin(self):
+    def begin(self, again=False):
+        if not(again):
+            self._compile_items()
         self.character.set_game(self)
         self.show_title()
         room = self['start']
@@ -343,3 +347,18 @@ class MicroGame:
 
     def show_title(self):
         self.screen.show_titles(self.title, self.description, self.author)
+
+    def _compile_items(self):
+        success = False
+        with open(self.path, 'r') as f:
+            for line in f:
+                line = u.clean(line)
+                if line[0] == '%':
+                    success = True
+                elif line[0] == '#':
+                    success = False
+                if success:
+                    with open('apps/mscroggs~ave/games/all.items', 'a+') as g:
+                        if len(line) == 0 or line[-1] != '\n':
+                            line += '\n'
+                        g.write(line)
