@@ -46,8 +46,6 @@ if sys.argv[1] == "python":
 if sys.argv[1] == "emf":
     with open(os.path.join(b_dir,"VERSION"),"a") as f:
         f.write("~")
-    with open(os.path.join(b_dir,"__init__.py"),"w") as f:
-        pass
     shutil.copy(os.path.join(dir,"emf/main.py"), b_dir)
     shutil.copytree(os.path.join(dir,"emf/core"), os.path.join(b_dir,"core"))
 
