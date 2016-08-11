@@ -328,6 +328,7 @@ class MicroGame:
 
     def begin(self, again=False):
         if not(again):
+            self.screen.show_loading()
             self._compile_items()
         self.character.set_game(self)
         self.show_title()
