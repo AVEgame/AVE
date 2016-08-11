@@ -1,16 +1,9 @@
-#!/usr/bin/env python
+### Author: mscroggs
+### Description: AVE text game
+### Category: Game
+### License: MIT
+### Appname: AVE
 ### reboot-before-run: True
-
-import pyb
-
-# This block may become unnecessary if the meta-tag above is implemented
-import stm
-if stm.mem8[0x40002850] == 0:
-    with open("main.json", 'w') as f:
-        f.write('{"main":"mscroggs~ave"}')
-    stm.mem8[0x40002850] = 2
-    pyb.hard_reset()
-# end of block
 
 import sys
 sys.path.append("apps/mscroggs~ave")
@@ -32,6 +25,7 @@ while True:
         if 'current.items' in os.listdir('apps/mscroggs~ave/games'):
             os.remove('apps/mscroggs~ave/games/current.items')
         ave.exit()
+        break
     except e.AVEToMenu:
         started = False
     finally:
