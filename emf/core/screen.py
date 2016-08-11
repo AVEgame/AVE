@@ -109,7 +109,7 @@ class Screen:
         return self.gameend("YOU WIN!")
 
     def gameend(self,text):
-        ugfx.text(1,1,text,ugfx.WHITE)
+        ugfx.Label(50,50,220,50,text,style=s2)
         return self.menu(["Play again","Play another game","Quit"], 3, wx=WIDTH-30, controls=False, titles=True)
 
     def show_inventory(self, inventory):
