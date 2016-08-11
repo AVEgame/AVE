@@ -5,15 +5,16 @@ sys.path.append("apps/mscroggs~ave")
 from core import utils as u
 from core import errors as e
 
-
+HIDE_INV = False # Change this to toggle hiding the inventory
 attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
-#pyb.info()
 
 class Item:
     def __init__(self, name, character):
         self.name = name
         self.character = character
         text = self.character.game.find_item(name)
+        with open('apps/mscroggs~ave/games/current.items', 'a') as f:
+            f.write(text)
         if text and "__HIDDEN__" in text:
             self.hidden = True
         else:
@@ -33,7 +34,7 @@ class Item:
         return self.name
 
     def get_props(self):
-        text = self.character.game.find_item(self.name)
+        text = self.character.game.find_item(self.name, path='apps/mscroggs~ave/games/current.items')
         props = []
         for line in text.split('\n')[1:]:
             if u.clean(line) == "__HIDDEN__":
@@ -107,6 +108,8 @@ class Character:
             return item not in self.inventory_ids()
 
     def show_inventory(self, show=False):
+        if not HIDE_INV:
+            show = True
         if show:
             inv = []
             for i in self.inventory:
@@ -127,6 +130,8 @@ class AVE:
         self.games = Games(folder, self.screen, self.character)
 
     def start(self):
+        with open('apps/mscroggs~ave/games/current.items', 'w') as f:
+            f.write('')
         self.screen.print_titles()
         game_to_load = self.screen.menu(self.games.titles(), 5, titles=True)
         self.games[game_to_load].load()
@@ -252,13 +257,17 @@ class MicroGame:
     def find_room(self, room_id):
         return self._find_id(room_id, '#')
 
-    def find_item(self, item_id):
-        return self._find_id(item_id, '%')
+    def find_item(self, item_id, path=None):
+        if path is None:
+            path = self.path
+        return self._find_id(item_id, '%', path=path)
 
-    def _find_id(self, obj_id, key):
+    def _find_id(self, obj_id, key, path=None):
+        if path is None:
+            path = self.path
         text = ''
         success = False
-        with open(self.path, 'r') as f:
+        with open(path, 'r') as f:
             for line in f:
                 line = u.clean(line)
                 if success and len(line) > 0:
