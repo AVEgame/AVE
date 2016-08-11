@@ -8,8 +8,8 @@
 import sys
 sys.path.append("apps/mscroggs~ave")
 
-from core import errors as e
-from core.ave import AVE
+import errors as e
+from ave import AVE
 import os
 
 import buttons

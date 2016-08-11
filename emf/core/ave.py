@@ -1,8 +1,8 @@
 import gc
 import sys
 sys.path.append("apps/mscroggs~ave")
-from core import utils as u
-from core import errors as e
+import utils as u
+import errors as e
 
 HIDE_INV = False # Change this to toggle hiding the inventory
 attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
@@ -126,7 +126,7 @@ class Character:
 
 class AVE:
     def __init__(self, folder="games"):
-        from core.screen import Screen
+        from screen import Screen
         self.screen = Screen()
         self.character = Character(self.screen)
         self.games = Games(folder, self.screen, self.character)
@@ -209,7 +209,7 @@ class Room:
         return "Room with id " + self.id
 
     def show(self, show_inv=False):
-        from core.screen import WIDTH
+        from screen import WIDTH
         included_lines = []
         for line in self.text:
             if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):

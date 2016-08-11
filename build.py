@@ -32,23 +32,36 @@ for f in os.listdir(b_dir):
         shutil.rmtree(os.path.join(b_dir,f))
 
 # copy games
-os.mkdir(os.path.join(b_dir,"games"))
-for f in os.listdir(os.path.join(dir,"games")):
-    if f[-4:] == ".ave":
-        shutil.copy(os.path.join(os.path.join(dir,"games"),f), os.path.join(os.path.join(b_dir,"games"),f))
-shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
+if sys.argv[1] == "emf":
+    for f in os.listdir(os.path.join(dir,"games")):
+        if f[-4:] == ".ave":
+            shutil.copy(os.path.join(os.path.join(dir,"games"),f), b_dir)
+else:
+    os.mkdir(os.path.join(b_dir,"games"))
+    for f in os.listdir(os.path.join(dir,"games")):
+        if f[-4:] == ".ave":
+            shutil.copy(os.path.join(os.path.join(dir,"games"),f), os.path.join(b_dir,"games"))
 
 # copy version specific files
+shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
+
 if sys.argv[1] == "python":
     shutil.copy(os.path.join(dir,"python/run.py"), b_dir)
     shutil.copytree(os.path.join(dir,"python/core"), os.path.join(b_dir,"core"))
+    shutil.copy(os.path.join(dir,"commoncore/errors.py"), os.path.join(b_dir,"core"))
+    shutil.copy(os.path.join(dir,"commoncore/__init__.py"), os.path.join(b_dir,"core"))
 
 if sys.argv[1] == "emf":
     with open(os.path.join(b_dir,"VERSION"),"a") as f:
         f.write("~")
+    shutil.copy(os.path.join(dir,"commoncore/errors.py"), b_dir)
+    shutil.copy(os.path.join(dir,"commoncore/__init__.py"), b_dir)
     shutil.copy(os.path.join(dir,"emf/main.py"), b_dir)
-    shutil.copytree(os.path.join(dir,"emf/core"), os.path.join(b_dir,"core"))
+    shutil.copy(os.path.join(dir,"emf/core/screen.py"), b_dir)
+    shutil.copy(os.path.join(dir,"emf/core/ave.py"), b_dir)
+    shutil.copy(os.path.join(dir,"emf/core/credits"), b_dir)
+    shutil.copy(os.path.join(dir,"emf/core/title"), b_dir)
+    shutil.copy(os.path.join(dir,"emf/core/screen.py"), b_dir)
+    shutil.copy(os.path.join(dir,"emf/core/utils.py"), b_dir)
 
 # copy common files
-shutil.copy(os.path.join(dir,"commoncore/errors.py"), os.path.join(b_dir,"core"))
-shutil.copy(os.path.join(dir,"commoncore/__init__.py"), os.path.join(b_dir,"core"))
