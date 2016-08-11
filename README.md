@@ -19,7 +19,7 @@ To make your own game for AVE, see `games/INSTRUCTIONS.md`.
 - [aaclarke4](http://github.com/aaclarke4) - Story writing
 
 To discuss the development of this game, join the
-[http://webchat.freenode.net/?channels=ave-dev](#ave-dev channel on Freenode).
+[#ave-dev channel on Freenode](http://webchat.freenode.net/?channels=ave-dev).
 
 [mscroggs.co.uk](http://mscroggs.co.uk)
 
