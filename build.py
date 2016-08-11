@@ -26,7 +26,10 @@ for f in os.listdir(b_dir):
         shutil.rmtree(os.path.join(b_dir,f))
 
 # copy games
-shutil.copytree(os.path.join(dir,"games"), os.path.join(b_dir,"games"))
+os.mkdir(os.path.join(b_dir,"games"))
+for f in os.listdir(os.path.join(dir,"games")):
+    if f[-4:] == ".ave":
+        shutil.copy(os.path.join(os.path.join(dir,"games"),f), os.path.join(os.path.join(b_dir,"games"),f))
 shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
 
 # copy version specific files
