@@ -109,7 +109,7 @@ class Screen:
         return self.gameend("YOU WIN!")
 
     def gameend(self,text):
-        ugfx.Label(50,50,220,50,text,style=s2)
+        ugfx.Label(50,50,220,50,text,style=s2,justification=ugfx.Label.CENTER)
         return self.menu(["Play again","Play another game","Quit"], 3, wx=WIDTH-30, controls=False, titles=True)
 
     def show_inventory(self, inventory):
@@ -226,4 +226,4 @@ class Screen:
                 raise e.AVEToMenu
 
     def show_loading(self):
-        ugfx.Label(50,50,220,50,"Loading... Please wait",style=s2)
+        ugfx.Label(50,50,220,50,"Loading... Please wait",style=s2,justification=ugfx.Label.CENTER)
