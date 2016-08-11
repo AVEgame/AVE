@@ -24,3 +24,5 @@ To discuss the development of this game, join the
 [avegame.co.uk](http://avegame.co.uk)
 
 [github.com/mscroggs/AVE](http://github.com/mscroggs/AVE)
+
+The repository for the AVE website is at [github.com/mscroggs/AVE-website](http://github.com/mscroggs/AVE-website).
