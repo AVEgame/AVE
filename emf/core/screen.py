@@ -208,7 +208,7 @@ class Screen:
         ugfx.Label(DX*4,DY,(WIDTH-8)*DX,DY,title,justification=ugfx.Label.CENTER,style=s)
         ugfx.Label(DX*4,2*DY,(WIDTH-8)*DX,DY,"By: "+author,justification=ugfx.Label.CENTER,style=s)
         ugfx.Label(DX*4,4*DY,(WIDTH-8)*DX,(HEIGHT-6)*DY,description,justification=ugfx.Label.LEFTTOP,style=s)
-        ugfx.Label(DX*4,(HEIGHT-2)*DY,(WIDTH-8)*DX,DY,"<A> begin  <B> menu",justification=ugfx.Label.CENTER,style=s)
+        ugfx.Label(DX*4,(HEIGHT-2)*DY,(WIDTH-8)*DX,DY,"<A> begin  <menu> menu",justification=ugfx.Label.CENTER,style=s)
 
         while True:
             pyb.wfi()

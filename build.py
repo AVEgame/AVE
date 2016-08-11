@@ -18,6 +18,12 @@ if sys.argv[1] not in ["python","emf"]:
 
 dir = os.path.dirname(os.path.realpath(__file__))
 b_dir = os.path.join(dir,"build")
+
+try:
+    os.stat(b_dir)
+except:
+    os.mkdir(b_dir)
+
 # empty /build
 for f in os.listdir(b_dir):
     try:
@@ -26,7 +32,10 @@ for f in os.listdir(b_dir):
         shutil.rmtree(os.path.join(b_dir,f))
 
 # copy games
-shutil.copytree(os.path.join(dir,"games"), os.path.join(b_dir,"games"))
+os.mkdir(os.path.join(b_dir,"games"))
+for f in os.listdir(os.path.join(dir,"games")):
+    if f[-4:] == ".ave":
+        shutil.copy(os.path.join(os.path.join(dir,"games"),f), os.path.join(os.path.join(b_dir,"games"),f))
 shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
 
 # copy version specific files
