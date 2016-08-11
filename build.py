@@ -44,3 +44,4 @@ if sys.argv[1] == "emf":
 
 # copy common files
 shutil.copy(os.path.join(dir,"commoncore/errors.py"), os.path.join(b_dir,"core"))
+shutil.copy(os.path.join(dir,"commoncore/__init__.py"), os.path.join(b_dir,"core"))
