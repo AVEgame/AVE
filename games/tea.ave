@@ -56,7 +56,7 @@ Go back up the stairs => stairs
 # kitchen
 You walk into the kitchen. There is a kettle.
 Turn on the kettle => kettle ?! realtea
-Turn on the kettel => realkettle ? realtea
+Turn on the kettle => realkettle ? realtea
 Go to the hall => hall
 Examine the fridge => fridge
 Go through the portal in the floor => portalstairs_in ? mug_portal
@@ -213,7 +213,7 @@ The troll says:
 "You look horrible, clean yourself up, you cannot pass." ?! face_washed
 "You look nice. I like your face." ? face_washed
 "Why have you given me a note from your mother?" ? troll_note ?! troll_crossed
-The troll takes pity on you and allows you to cross. ?! troll_crossed
+The troll takes pity on you and allows you to cross. ? troll_note ?! troll_crossed
 "You have a receipt. I want it. Please give it to me" ? receipt
 Give the troll your note => trollbridge ? face_washed ? mystery_note ~ mystery_note + troll_note
 Cross the bridge => ornate_doorway ? troll_note + troll_crossed
@@ -364,4 +364,7 @@ __HIDDEN__
 Receipt
 
 % door_opened
+__HIDDEN__
+
+% sofa_lying
 __HIDDEN__

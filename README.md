@@ -3,12 +3,14 @@
 AVE: Adventure! Villainy! Excitement! is a text-based game engine
 written by Matthew Scroggs.
 
-To play AVE, run `run.py`. AVE is yet to be tested on non-Linux
-systems.
+AVE can currently run on Linux/Mac or on the [EMFCamp Tilda v3 badge](https://badge.emfcamp.org/wiki/TiLDA_MK3).
+
+To build AVE for Linux/Mac, run `./build.py python` in the main directory. To run, enter the `build` directory
+and run `./run.py`. To run AVE in debug mode, run `DEBUG=1 ./run.py` or `DEBUG=1 python run.py`.
+
+To build for the badge run `./build.py emf` then copy all files in the `build` directory to `apps/mscroggs~ave` on the badge.
 
 To make your own game for AVE, see `games/INSTRUCTIONS.md`.
-
-To run AVE in debug mode, run `DEBUG=1 ./run.py` or `DEBUG=1 python run.py`.
 
 ### Collaborators
 - [mscroggs](http://github.com/mscroggs) - Lead programmer and story writing
