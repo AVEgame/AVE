@@ -364,7 +364,7 @@ class MicroGame:
                 elif line[0] == '#':
                     success = False
                 if success:
-                    with open('apps/mscroggs~ave/games/all.items', 'a+') as g:
+                    with open('apps/mscroggs~ave/all.items', 'a+') as g:
                         if len(line) == 0 or line[-1] != '\n':
                             line += '\n'
                         g.write(line)
