@@ -29,6 +29,8 @@ while True:
         started = True
         ave.start()
     except e.AVEQuit:
+        if 'current.items' in os.listdir('apps/mscroggs~ave/games'):
+            os.remove('apps/mscroggs~ave/games/current.items')
         ave.exit()
     except e.AVEToMenu:
         started = False

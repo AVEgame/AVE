@@ -13,12 +13,15 @@ class Item:
         self.name = name
         self.character = character
         text = self.character.game.find_item(name)
-        with open('apps/mscroggs~ave/games/current.items', 'a') as f:
-            f.write(text)
         if text and "__HIDDEN__" in text:
             self.hidden = True
         else:
             self.hidden = False
+        if not self.hidden:
+            if text [-1] != '\n':
+                text += '\n'
+            with open('apps/mscroggs~ave/games/current.items', 'a') as f:
+                f.write(text)
         text = None
         gc.collect()
 
