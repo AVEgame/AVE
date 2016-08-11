@@ -143,7 +143,7 @@ class AVE:
         while again:
             again = False
             try:
-                self.games[game_to_load].begin()
+                self.games[game_to_load].begin(again=True)
             except e.AVEGameOver:
                 next = self.screen.gameover()
                 self.character.reset()
@@ -326,8 +326,9 @@ class MicroGame:
     def load(self):
         self.screen.clear()
 
-    def begin(self):
-        self._compile_items()
+    def begin(self, again=False):
+        if not(again):
+            self._compile_items()
         self.character.set_game(self)
         self.show_title()
         room = self['start']
