@@ -18,6 +18,12 @@ if sys.argv[1] not in ["python","emf"]:
 
 dir = os.path.dirname(os.path.realpath(__file__))
 b_dir = os.path.join(dir,"build")
+
+try:
+    os.stat(b_dir)
+except:
+    os.mkdir(b_dir)
+
 # empty /build
 for f in os.listdir(b_dir):
     try:
