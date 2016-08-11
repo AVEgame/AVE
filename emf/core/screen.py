@@ -18,12 +18,18 @@ DY=12
 buttons.init()
 
 s=ugfx.Style()
-
 s.set_background(ugfx.BLACK)
 s.set_enabled([ugfx.WHITE,ugfx.WHITE,ugfx.WHITE,ugfx.WHITE])
 s.set_disabled([ugfx.WHITE,ugfx.WHITE,ugfx.WHITE,ugfx.WHITE])
 s.set_pressed([ugfx.WHITE,ugfx.WHITE,ugfx.WHITE,ugfx.WHITE])
 s.set_focus(ugfx.WHITE)
+
+s2=ugfx.Style()
+s2.set_background(ugfx.BLUE)
+s2.set_enabled([ugfx.YELLOW,ugfx.YELLOW,ugfx.YELLOW,ugfx.YELLOW])
+s2.set_disabled([ugfx.YELLOW,ugfx.YELLOW,ugfx.YELLOW,ugfx.YELLOW])
+s2.set_pressed([ugfx.YELLOW,ugfx.YELLOW,ugfx.YELLOW,ugfx.YELLOW])
+s2.set_focus(ugfx.YELLOW)
 
 def get_colors(n):
     if n == 1:  return ugfx.BLACK,ugfx.RED
@@ -103,7 +109,7 @@ class Screen:
         return self.gameend("YOU WIN!")
 
     def gameend(self,text):
-        ugfx.text(1,1,text,ugfx.WHITE)
+        ugfx.Label(50,50,220,50,text,style=s2,justification=ugfx.Label.CENTER)
         return self.menu(["Play again","Play another game","Quit"], 3, wx=WIDTH-30, controls=False, titles=True)
 
     def show_inventory(self, inventory):
@@ -218,3 +224,6 @@ class Screen:
             if buttons.is_pressed("BTN_MENU"):
                 pyb.delay(REPEATRATE)
                 raise e.AVEToMenu
+
+    def show_loading(self):
+        ugfx.Label(50,50,220,50,"Loading... Please wait",style=s2,justification=ugfx.Label.CENTER)
