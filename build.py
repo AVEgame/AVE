@@ -43,5 +43,4 @@ if sys.argv[1] == "emf":
     shutil.copytree(os.path.join(dir,"emf/core"), os.path.join(b_dir,"core"))
 
 # copy common files
-shutil.copy(os.path.join(dir,"commoncore/utils.py"), os.path.join(b_dir,"core"))
 shutil.copy(os.path.join(dir,"commoncore/errors.py"), os.path.join(b_dir,"core"))
