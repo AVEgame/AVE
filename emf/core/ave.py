@@ -140,10 +140,15 @@ class AVE:
         game_to_load = self.screen.menu(self.games.titles(), 5, titles=True)
         self.games[game_to_load].load()
         again = True
+        first_run = True
         while again:
             again = False
             try:
-                self.games[game_to_load].begin(again=True)
+                if first_run:
+                    first_run = False
+                    self.games[game_to_load].begin(again=False)
+                else:
+                    self.games[game_to_load].begin(again=True)
             except e.AVEGameOver:
                 next = self.screen.gameover()
                 self.character.reset()
