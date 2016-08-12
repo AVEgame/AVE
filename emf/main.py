@@ -22,16 +22,7 @@ while True:
         started = True
         ave.start()
     except e.AVEQuit:
-        if 'current.items' in os.listdir('apps/mscroggs~ave'):
-            os.remove('apps/mscroggs~ave/current.items')
-        if 'all.items' in os.listdir('apps/mscroggs~ave'):
-            os.remove('apps/mscroggs~ave/all.items')
         ave.exit()
         break
     except e.AVEToMenu:
         started = False
-    finally:
-        if 'current.items' in os.listdir('apps/mscroggs~ave'):
-            os.remove('apps/mscroggs~ave/current.items')
-        if 'all.items' in os.listdir('apps/mscroggs~ave'):
-            os.remove('apps/mscroggs~ave/all.items')
