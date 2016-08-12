@@ -137,8 +137,8 @@ The floor cracks around the smashed mug revealing a portal ? mug_water ? mug_tea
 Pour the water => kitchen_spill ?! mug
 Pour the water into the mug => kettle_on ? mug ?! mug_water + mug_water
 Put the tea bag into the mug => kettle_on ? mug ? teabag ?! mug_teabag ~ teabag + mug_teabag
-Put the milk in the tea => kettle_on ? mug_water ? mug_teabag ~ milk ?! mug_milk + mug_milk ~ mug_teabag ~ mug_milk ~ mug_water
-Go back to the kitchen => kitchen
+Put the milk in the tea => kettle_on ? mug_water ? mug_teabag ~ milk ?! mug_milk + mug_milk
+Go back to the kitchen => kitchen ~ mug_teabag ~ mug_milk ~ mug_water
 
 # kitchen_spill
 You pour the boiling water all over the floor. You really should've found a mug before trying to make tea...
