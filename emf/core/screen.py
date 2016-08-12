@@ -3,8 +3,8 @@
 import sys
 sys.path.append("apps/mscroggs~ave")
 
-from core import utils as u
-from core import errors as e
+import utils as u
+import errors as e
 import ugfx
 import buttons
 import pyb
@@ -82,7 +82,7 @@ class Screen:
         self.clear()
         stuff = []
         stuff2 = []
-        with open("apps/mscroggs~ave/core/"+filename) as f:
+        with open("apps/mscroggs~ave/"+filename) as f:
             y = 0
             for line in f:
                 if line[0]!="#":

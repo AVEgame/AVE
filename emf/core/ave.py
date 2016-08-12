@@ -1,8 +1,8 @@
 import gc
 import sys
 sys.path.append("apps/mscroggs~ave")
-from core import utils as u
-from core import errors as e
+import utils as u
+import errors as e
 
 HIDE_INV = False # Change this to toggle hiding the inventory
 attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
@@ -11,7 +11,7 @@ class Item:
     def __init__(self, name, character):
         self.name = name
         self.character = character
-        text = self.character.game.find_item(name, path='apps/mscroggs~ave/games/all.items')
+        text = self.character.game.find_item(name, path='apps/mscroggs~ave/all.items')
         if text and "__HIDDEN__" in text:
             self.hidden = True
         else:
@@ -19,7 +19,7 @@ class Item:
         if not self.hidden:
             if len(text) == 0 or text[-1] != '\n':
                 text += '\n'
-            with open('apps/mscroggs~ave/games/current.items', 'a+') as f:
+            with open('apps/mscroggs~ave/current.items', 'a+') as f:
                 f.write(text)
         text = None
         gc.collect()
@@ -36,7 +36,7 @@ class Item:
         return self.name
 
     def get_props(self):
-        text = self.character.game.find_item(self.name, path='apps/mscroggs~ave/games/current.items')
+        text = self.character.game.find_item(self.name, path='apps/mscroggs~ave/current.items')
         props = []
         for line in text.split('\n')[1:]:
             if u.clean(line) == "__HIDDEN__":
@@ -125,16 +125,16 @@ class Character:
         return [item.name for item in self.inventory]
 
 class AVE:
-    def __init__(self, folder="games"):
-        from core.screen import Screen
+    def __init__(self, folder=""):
+        from screen import Screen
         self.screen = Screen()
         self.character = Character(self.screen)
         self.games = Games(folder, self.screen, self.character)
 
     def start(self):
-        with open('apps/mscroggs~ave/games/current.items', 'w') as f:
+        with open('apps/mscroggs~ave/current.items', 'w') as f:
             f.write('')
-        with open('apps/mscroggs~ave/games/all.items','w') as f:
+        with open('apps/mscroggs~ave/all.items','w') as f:
             f.write('')
         self.screen.print_titles()
         game_to_load = self.screen.menu(self.games.titles(), 5, titles=True)
@@ -174,7 +174,7 @@ class Games:
         import os
         self.screen = screen
         self.character = character
-        self.path = "apps/mscroggs~ave/games"
+        self.path = "apps/mscroggs~ave"
         self.games = []
         for game in os.listdir(self.path):
             if ".ave" in game:
@@ -209,7 +209,7 @@ class Room:
         return "Room with id " + self.id
 
     def show(self, show_inv=False):
-        from core.screen import WIDTH
+        from screen import WIDTH
         included_lines = []
         for line in self.text:
             if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
@@ -364,7 +364,7 @@ class MicroGame:
                 elif line[0] == '#':
                     success = False
                 if success:
-                    with open('apps/mscroggs~ave/games/all.items', 'a+') as g:
+                    with open('apps/mscroggs~ave/all.items', 'a+') as g:
                         if len(line) == 0 or line[-1] != '\n':
                             line += '\n'
                         g.write(line)

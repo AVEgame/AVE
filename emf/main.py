@@ -8,8 +8,8 @@
 import sys
 sys.path.append("apps/mscroggs~ave")
 
-from core import errors as e
-from core.ave import AVE
+import errors as e
+from ave import AVE
 import os
 
 import buttons
@@ -22,16 +22,16 @@ while True:
         started = True
         ave.start()
     except e.AVEQuit:
-        if 'current.items' in os.listdir('apps/mscroggs~ave/games'):
-            os.remove('apps/mscroggs~ave/games/current.items')
-        if 'all.items' in os.listdir('apps/mscroggs~ave/games'):
-            os.remove('apps/mscroggs~ave/games/all.items')
+        if 'current.items' in os.listdir('apps/mscroggs~ave'):
+            os.remove('apps/mscroggs~ave/current.items')
+        if 'all.items' in os.listdir('apps/mscroggs~ave'):
+            os.remove('apps/mscroggs~ave/all.items')
         ave.exit()
         break
     except e.AVEToMenu:
         started = False
     finally:
-        if 'current.items' in os.listdir('apps/mscroggs~ave/games'):
-            os.remove('apps/mscroggs~ave/games/current.items')
-        if 'all.items' in os.listdir('apps/mscroggs~ave/games'):
-            os.remove('apps/mscroggs~ave/games/all.items')
+        if 'current.items' in os.listdir('apps/mscroggs~ave'):
+            os.remove('apps/mscroggs~ave/current.items')
+        if 'all.items' in os.listdir('apps/mscroggs~ave'):
+            os.remove('apps/mscroggs~ave/all.items')
