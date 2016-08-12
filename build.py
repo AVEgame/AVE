@@ -11,6 +11,25 @@ class BadArg(BaseException):
     def __str__(self):
         return self.string
 
+class BadFile(BaseException):
+    def __init__(self):
+        pass
+    def __str__(self):
+        return "Game files must end in .ave"
+
+def create_item_text(game):
+    success = False
+    text = ''
+    with open(game, 'r') as f:
+        for line in f:
+            if line[0] == '%':
+                success = True
+            elif line[0] == '#':
+                success = False
+            if success:
+                text += line
+    return text
+
 if len(sys.argv) < 2:
     raise BadArg("Please enter a type to build")
 if sys.argv[1] not in ["python","emf"]:
@@ -36,6 +55,9 @@ if sys.argv[1] == "emf":
     for f in os.listdir(os.path.join(dir,"games")):
         if f[-4:] == ".ave":
             shutil.copy(os.path.join(os.path.join(dir,"games"),f), b_dir)
+            text = create_item_text(os.path.join(b_dir,f))
+            with open(os.path.join(b_dir, f[:-4] + '.items'), 'w') as g:
+                g.write(text)
 else:
     os.mkdir(os.path.join(b_dir,"games"))
     for f in os.listdir(os.path.join(dir,"games")):
