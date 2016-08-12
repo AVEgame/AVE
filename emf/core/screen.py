@@ -67,10 +67,10 @@ class Screen:
         print(options)
 
     def print_titles(self):
-        self.print_file("title")
+        self.print_file("title.tit")
 
     def print_credits(self):
-        self.print_file("credits")
+        self.print_file("credits.tit")
 
     def put_ave_logo(self):
         ugfx.text(320-DX*3,1,"A",ugfx.RED)
