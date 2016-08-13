@@ -11,6 +11,7 @@ class Item:
     def __init__(self, name, character):
         self.name = name
         self.character = character
+        text = self.character.game.find_item(self.name, path=self.character.game.item_path)
         if text and "__HIDDEN__" in text:
             self.hidden = True
         else:
@@ -30,7 +31,7 @@ class Item:
         return self.name
 
     def get_props(self):
-        text = self.character.game.find_item(self.name, path=self.character.item_path)
+        text = self.character.game.find_item(self.name, path=self.character.game.item_path)
         props = []
         for line in text.split('\n')[1:]:
             if u.clean(line) == "__HIDDEN__":
