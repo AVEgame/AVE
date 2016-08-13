@@ -64,8 +64,8 @@ Go through the portal in the floor => portalstairs_in ? mug_portal
 # realkettle
 The kettle slowly boils. You feel that the end may be near. ?! mug_milk
 This is finally it. It smells of beauty itself. ? mug_milk
-Pour the water into the mug => realkettle + mug_water ?! mug_water
-Put the tea bag in the mug => realkettle + mug_teabag ?! mug_teabag ? mug_water
+Put the tea bag in the mug => realkettle + mug_teabag ?! mug_teabag
+Pour the water into the mug => realkettle + mug_water ?! mug_water ? mug_teabag
 Pour the milk into the cup => realkettle + mug_milk ?! mug_milk ? mug_teabag
 Drink the tea => win ? yorkshire
 Drink the tea => lose ?! yorkshire
@@ -129,15 +129,18 @@ The kettle works. Slowly the water comes to the boil. ?! mug_water ?! mug_teabag
 You put the teabag into the mug. ?! mug_water ? mug_teabag ?! mug_milk
 You pour the water into the mug. ? mug_water ? mug_teabag ?! mug_milk
 You pour the water into the mug. You should've put the tea bag in first though. You pour away the water and boil the kettle again. ? mug_water ?! mug_teabag ?! mug_milk
-You pour the milk into the tea. You've done it! You take a sip of tea... ? mug_water ? mug_teabag ? mug_milk
-It tastes... of peppermint! You've put milk in herbal tea. This will not do. ? mug_water ? mug_teabag ? mug_milk
-You smash the mug in disgust. ? mug_water ? mug_teabag ? mug_milk
-The floor cracks around the smashed mug revealing a portal ? mug_water ? mug_teabag ? mug_milk ~ mug ~ mug_teabag ~ mug_milk ~ mug_water + mug_portal
-Pour the water => kitchen_spill ?! mug
+Pour the water => kitchen_spill ?! mug ~ peppermint
 Pour the water into the mug => kettle_on ? mug ?! mug_water + mug_water
 Put the tea bag into the mug => kettle_on ? mug ? teabag ?! mug_teabag ~ teabag + mug_teabag
-Put the milk in the tea => kettle_on ? mug_water ? mug_teabag ~ milk ?! mug_milk + mug_milk
-Go back to the kitchen => kitchen ~ mug_teabag ~ mug_milk ~ mug_water
+Put the milk in the tea => drink_peppermint ? mug_water ? mug_teabag ~ milk ?! mug_milk + mug_milk ~ mug_teabag ~ mug_milk ~ mug_water + mug_portal
+Go back to the kitchen => kitchen
+
+# drink_peppermint
+You pour the milk into the tea. You've done it! You take a sip of tea...
+It tastes... of peppermint! You've put milk in herbal tea. This will not do.
+You smash the mug in disgust.
+The floor cracks around the smashed mug revealing a portal ~ mug ~ mug_teabag ~ mug_milk ~ mug_water
+Continue => kitchen
 
 # kitchen_spill
 You pour the boiling water all over the floor. You really should've found a mug before trying to make tea...
@@ -205,21 +208,32 @@ Continue => kitchen
 # portalstairs
 You are at the top of a long, candlelit, stone staircase.
 Go back through the portal => portalstairs_out
-Walk down the stairs => trollbridge
+Walk down the stairs => trollbridge_in
 
-# trollbridge
+# trollbridge_in
 You are at one end of a bridge guarded by a troll. On the other end of the bridge is a grand golden doorway.
 The troll says:
 "You look horrible, clean yourself up, you cannot pass." ?! face_washed
-"You look nice. I like your face." ? face_washed
+"You look nice. I like your face." ? face_washed ?! real_tea
 "Why have you given me a note from your mother?" ? troll_note ?! troll_crossed
 The troll takes pity on you and allows you to cross. ? troll_note ?! troll_crossed
-"You have a receipt. I want it. Please give it to me" ? receipt
-Give the troll your note => trollbridge ? face_washed ? mystery_note ~ mystery_note + troll_note
+Give the troll your note => trollbridge_in ? face_washed ? mystery_note ~ mystery_note + troll_note
 Cross the bridge => ornate_doorway ? troll_note + troll_crossed
-Give the troll your receipt => trollbridge_mug + mug ? receipt ~ receipt
-Go back to the stairs => portalstairs ?! receipt
-Go back to the stairs => troll_kill ? receipt
+Go back to the stairs => portalstairs
+
+
+# trollbridge_out
+You are at one end of a bridge guarded by a troll. On the other end of the bridge is a grand golden doorway.
+The troll says:
+"You look nice. I like your face." ? face_washed
+"You have a receipt. I want it. Please give it to me" ? receipt
+"You didn't bring me back a present. I don't like you anymore" ? real_tea ?! receipt ?! troll_receipt
+Give the troll your receipt => trollbridge_mug + mug ? receipt ~ receipt + troll_receipt
+Cross the bridge => troll_kill ?! troll_receipt
+Cross the bridge => ornate_doorway ? troll_receipt
+Go back to the stairs => troll_kill ?! troll_receipt
+Go back to the stairs => portalstairs ? troll_receipt
+
 
 # troll_kill
 You have angered the troll. He bashes you over the head with a beautiful mug. You die.
@@ -227,7 +241,7 @@ Continue => __GAMEOVER__
 
 # trollbridge_mug
 "Thank you for my receipt. Please have my mug in exchange."
-Continue => trollbridge
+Continue => trollbridge_out
 
 # ornate_doorway
 The doorway has a keyhole. ?! door_opened
@@ -235,7 +249,7 @@ It looks surprisingly similar to your garden door. ?! door_opened
 The door is unlocked. ? door_opened
 Try the Garden Key => ornate_doorway + door_opened ?! door_opened
 Open the door => tesco_in ? door_opened
-Cross the bridge => trollbridge
+Cross the bridge => trollbridge_out
 
 # tesco_in
 You open the door. The light is blindingly bright. You step through.
@@ -367,4 +381,7 @@ Receipt
 __HIDDEN__
 
 % sofa_lying
+__HIDDEN__
+
+% troll_receipt
 __HIDDEN__
