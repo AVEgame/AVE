@@ -21,6 +21,8 @@ To make your own game for AVE, see `games/INSTRUCTIONS.md`.
 To discuss the development of this game, join the
 [#ave-dev channel on Freenode](http://webchat.freenode.net/?channels=ave-dev).
 
-[mscroggs.co.uk](http://mscroggs.co.uk)
+[avegame.co.uk](http://avegame.co.uk)
 
 [github.com/mscroggs/AVE](http://github.com/mscroggs/AVE)
+
+The repository for the AVE website is at [github.com/mscroggs/AVE-website](http://github.com/mscroggs/AVE-website).
