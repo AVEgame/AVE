@@ -64,8 +64,8 @@ Go through the portal in the floor => portalstairs_in ? mug_portal
 # realkettle
 The kettle slowly boils. You feel that the end may be near. ?! mug_milk
 This is finally it. It smells of beauty itself. ? mug_milk
-Pour the water into the mug => realkettle + mug_water ?! mug_water
-Put the tea bag in the mug => realkettle + mug_teabag ?! mug_teabag ? mug_water
+Put the tea bag in the mug => realkettle + mug_teabag ?! mug_teabag
+Pour the water into the mug => realkettle + mug_water ?! mug_water ? mug_teabag
 Pour the milk into the cup => realkettle + mug_milk ?! mug_milk ? mug_teabag
 Drink the tea => win ? yorkshire
 Drink the tea => lose ?! yorkshire
@@ -217,7 +217,7 @@ The troll says:
 "You look nice. I like your face." ? face_washed ?! real_tea
 "Why have you given me a note from your mother?" ? troll_note ?! troll_crossed
 The troll takes pity on you and allows you to cross. ? troll_note ?! troll_crossed
-Give the troll your note => trollbridge ? face_washed ? mystery_note ~ mystery_note + troll_note
+Give the troll your note => trollbridge_in ? face_washed ? mystery_note ~ mystery_note + troll_note
 Cross the bridge => ornate_doorway ? troll_note + troll_crossed
 Go back to the stairs => portalstairs
 
@@ -225,7 +225,7 @@ Go back to the stairs => portalstairs
 # trollbridge_out
 You are at one end of a bridge guarded by a troll. On the other end of the bridge is a grand golden doorway.
 The troll says:
-"You look nice. I like your face." ? face_washed ? receipt
+"You look nice. I like your face." ? face_washed
 "You have a receipt. I want it. Please give it to me" ? receipt
 "You didn't bring me back a present. I don't like you anymore" ? real_tea ?! receipt ?! troll_receipt
 Give the troll your receipt => trollbridge_mug + mug ? receipt ~ receipt + troll_receipt
@@ -249,7 +249,7 @@ It looks surprisingly similar to your garden door. ?! door_opened
 The door is unlocked. ? door_opened
 Try the Garden Key => ornate_doorway + door_opened ?! door_opened
 Open the door => tesco_in ? door_opened
-Cross the bridge => trollbridge
+Cross the bridge => trollbridge_out
 
 # tesco_in
 You open the door. The light is blindingly bright. You step through.
