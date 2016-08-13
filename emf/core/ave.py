@@ -323,9 +323,6 @@ class MicroGame:
         self.screen.clear()
 
     def begin(self, again=False):
-        if not(again):
-            self.screen.show_loading()
-            self._compile_items()
         self.character.set_game(self)
         self.show_title()
         room = self['start']
@@ -344,18 +341,3 @@ class MicroGame:
 
     def show_title(self):
         self.screen.show_titles(self.title, self.description, self.author)
-
-    def _compile_items(self):
-        success = False
-        with open(self.path, 'r') as f:
-            for line in f:
-                line = u.clean(line)
-                if line[0] == '%':
-                    success = True
-                elif line[0] == '#':
-                    success = False
-                if success:
-                    with open('apps/mscroggs~ave/all.items', 'a+') as g:
-                        if len(line) == 0 or line[-1] != '\n':
-                            line += '\n'
-                        g.write(line)
