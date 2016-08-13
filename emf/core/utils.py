@@ -14,7 +14,7 @@ def _clean(string):
     return string
 
 def _replacements(string):
-    with open("apps/mscroggs~ave/VERSION") as f:
+    with open("apps/mscroggs~ave/VERSION.ver") as f:
         v = f.read()
     string = v.join(string.split("%v%"))
     return string

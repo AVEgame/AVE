@@ -76,13 +76,14 @@ if sys.argv[1] == "python":
 if sys.argv[1] == "emf":
     with open(os.path.join(b_dir,"VERSION"),"a") as f:
         f.write("~")
+    shutil.move(os.path.join(b_dir,"VERSION"),os.path.join(b_dir,"VERSION.ver"))
     shutil.copy(os.path.join(dir,"commoncore/errors.py"), b_dir)
     shutil.copy(os.path.join(dir,"commoncore/__init__.py"), b_dir)
     shutil.copy(os.path.join(dir,"emf/main.py"), b_dir)
     shutil.copy(os.path.join(dir,"emf/core/screen.py"), b_dir)
     shutil.copy(os.path.join(dir,"emf/core/ave.py"), b_dir)
-    shutil.copy(os.path.join(dir,"emf/core/credits"), b_dir)
-    shutil.copy(os.path.join(dir,"emf/core/title"), b_dir)
+    shutil.copy(os.path.join(dir,"emf/core/credits.tit"), b_dir)
+    shutil.copy(os.path.join(dir,"emf/core/title.tit"), b_dir)
     shutil.copy(os.path.join(dir,"emf/core/screen.py"), b_dir)
     shutil.copy(os.path.join(dir,"emf/core/utils.py"), b_dir)
 
