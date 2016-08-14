@@ -1,3 +1,4 @@
+
 function loadRoom(id,add=Array(),sub=Array()){
     for(var i=0;i<add.length;i++){
         myInventory.push(add[i])
@@ -104,7 +105,23 @@ function getInventory(){
     var inve = Array()
     for(var i=0;i<myInventory.length;i++){
         if(!items[myInventory[i]][1]){
-            inve.push(items[myInventory[i]][0])
+            item = items[myInventory[i]]
+            for(var j=0;j<item[0].length;j++){
+                pass=true;
+                for(var k=0;k<item[0][j][1][2].length;k++){//?
+                    if(myInventory.indexOf(item[0][j][1][2][k])==-1){
+                        pass=false;
+                    }
+                }
+                for(var k=0;k<item[0][j][1][3].length;k++){//?
+                    if(myInventory.indexOf(item[0][j][1][3][k])!=-1){
+                        pass=false;
+                    }
+                }
+                if(pass){
+                    inve.push(item[0][j][0])
+                }
+            }
         }
     }
     return inve

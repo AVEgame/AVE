@@ -118,12 +118,23 @@ def game_to_js(txt):
     for name,item in items.items():
         opt = '"'
         opt += name
-        opt += '" : Array("'
-        try:
-            opt += item[0][0]["name"]
-        except IndexError:
-            pass
-        opt += '",'
+        opt += '" : Array(Array('
+        names = []
+        for a in item[0]:
+            n = 'Array("'
+            try:
+                n += a["name"]
+            except IndexError:
+                pass
+            n += '",Array('
+            n += 'Array(' + ",".join(['"'+b+'"' for b in a["adds"]]) + '),'
+            n += 'Array(' + ",".join(['"'+b+'"' for b in a["rems"]]) + '),'
+            n += 'Array(' + ",".join(['"'+b+'"' for b in a["needs"]]) + '),'
+            n += 'Array(' + ",".join(['"'+b+'"' for b in a["unneeds"]]) + ')'
+            n += "))"
+            names.append(n)
+        opt += ",".join(names)
+        opt += '),'
         if item[1]:
             opt += "true"
         else:
