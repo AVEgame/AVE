@@ -117,5 +117,5 @@ function gameRestart(){
 }
 
 function gameList(){
-    window.location.href = 'select.php';
+    window.location.href = '/play';
 }

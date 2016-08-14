@@ -1,9 +1,9 @@
 <?php
 include("../intro.php");
 ?>
-<script type='text/javascript' src='gamelist.js'></script>
-<script type='text/javascript' src='fromave.js'></script>
-<script type='text/javascript' src='gameselect.js'></script>
+<script type='text/javascript' src='/ave/gamelist.js'></script>
+<script type='text/javascript' src='/ave/fromave.js'></script>
+<script type='text/javascript' src='/ave/gameselect.js'></script>
 <div class='game'>
 <div style='width:100%;text-align:right;margin-bottom:3px'>
 <?php
