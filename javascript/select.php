@@ -1,9 +1,9 @@
 <?php
 include("../intro.php");
+echo("<script type='text/javascript' src='/ave/gamelist.js?time=".date("U")."'></script>");
+echo("<script type='text/javascript' src='/ave/fromave.js?time=".date("U")."'></script>");
+echo("<script type='text/javascript' src='/ave/gameselect.js?time=".date("U")."'></script>");
 ?>
-<script type='text/javascript' src='/ave/gamelist.js'></script>
-<script type='text/javascript' src='/ave/fromave.js'></script>
-<script type='text/javascript' src='/ave/gameselect.js'></script>
 <div class='game'>
 <div style='width:100%;text-align:right;margin-bottom:3px'>
 <?php

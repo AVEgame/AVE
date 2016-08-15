@@ -2,9 +2,9 @@
 include("../intro.php");
 ?>
 <?php
-echo("<script type='text/javascript' src='/ave/games/".$_GET['title'].".js'></script>");
+echo("<script type='text/javascript' src='/ave/games/".$_GET['title'].".js?time=".date("U")."'></script>");
+echo("<script type='text/javascript' src='/ave/game.js?time=".date("U")."'></script>");
 ?>
-<script type='text/javascript' src='/ave/game.js'></script>
 <div class='game'>
 <div style='width:100%;text-align:right;margin-bottom:3px'><span style='color:red'>A</span><span style='color:green'>V</span><span style='color:blue'>E</span></div>
 <div id='gameend'>
