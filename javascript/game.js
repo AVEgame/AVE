@@ -73,7 +73,7 @@ function getRoom(id){
             for(var j=0;j<line[1][1].length;j++){//~
                 index=myInventory.indexOf(line[1][1][j]);
                 if(index!=-1){
-                    myInventory=myInventory.splice(index,-1);
+                    myInventory=myInventory.splice(index,1);
                 }
             }
         roomtext += line[0] + " "
