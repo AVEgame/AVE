@@ -5,7 +5,7 @@ function loadRoom(id,add=Array(),sub=Array()){
     }
     for(var i=0;i<sub.length;i++){
         index=myInventory.indexOf(sub[i]);
-        if(index!=-1){myInventory=myInventory.splice(index,1)}
+        if(index!=-1){myInventory.splice(index,1)}
     }
     if(id=="__GAMEOVER__" || id=="__WINNER__"){
         menu = document.getElementById("menu").innerHTML;
@@ -73,7 +73,7 @@ function getRoom(id){
             for(var j=0;j<line[1][1].length;j++){//~
                 index=myInventory.indexOf(line[1][1][j]);
                 if(index!=-1){
-                    myInventory=myInventory.splice(index,1);
+                    myInventory.splice(index,1);
                 }
             }
         roomtext += line[0] + " "
