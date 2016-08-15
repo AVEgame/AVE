@@ -29,13 +29,13 @@ function loadRoom(id,add=Array(),sub=Array()){
     for(var i=0;i<details[1].length;i++){
         addstr = "Array("
         for(var j=0;j<details[1][i][2].length;j++){
-            addstr +='"'+details[1][i][2]+'"'
+            addstr +='"'+details[1][i][2][j]+'"'
             if(j<details[1][i][2].length-1){addstr+=",";}
         }
         addstr +=")"
         substr = "Array("
         for(var j=0;j<details[1][i][3].length;j++){
-            substr +='"'+details[1][i][3]+'"'
+            substr +='"'+details[1][i][3][j]+'"'
             if(j<details[1][i][3].length-1){substr+=",";}
         }
         substr +=")"
