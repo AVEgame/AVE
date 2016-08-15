@@ -5,7 +5,7 @@ function loadRoom(id,add=Array(),sub=Array()){
     }
     for(var i=0;i<sub.length;i++){
         index=myInventory.indexOf(sub[i]);
-        if(index!=-1){myInventory=myInventory.splice(index,i)}
+        if(index!=-1){myInventory=myInventory.splice(index,1)}
     }
     if(id=="__GAMEOVER__" || id=="__WINNER__"){
         menu = document.getElementById("menu").innerHTML;
