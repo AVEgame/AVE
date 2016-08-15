@@ -82,10 +82,10 @@ def game_to_js(txt):
     out += 'rooms = {'
     my_options = []
     for key,value in rooms.items():
-        opt = '"'+key+'" : Array(Array('
+        opt = '"'+key+'" : Array(\n    Array('
         texts = []
         for t in value[1]:
-            this_t = 'Array("'
+            this_t = '\n        Array("'
             this_t += "\\\"".join(t["text"].split('"'))
             this_t += '",Array('
             this_t += 'Array('+",".join(['"'+a+'"' for a in t['adds']])+'),'
@@ -94,10 +94,10 @@ def game_to_js(txt):
             this_t += 'Array('+",".join(['"'+a+'"' for a in t['unneeds']])+')))'
             texts.append(this_t)
         opt += ",".join(texts)
-        opt += "),Array("
+        opt += "),\n    Array("
         options = []
         for o in value[2]:
-            this_o = 'Array("'
+            this_o = '\n        Array("'
             this_o += o["option"]
             this_o += '","'
             this_o += o["id"]
@@ -110,7 +110,7 @@ def game_to_js(txt):
         opt += ",".join(options)
         opt += "))"
         my_options.append(opt)
-    out += ",".join(my_options)
+    out += ",\n".join(my_options)
     out += '}\n'
 
     out += 'items = {'
