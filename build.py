@@ -79,8 +79,7 @@ else:
             shutil.copy(os.path.join(os.path.join(dir,"games"),f), os.path.join(b_dir,"games"))
     
 # copy version specific files
-if sys.argv[1] != "javascript":
-    shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
+shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
 
 if sys.argv[1] == "javascript":
     shutil.copy(os.path.join(dir,"javascript/game.js"), b_dir)
