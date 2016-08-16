@@ -1,7 +1,7 @@
 function showMainTitle(){
     out = typeset(titleFromAVE())
     out += seperator()
-    out += "<div class='menu'>"
+    out += "<div id='menu'>"
     for(var game in gameList){
         out += "<div class='menuitem' onclick=\"showGameTitle('"+game+"')\">"+gameList[game]["title"]+"</div>"
     }
@@ -13,7 +13,7 @@ function showMainTitle(){
 function showCredits(){
     out = typeset(creditsFromAVE())
     out += seperator()
-    out += "<div class='menu'>"
+    out += "<div id='menu'>"
     out += "<div class='menuitem' onclick=\"showMainTitle()\">Back to main menu</div>"
     out += "</div>"
     document.getElementById("main").innerHTML = out
@@ -26,7 +26,7 @@ function showGameTitle(id){
     out += seperator()
     out += "<div style='text-align:center'>"+gameList[id]["desc"]+"</div>"
     out += seperator()
-    out += "<div class='menu'>"
+    out += "<div id='menu'>"
     out += "<div class='menuitem' onclick='loadGame(\""+id+"\")'>Play game</div>"
     out += "<div class='menuitem' onclick='showMainTitle()'>Back to main menu</div>"
     out += "</div>"
