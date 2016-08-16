@@ -36,7 +36,11 @@ if sys.argv[1] not in ["python","emf","javascript"]:
     raise BadArg("Unknown type")
 
 dir = os.path.dirname(os.path.realpath(__file__))
-b_dir = os.path.join(dir,"build")
+
+if len(sys.argv) >= 3:
+    b_dir = os.path.join(dir,sys.argv[2])
+else:
+    b_dir = os.path.join(dir,"build")
 
 try:
     os.stat(b_dir)
