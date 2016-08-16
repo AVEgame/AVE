@@ -1,6 +1,6 @@
 body {font-family:monospace}
 
-.game {position:relative;margin:auto;background-color:#2f0923;border:5px solid #2f0923;width:600px;height:400px;font-weight:bold}
+.game {position:relative;margin:auto;background-color:#2f0923;border:5px solid #2f0923;width:600px;height:400px;font-weight:bold;line-height:1.2em}
 #roominfo {color:white;width:430px;float:left;height:250px}
 #inventory {padding:3px;background-color:blue;color:yellow;width:164px;float:left;height:239px}
 #menu {width:594px;position:absolute;bottom:0}
