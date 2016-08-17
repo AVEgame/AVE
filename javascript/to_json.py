@@ -127,9 +127,9 @@ def game_to_js(txt):
         out["items"][name].append(names)
         out["items"][name].append(item[1])
     if active:
-        return out,'{"title":"'+title+'","desc":"'+description+'","author":"'+author+'"}'
+        return json.dumps(out),json.dumps({"title":title,"desc":description,"author":author})
     else:
-        return out,None
+        return json.dumps(out),None
 
 
 
