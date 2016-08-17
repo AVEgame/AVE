@@ -86,6 +86,7 @@ Continue => __GAMEOVER__ ? kettleplug
 Plug your kettle lead into the kettle => kettle_on ?! kettleplug ? kettle_lead ~ kettle_lead + kettle_works ?! kettle_works
 Boil the kettle => kettle_on ? kettle_works
 Give up => kitchen ?! kettleplug
+Go through the portal in the floor => portalstairs_in ? mug_portal
 
 # in_fridge
 It's cold and cramped inside the fridge. The door slowly closes behind you.

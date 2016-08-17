@@ -11,16 +11,11 @@ class Item:
     def __init__(self, name, character):
         self.name = name
         self.character = character
-        text = self.character.game.find_item(name, path='apps/mscroggs~ave/all.items')
+        text = self.character.game.find_item(self.name, path=self.character.game.item_path)
         if text and "__HIDDEN__" in text:
             self.hidden = True
         else:
             self.hidden = False
-        if not self.hidden:
-            if len(text) == 0 or text[-1] != '\n':
-                text += '\n'
-            with open('apps/mscroggs~ave/current.items', 'a+') as f:
-                f.write(text)
         text = None
         gc.collect()
 
@@ -36,7 +31,7 @@ class Item:
         return self.name
 
     def get_props(self):
-        text = self.character.game.find_item(self.name, path='apps/mscroggs~ave/current.items')
+        text = self.character.game.find_item(self.name, path=self.character.game.item_path)
         props = []
         for line in text.split('\n')[1:]:
             if u.clean(line) == "__HIDDEN__":
@@ -132,10 +127,6 @@ class AVE:
         self.games = Games(folder, self.screen, self.character)
 
     def start(self):
-        with open('apps/mscroggs~ave/current.items', 'w') as f:
-            f.write('')
-        with open('apps/mscroggs~ave/all.items','w') as f:
-            f.write('')
         self.screen.print_titles()
         game_to_load = self.screen.menu(self.games.titles(), 5, titles=True)
         self.games[game_to_load].load()
@@ -240,6 +231,7 @@ class MicroGame:
         self.screen = screen
         self.character = character
         self.path = path
+        self.item_path = path[:-4] + '.items'
         self.title = ""
         self.description = ""
         self.author = ""
@@ -332,9 +324,6 @@ class MicroGame:
         self.screen.clear()
 
     def begin(self, again=False):
-        if not(again):
-            self.screen.show_loading()
-            self._compile_items()
         self.character.set_game(self)
         self.show_title()
         room = self['start']
@@ -353,18 +342,3 @@ class MicroGame:
 
     def show_title(self):
         self.screen.show_titles(self.title, self.description, self.author)
-
-    def _compile_items(self):
-        success = False
-        with open(self.path, 'r') as f:
-            for line in f:
-                line = u.clean(line)
-                if line[0] == '%':
-                    success = True
-                elif line[0] == '#':
-                    success = False
-                if success:
-                    with open('apps/mscroggs~ave/all.items', 'a+') as g:
-                        if len(line) == 0 or line[-1] != '\n':
-                            line += '\n'
-                        g.write(line)
