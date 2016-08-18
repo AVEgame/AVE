@@ -87,13 +87,15 @@ def game_to_js(txt):
         out["rooms"][key] = []
         texts = []
         for t in value[1]:
-            texts.append(t["text"])
+            this_t = []
+            this_t.append(t["text"])
             checks = []
             checks.append(t['adds'])
             checks.append(t['rems'])
             checks.append(t['needs'])
             checks.append(t['unneeds'])
-            texts.append(checks)
+            this_t.append(checks)
+            texts.append(this_t)
         out["rooms"][key].append(texts)
         options = []
         for o in value[2]:
