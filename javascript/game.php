@@ -1,8 +1,8 @@
 <?php
 include("../intro.php");
-?>
-<?php
-echo("<script type='text/javascript' src='/ave/games/".$_GET['title'].".js?time=".date("U")."'></script>");
+
+$game = $_GET['title'];
+include("avetojs.php");
 echo("<script type='text/javascript' src='/ave/game.js?time=".date("U")."'></script>");
 ?>
 <div class='game'>
@@ -19,7 +19,6 @@ echo("<script type='text/javascript' src='/ave/game.js?time=".date("U")."'></scr
 </div>
 <script type='text/javascript'>
 gameRestart();
-
 </script>
 <?php
 include("../outro.php");
