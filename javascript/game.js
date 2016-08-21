@@ -104,7 +104,7 @@ function getRoom(id){
 function getInventory(){
     var inve = Array()
     for(var i=0;i<myInventory.length;i++){
-        if(!items[myInventory[i]][1]){
+        if((myInventory[i] in items) && (!items[myInventory[i]][1])){
             item = items[myInventory[i]]
             for(var j=0;j<item[0].length;j++){
                 pass=true;

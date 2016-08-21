@@ -25,7 +25,7 @@ class Item:
     def is_hidden(self):
         if self.name in self.character.items:
             return self.character.items[self.name][1]
-        return False
+        return True
 
 class Character:
     def __init__(self, screen):
