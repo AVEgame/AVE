@@ -12,7 +12,7 @@ class Item:
         self.name = name
         self.character = character
         text = self.character.game.find_item(self.name, path=self.character.game.item_path)
-        if text and "__HIDDEN__" in text:
+        if text and "__HIDDEN__" in text or len(text) == 0:
             self.hidden = True
         else:
             self.hidden = False
