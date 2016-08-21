@@ -1,5 +1,4 @@
-
-function loadRoom(id,add=Array(),sub=Array()){
+function loadRoom(id,add,sub){
     for(var i=0;i<add.length;i++){
         myInventory.push(add[i])
     }
@@ -129,7 +128,7 @@ function getInventory(){
 
 function gameRestart(){
     myInventory=Array();
-    loadRoom("start");
+    loadRoom("start",Array(),Array());
     document.getElementById("gameend").style.display="none";
 }
 

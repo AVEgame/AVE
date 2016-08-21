@@ -40,7 +40,7 @@ function loadGame(id){
 function seperator(){
     out = "<div style='text-align:center'>&nbsp;"
     for(var i=0;i<14;i++){
-        out += "<span style='color:red'>~</span>&nbsp;<span style='color:green'>~</span>&nbsp;<span style='color:blue'>~</span>&nbsp;"
+        out += "<span style='color:#cc0000'>~</span>&nbsp;<span style='color:#4d9906'>~</span>&nbsp;<span style='color:#32619e'>~</span>&nbsp;"
     }
     out += "</div>"
     return out;
@@ -48,10 +48,27 @@ function seperator(){
 
 function typeset(txt){
     txt = txt.replace(/ /g,"&nbsp;")
-    txt = txt.replace(/\n/g,"<br />")
     txt = txt.replace(/%v%/g,version())
-    txt = txt.replace(/=/g,"<span style='background-color:blue'>&nbsp;</span>")
-    txt = txt.replace(/@/g,"<span style='background-color:red'>&nbsp;</span>")
-    txt = txt.replace(/\^/g,"<span style='background-color:green'>&nbsp;</span>")
+    txt = txt.replace(/=/g,"<span style='background-color:#32619e'>&nbsp;</span>")
+    txt = txt.replace(/@/g,"<span style='background-color:#cc0000'>&nbsp;</span>")
+    txt = txt.replace(/\^/g,"<span style='background-color:#4d9906'>&nbsp;</span>")
+    txt = txt.replace(/AVE/g,"<span style='color:#cc0000'>A</span><span style='color:#4d9906'>V</span><span style='color:#32619e'>E</span>")
+    split = txt.split("\n")
+    txt = ""
+    for(var i=0;i<split.length;i++){
+        if(split[i].substring(0,2)=="<>"){
+            txt += "<div style='text-align:center'>"
+            txt += split[i].substring(2)
+            txt += "</div>"
+        } else if(split[i].substring(0,2)=="<-"){
+            txt += "<div style='text-align:right'>"
+            txt += split[i].substring(2)
+            txt += "</div>"
+        } else {
+            txt += "<div>"
+            txt += split[i]
+            txt += "</div>"
+        }
+    }
     return txt
 }
