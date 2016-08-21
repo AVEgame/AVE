@@ -1,8 +1,13 @@
 <?php
 include("../intro.php");
 
-$game = $_GET['title'];
-include("avetojs.php");
+if(isset($_GET['user'])){
+    $game = "../../usergames/".$_GET['title'];
+    include("avetojs.php");
+} else {
+    $game = $_GET['title'];
+    include("avetojs.php");
+}
 echo("<script type='text/javascript' src='/ave/game.js?time=".date("U")."'></script>");
 ?>
 <div class='game'>
