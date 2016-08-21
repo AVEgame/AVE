@@ -76,19 +76,6 @@ Go see what the mass is => opposite_lawn
 Steal the police car => car ? police_car + outside + the_police_car
 Go back inside => downstairs
 
-% police_car
-__HIDDEN__
-% the_police_car
-__HIDDEN__
-% neigh_car
-__HIDDEN__
-% outside
-__HIDDEN__
-% train_station
-__HIDDEN__
-% supermarket
-__HIDDEN__
-
 # car
 You are inside
 the police ? the_police_car
@@ -130,9 +117,6 @@ Leave your neighbour's house => outside
 
 % keys
 Car Keys
-
-% neigh_talk
-__HIDDEN__
 
 # neigh_kill
 A look of horror overcomes your neighbour's face as you murder him. + neighbour_dead ~ sidekick + neighbour_body_at_door
@@ -189,15 +173,6 @@ Continue => opposite_living ?! tied
 The man flees.
 Continue => opposite_bedroom
 
-% murderer_killed
-__HIDDEN__
-
-% murderer_knocked_out
-__HIDDEN__
-
-% tied
-__HIDDEN__
-
 % rope
 Rope
 
@@ -245,8 +220,6 @@ Pick up the hammer => secret_room ?! hammer + hammer
 Pick up the dynamite => secret_room ?! dynamite + dynamite
 Leave the secret room => neigh_bath
 
-% mirror_s
-__HIDDEN__
 % mirror_shard
 Shard of Glass
 % hammer
@@ -256,8 +229,6 @@ Dynamite
 
 % talc
 Talcum Powder
-% one_dead
-__HIDDEN__
 
 # neigh_bed
 As you open the door to the bedroom, your neighbour's wife leaps at you with a cricket bat. ?! neigh_wife_dead
@@ -281,15 +252,6 @@ There is an almighty crash as you throw your neighbour's wife's body out of the 
 Through the broken glass, you see that a police car and two officers have arrived outside.
 The police see the body then head towards your neighbour's house. + police_after_you
 Continue => neigh_bed
-
-% police_after_you
-__HIDDEN__
-
-% wife_window
-__HIDDEN__
-
-% neigh_wife_dead
-__HIDDEN__
 
 # neigh_wife_knife
 Your neighbour's wife knocks the knife out of your hand then knocks you out with a masive blow on the head. ~ knife
@@ -433,11 +395,6 @@ Look at the bank statements => office_desk + bank_s
 Look at the diary => office_desk + diary
 Leave the desk => opposite_office
 
-% bank_s
-__HIDDEN__
-% diary
-__HIDDEN__
-
 # office_lean
 As you lean out of the window, you feel a strong pair of arms lift your legs up and throw you outside. You accelerate towards the ground with fatal speed. ?! sidekick ?! escaped ?! day
 You can see the victim lying on the lawn. Everything else is dark. ? sidekick ?! day
@@ -457,9 +414,6 @@ Leave the answerphone => opposite_living
 
 % tape
 Answerphone Tape
-
-% called
-__HIDDEN__
 
 # redial2
 *ring*... *ring*... There is no answer ? called
@@ -606,45 +560,6 @@ He grew angry and did the murder.
 
 After the murder, the murderer hid in the house or escaped depending what you do...
 
-% murder
-__HIDDEN__
-
-% through_window
-__HIDDEN__
-
-% window_broken
-__HIDDEN__
-
-% knock
-__HIDDEN__
-
-% try_door
-__HIDDEN__
-
-% murderer
-__HIDDEN__
-
-% sidekick
-__HIDDEN__
-
-% seen
-__HIDDEN__
-
-% knife_gone
-__HIDDEN__
-
-% show_once
-__HIDDEN__
-
-% sofacut
-__HIDDEN__
-
-% knife_fridge
-__HIDDEN__
-
-% safe_open
-__HIDDEN__
-
 % knife
 Carving Knife
 
@@ -660,111 +575,5 @@ Box of Matches
 % gun
 Revolver
 
-% neighbour_dead
-__HIDDEN__
-
-% neighbours_body_in_hall
-__HIDDEN__
-
-% neighbours_body_in_livingroom
-__HIDDEN__
-
-% neighbours_body_in_sofa
-__HIDDEN__
-
-% neighbours_body_opposite
-__HIDDEN__
-
-% neigh_guard
-__HIDDEN__
-
-% gas_on
-__HIDDEN__
-
-% day
-__HIDDEN__
-
-% escaped
-__HIDDEN__
-
-% compartment_open
-__HIDDEN__
-
-% bureau_fire_day
-__HIDDEN__
-
-% bureau_fire_night
-__HIDDEN__
-
-% candle
-__HIDDEN__
-
-% neighbour_body_at_door
-__HIDDEN__
-
 % money
 Huge Pile of Money
-
-%a0
-__HIDDEN__
-%a1
-__HIDDEN__
-%a2
-__HIDDEN__
-%a3
-__HIDDEN__
-%a4
-__HIDDEN__
-%a5
-__HIDDEN__
-%a6
-__HIDDEN__
-%a7
-__HIDDEN__
-%a8
-__HIDDEN__
-%a9
-__HIDDEN__
-%b0
-__HIDDEN__
-%b1
-__HIDDEN__
-%b2
-__HIDDEN__
-%b3
-__HIDDEN__
-%b4
-__HIDDEN__
-%b5
-__HIDDEN__
-%b6
-__HIDDEN__
-%b7
-__HIDDEN__
-%b8
-__HIDDEN__
-%b9
-__HIDDEN__
-%c0
-__HIDDEN__
-%c1
-__HIDDEN__
-%c2
-__HIDDEN__
-%c3
-__HIDDEN__
-%c4
-__HIDDEN__
-%c5
-__HIDDEN__
-%c6
-__HIDDEN__
-%c7
-__HIDDEN__
-%c8
-__HIDDEN__
-%c9
-__HIDDEN__
-
-% dusted
-__HIDDEN__

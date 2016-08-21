@@ -305,15 +305,6 @@ Continue => __GAMEOVER__
 Blunt Pencil ?! sharpener
 Sharp Pencil ? sharpener
 
-% bin
-__HIDDEN__
-
-% sharpener
-__HIDDEN__
-
-% kettle_works
-__HIDDEN__
-
 % hat
 Wollen Hat
 
@@ -332,17 +323,11 @@ Kettle Lead
 % ac_adapt
 AC Adapter
 
-% table_clear
-__HIDDEN__
-
 % mug
 Mug
 
 % mystery_note
 Mysterious note
-
-% table_clear
-__HIDDEN__
 
 % thimble
 Rubber thimble
@@ -350,39 +335,9 @@ Rubber thimble
 % key
 Garden key
 
-% mug_portal
-__HIDDEN__
-
-% face_washed
-__HIDDEN__
-
-% troll_note
-__HIDDEN__
-
-% troll_crossed
-__HIDDEN__
-
 % realtea
 PG Tips ? pg_tips
 Yorkshire Tea ? yorkshire
 
-% pg_tips
-__HIDDEN__
-
-% yorkshire
-__HIDDEN__
-
-% paid
-__HIDDEN__
-
 % receipt
 Receipt
-
-% door_opened
-__HIDDEN__
-
-% sofa_lying
-__HIDDEN__
-
-% troll_receipt
-__HIDDEN__
