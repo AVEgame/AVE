@@ -27,6 +27,7 @@ $firstitem = true;
 $mode = "PREA";
 
 $txt=file_get_contents(str_replace("avetojs.php","games/".$game.".ave",__FILE__));
+$txt=htmlspecialchars($txt);
 $txt=explode("\n",$txt);
 $txt[] = "#";
 foreach($txt as $line){if(strlen($line)>0){
