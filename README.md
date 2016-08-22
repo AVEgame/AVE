@@ -7,7 +7,7 @@ AVE can currently run on Linux/Mac or on the [EMFCamp Tilda v3 badge](https://ba
 
 To build AVE for Linux/Mac, run `./build.py python` in the main directory. To run, enter the `build` directory
 and run `./run.py`. To run AVE in debug mode, run `DEBUG=1 ./run.py` or `DEBUG=1 python run.py`. To build AVE in Javascript/PHP
-for the [AVE website](http://github.com/mscroggs/AVE-website), run `./build.py javascript`.
+for the [AVE website](http://github.com/AVEgame/AVE-website), run `./build.py javascript`.
 
 To build for the badge run `./build.py emf` then copy all files in the `build` directory to `apps/mscroggs~ave` on the badge.
 
@@ -24,6 +24,6 @@ To discuss the development of this game, join the
 
 [avegame.co.uk](http://avegame.co.uk)
 
-[github.com/mscroggs/AVE](http://github.com/mscroggs/AVE)
+[github.com/AVEgame/AVE](http://github.com/AVEgame/AVE)
 
-The repository for the AVE website is at [github.com/mscroggs/AVE-website](http://github.com/mscroggs/AVE-website).
+The repository for the AVE website is at [github.com/AVEgame/AVE-website](http://github.com/AVEgame/AVE-website).
