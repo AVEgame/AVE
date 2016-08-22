@@ -1,4 +1,6 @@
 <?php
+if(isset($_GET['game'])){$game=$_GET['game'];}
+
 $attrs = Array("+"=>"adds","?"=>"needs","?!"=>"unneeds","~"=>"rems");
 
 function _clean_newlines($string){
@@ -27,7 +29,6 @@ $firstitem = true;
 $mode = "PREA";
 
 $txt=file_get_contents(str_replace("avetojs.php","games/".$game.".ave",__FILE__));
-$txt=htmlspecialchars($txt);
 $txt=explode("\n",$txt);
 $txt[] = "#";
 foreach($txt as $line){if(strlen($line)>0){
@@ -123,100 +124,10 @@ foreach($txt as $line){if(strlen($line)>0){
         }
     }
 }}
-echo "<script type='text/javascript'>\n";
-echo "gameInfo={\"title\":\"".$title."\",\"desc\":\"".$description."\",\"author\":\"".$author."\"}\n";
-echo "rooms = {";
-$my_options = Array();
-foreach($rooms as $key=>$value){
-    $opt = "\"".$key."\" : Array(\n    Array(";
-    $texts = Array();
-    foreach($value[1] as $t){
-        $this_t = "\n        Array(\"";
-        $this_t .= implode("\\\"",explode("\"",$t["text"]));
-        $this_t .= "\",Array(";
-        $ls = Array();
-        foreach($t["adds"] as $a){$ls[] = "\"".$a."\"";}
-        $this_t .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($t["rems"] as $a){$ls[] = "\"".$a."\"";}
-        $this_t .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($t["needs"] as $a){$ls[] = "\"".$a."\"";}
-        $this_t .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($t["unneeds"] as $a){$ls[] = "\"".$a."\"";}
-        $this_t .= "Array(".implode(",",$ls).")))";
-        $texts[] = $this_t;
-    }
-    $opt .= implode(",",$texts);
-    $opt .= "),\n    Array(";
-    $options = Array();
-    foreach($value[2] as $o){
-        $this_o = "\n        Array(\"";
-        $this_o .= $o["option"];
-        $this_o .= "\",\"";
-        $this_o .= $o["id"];
-        $this_o .= "\",Array(";
-        $ls = Array();
-        foreach($o["adds"] as $a){$ls[] = "\"".$a."\"";}
-        $this_o .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($o["rems"] as $a){$ls[] = "\"".$a."\"";}
-        $this_o .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($o["needs"] as $a){$ls[] = "\"".$a."\"";}
-        $this_o .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($o["unneeds"] as $a){$ls[] = "\"".$a."\"";}
-        $this_o .= "Array(".implode(",",$ls).")))";
-        $options[] = $this_o;
-    }
-    $opt .= implode(",",$options);
-    $opt .= "))";
-    $my_options[] = $opt;
-}
-echo implode(",\n",$my_options);
-echo "}\n";
 
-echo "items = {";
-$my_items = Array();
-foreach($items as $name => $item){
-    $opt = "\"";
-    $opt .= $name;
-    $opt .= "\" : Array(Array(";
-    $names = Array();
-    foreach($item[0] as $a){
-        $n = "Array(\"";
-        if(isset($a["name"])){
-            $n .= $a["name"];
-        }
-        $n .= "\",Array(";
-        $ls = Array();
-        foreach($a["adds"] as $aa){$ls[] = "\"".$aa."\"";}
-        $n .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($a["rems"] as $aa){$ls[] = "\"".$aa."\"";}
-        $n .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($a["needs"] as $aa){$ls[] = "\"".$aa."\"";}
-        $n .= "Array(".implode(",",$ls)."),";
-        $ls = Array();
-        foreach($a["unneeds"] as $aa){$ls[] = "\"".$aa."\"";}
-        $n .= "Array(".implode(",",$ls).")";
-        $n .= "))";
-        $names[] = $n;
-    }
-    $opt .= implode(",",$names);
-    $opt .= "),";
-    if($item[1]){
-        $opt .= "true";
-    } else {
-        $opt .= "false";
-    }
-    $opt .= ")";
-    $my_items[] = $opt;
-}
-echo implode(",",$my_items);
-echo "}\n";
-echo "</script>";
-?>
+$out = Array(
+    "rooms" => $rooms,
+    "items" => $items
+);
+
+echo json_encode($out);

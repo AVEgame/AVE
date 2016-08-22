@@ -1,13 +1,6 @@
 <?php
 include("../intro.php");
 
-if(isset($_GET['user'])){
-    $game = "../../usergames/".$_GET['title'];
-    include("avetojs.php");
-} else {
-    $game = $_GET['title'];
-    include("avetojs.php");
-}
 echo("<script type='text/javascript' src='/ave/game.js?time=".date("U")."'></script>");
 ?>
 <div class='game'>
@@ -22,9 +15,25 @@ echo("<script type='text/javascript' src='/ave/game.js?time=".date("U")."'></scr
 <div id='menu'>
 </div>
 </div>
-<script type='text/javascript'>
-gameRestart();
-</script>
 <?php
+echo("
+<script type='text/javascript'>
+//var rooms = ''
+//var items = ''
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType('application/json');
+    xobj.open('GET', '/download/"); if(isset($_GET['user'])){echo("user/");} echo($_GET['title'].".json', true); // Replace 'my_data' with the path to your file
+    xobj.onreadystatechange = function () {
+          if (xobj.readyState == 4 && xobj.status == '200') {
+            json_data = JSON.parse(xobj.responseText);
+            rooms = json_data['rooms']
+            items = json_data['items']
+            gameRestart();
+          }
+    };
+    xobj.send(null); 
+</script>
+");
+
 include("../outro.php");
 ?>

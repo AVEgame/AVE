@@ -27,18 +27,18 @@ function loadRoom(id,add,sub){
     menuItems="";
     for(var i=0;i<details[1].length;i++){
         addstr = "Array("
-        for(var j=0;j<details[1][i][2].length;j++){
-            addstr +='"'+details[1][i][2][j]+'"'
-            if(j<details[1][i][2].length-1){addstr+=",";}
+        for(var j=0;j<details[1][i]["adds"].length;j++){
+            addstr +='"'+details[1][i]["adds"][j]+'"'
+            if(j<details[1][i]["adds"].length-1){addstr+=",";}
         }
         addstr +=")"
         substr = "Array("
-        for(var j=0;j<details[1][i][3].length;j++){
-            substr +='"'+details[1][i][3][j]+'"'
-            if(j<details[1][i][3].length-1){substr+=",";}
+        for(var j=0;j<details[1][i]["rems"].length;j++){
+            substr +='"'+details[1][i]["rems"][j]+'"'
+            if(j<details[1][i]["rems"].length-1){substr+=",";}
         }
         substr +=")"
-        menuItems+="<div class='menuitem' onClick='loadRoom(\""+details[1][i][1]+"\","+addstr+","+substr+")'>"+details[1][i][0]+"</div>";
+        menuItems+="<div class='menuitem' onClick='loadRoom(\""+details[1][i]["id"]+"\","+addstr+","+substr+")'>"+details[1][i]["option"]+"</div>";
     }
     document.getElementById("menu").innerHTML=menuItems;
     inv = getInventory();
@@ -52,49 +52,49 @@ function loadRoom(id,add,sub){
 
 function getRoom(id){
     roomtext=""
-    for(var i=0;i<rooms[id][0].length;i++){
-        line=rooms[id][0][i]
+    for(var i=0;i<rooms[id][1].length;i++){
+        line=rooms[id][1][i]
         pass=true;
-        for(var j=0;j<line[1][2].length;j++){//?
-            if(myInventory.indexOf(line[1][2][j])==-1){
+        for(var j=0;j<line["needs"].length;j++){//?
+            if(myInventory.indexOf(line["needs"][j])==-1){
                 pass=false;
             }
         }
-        for(var j=0;j<line[1][3].length;j++){//?!
-            if(myInventory.indexOf(line[1][3][j])!=-1){
+        for(var j=0;j<line["unneeds"].length;j++){//?!
+            if(myInventory.indexOf(line["unneeds"][j])!=-1){
                 pass=false;
             }
         }
         if(pass){
-            for(var j=0;j<line[1][0].length;j++){//+
-                myInventory.push(line[1][0][j]);
+            for(var j=0;j<line["adds"].length;j++){//+
+                myInventory.push(line["adds"][j]);
             }
-            for(var j=0;j<line[1][1].length;j++){//~
-                index=myInventory.indexOf(line[1][1][j]);
+            for(var j=0;j<line["rems"].length;j++){//~
+                index=myInventory.indexOf(line["rems"][j]);
                 if(index!=-1){
                     myInventory.splice(index,1);
                 }
             }
-        roomtext += line[0] + " "
+        roomtext += line["text"] + " "
         }
     }
 
     options=Array();
-    for(var i=0;i<rooms[id][1].length;i++){
-        line=rooms[id][1][i]
+    for(var i=0;i<rooms[id][2].length;i++){
+        line=rooms[id][2][i]
         pass=true;
-        for(var j=0;j<line[2][2].length;j++){//?
-            if(myInventory.indexOf(line[2][2][j])==-1){
+        for(var j=0;j<line["needs"].length;j++){//?
+            if(myInventory.indexOf(line["needs"][j])==-1){
                 pass=false;
             }
         }
-        for(var j=0;j<line[2][3].length;j++){//?!
-            if(myInventory.indexOf(line[2][3][j])!=-1){
+        for(var j=0;j<line["unneeds"].length;j++){//?!
+            if(myInventory.indexOf(line["unneeds"][j])!=-1){
                 pass=false;
             }
         }
         if(pass){
-            options.push(Array(line[0],line[1],line[2][0],line[2][1]))
+            options.push(line)
         }
     }
     return Array(roomtext,options)
@@ -107,18 +107,18 @@ function getInventory(){
             item = items[myInventory[i]]
             for(var j=0;j<item[0].length;j++){
                 pass=true;
-                for(var k=0;k<item[0][j][1][2].length;k++){//?
-                    if(myInventory.indexOf(item[0][j][1][2][k])==-1){
+                for(var k=0;k<item[0][j]["needs"].length;k++){//?
+                    if(myInventory.indexOf(item[0][j]["needs"][k])==-1){
                         pass=false;
                     }
                 }
-                for(var k=0;k<item[0][j][1][3].length;k++){//?
-                    if(myInventory.indexOf(item[0][j][1][3][k])!=-1){
+                for(var k=0;k<item[0][j]["unneeds"].length;k++){//?
+                    if(myInventory.indexOf(item[0][j]["unneeds"][k])!=-1){
                         pass=false;
                     }
                 }
                 if(pass){
-                    inve.push(item[0][j][0])
+                    inve.push(item[0][j]["name"])
                 }
             }
         }
