@@ -153,7 +153,7 @@ There is a sofa in the living room. There is also a coffee table and a door to t
 Sit on the sofa => sofa
 Go to the coffee table => coffee_table
 Go through the door => gardendoor
-Go back => hall
+Go back to the hall=> hall
 
 # sofa
 You sit on the sofa. It is very comfortable, but you still feel nervous... as if something is missing. ?! sofa_lying
