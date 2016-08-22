@@ -1,1 +1,1 @@
-from to_js import game_to_js
+from to_js import get_game_info

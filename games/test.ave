@@ -1,6 +1,7 @@
 == Test Game ==
 -- This game is very boring and so should only be used to test features. --
 ** Matthew Scroggs **
+~~ off ~~
 
 # start
 You wake up. What do you want to do?
@@ -8,6 +9,7 @@ Go back to sleep => start
 Pick up the hammer => start + hammer ?! hammer
 Put down the hammer => start ~ hammer ? hammer
 Hit yourself on the head with the hammer => hammer ? hammer
+Test for PHP injection attack => inject
 Get up => up
 
 # up
@@ -18,6 +20,10 @@ Pick up the hammer => start + hammer ?! hammer
 Put down the hammer => start ~ hammer ? hammer
 Hit yourself on the head with the hammer => hammer ? hammer
 Run => __WINNER__
+
+# inject
+Here: <?php echo('oops!');?>!
+Go back => start
 
 # hammer
 Your head smashes. GAME OVER.

@@ -62,25 +62,22 @@ if sys.argv[1] == "emf":
             text = create_item_text(os.path.join(b_dir,f))
             with open(os.path.join(b_dir, f[:-4] + '.items'), 'w') as g:
                 g.write(text)
-elif sys.argv[1] == "javascript":
-    from javascript import game_to_js
-    os.mkdir(os.path.join(b_dir,"games"))
-    gamelist = []
-    for f in os.listdir(os.path.join(dir,"games")):
-        if f[-4:] == ".ave":
-            with open(os.path.join(os.path.join(dir,"games"),f)) as file:
-                out,list_me = game_to_js(file.read())
-            if list_me is not None:
-                gamelist.append('"'+f[:-4]+'" : '+list_me)
-            with open(os.path.join(os.path.join(b_dir,"games"),f[:-4]+".js"),"w") as file:
-                file.write(out)
-    with open(os.path.join(b_dir,"gamelist.js"),"w") as f:
-        f.write("gameList={"+",".join(gamelist)+"};")
 else:
     os.mkdir(os.path.join(b_dir,"games"))
     for f in os.listdir(os.path.join(dir,"games")):
         if f[-4:] == ".ave":
             shutil.copy(os.path.join(os.path.join(dir,"games"),f), os.path.join(b_dir,"games"))
+if sys.argv[1] == "javascript":
+    from javascript import get_game_info
+    gamelist = []
+    for f in os.listdir(os.path.join(dir,"games")):
+        if f[-4:] == ".ave":
+            with open(os.path.join(os.path.join(dir,"games"),f)) as file:
+                list_me = get_game_info(file.read())
+            if list_me is not None:
+                gamelist.append('"'+f[:-4]+'" : '+list_me)
+    with open(os.path.join(b_dir,"gamelist.js"),"w") as f:
+        f.write("gameList={"+",".join(gamelist)+"};")
     
 # copy version specific files
 shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
@@ -88,6 +85,7 @@ shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))
 if sys.argv[1] == "javascript":
     shutil.copy(os.path.join(dir,"javascript/game.js"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/game.php"), b_dir)
+    shutil.copy(os.path.join(dir,"javascript/avetojs.php"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/gameselect.js"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/select.php"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/sty.css"), b_dir)

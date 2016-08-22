@@ -1,13 +1,15 @@
 body {font-family:monospace}
 
-.game {position:relative;margin:auto;background-color:#2f0923;border:5px solid #2f0923;width:600px;height:400px;font-weight:bold;line-height:1.2em}
+.gameselect,.game {position:relative;margin:auto;background-color:#2f0923;border:5px solid #2f0923;height:400px;font-weight:bold;line-height:1.2em}
+.gameselect {min-width:600px;display:inline-block}
+.game {width:600px;}
 #roominfo {color:white;width:425px;float:left;height:250px;padding-right:5px}
-#inventory {padding:3px;background-color:blue;color:yellow;width:164px;float:left;height:239px}
+#inventory {padding:3px;background-color:#32619e;color:white;width:164px;float:left;height:239px}
 #menu {width:594px;position:absolute;bottom:0}
-.dummymenuitem {background-color:blue;color:yellow;width:100%;padding:3px}
-.menuitem {background-color:blue;color:yellow;width:100%;padding:3px;cursor:pointer;cursor:hand}
-.menuitem:hover {color:blue;background-color:yellow}
+.dummymenuitem {background-color:#32619e;color:yellow;width:100%;padding:3px}
+.menuitem {background-color:yellow;color:black;width:100%;padding:3px;cursor:pointer;cursor:hand}
+.menuitem:hover {color:white;background-color:#cc0000}
 #gameend {left:100px;width:352px;margin-right:-396px;border:2px solid black;height:80px;margin-bottom:-124px;
-          top:100px;text-align:center;position:relative;color:yellow;background-color:blue;padding:20px;display:none}
+          top:100px;text-align:center;position:relative;color:yellow;background-color:#32619e;padding:20px;display:none}
 #gameendtext {margin-bottom:10px}
 #main {color:white}
