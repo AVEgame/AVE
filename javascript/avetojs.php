@@ -28,7 +28,11 @@ $preamb = true;
 $firstitem = true;
 $mode = "PREA";
 
+if(isset($_GET['user'])){
+$txt=file_get_contents(str_replace("avetojs.php","../usergames/".$game.".ave",__FILE__));
+} else {
 $txt=file_get_contents(str_replace("avetojs.php","games/".$game.".ave",__FILE__));
+}
 $txt=explode("\n",$txt);
 $txt[] = "#";
 foreach($txt as $line){if(strlen($line)>0){

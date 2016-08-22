@@ -23,7 +23,7 @@ if(isset($_GET['user'])){echo("user=true");} else {echo("user=false");}
 echo("
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType('application/json');
-    xobj.open('GET', '/gamelist.json', true); // Replace 'my_data' with the path to your file
+    xobj.open('GET', '/gamelist.json?time=".date("U")."', true); // Replace 'my_data' with the path to your file
     xobj.onreadystatechange = function () {
           if (xobj.readyState == 4 && xobj.status == '200') {
             json_data = JSON.parse(xobj.responseText);

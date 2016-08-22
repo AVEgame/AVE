@@ -22,7 +22,7 @@ echo("
 //var items = ''
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType('application/json');
-    xobj.open('GET', '/download/"); if(isset($_GET['user'])){echo("user/");} echo($_GET['title'].".json', true); // Replace 'my_data' with the path to your file
+    xobj.open('GET', '/download/"); if(isset($_GET['user'])){echo("user/");} echo($_GET['title'].".json?time=".date("U")."', true); // Replace 'my_data' with the path to your file
     xobj.onreadystatechange = function () {
           if (xobj.readyState == 4 && xobj.status == '200') {
             json_data = JSON.parse(xobj.responseText);
