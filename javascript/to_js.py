@@ -18,8 +18,6 @@ def get_game_info(txt):
     else:
         return None
 
-
-
 def _clean_newlines(string):
     while "\n" in string:
         string = string.strip("\n")
