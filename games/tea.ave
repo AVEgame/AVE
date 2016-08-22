@@ -174,7 +174,7 @@ You get a terribly painful papercut. It gets infected. ? table_clear ?! thimble 
 Tidy the papers => coffee_table ?! table_clear + table_clear ?! infection
 Pick up the thimble => coffee_table ?! thimble + thimble ?! infection
 Pick up the note => coffee_table ?! mystery_note + mystery_note ? table_clear ?! infection
-Step away from the coffee table => livingroom  ?! infection
+Step away from the coffee table => livingroom ?! infection
 Continue => __GAMEOVER__ ? table_clear ?! thimble
 
 # gardendoor
@@ -341,3 +341,4 @@ Yorkshire Tea ? yorkshire
 
 % receipt
 Receipt
+
