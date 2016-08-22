@@ -36,7 +36,7 @@ function showGameTitle(id){
 }
 
 function loadGame(id){
-    window.location.href = '/play/'+id+'.ave';
+    window.location.href = '/play/'+id;
 }
 
 function seperator(){

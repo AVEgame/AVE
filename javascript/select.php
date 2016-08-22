@@ -33,7 +33,7 @@ echo("
                 gameList = Array()
                 for(var key in json_data){
                     if(key.substring(0,5)!='user/' && json_data[key]['active']){
-                        gameList.push(json_data[key])
+                        gameList[key] = json_data[key]
                     }
                 }
             }
