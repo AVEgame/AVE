@@ -5,7 +5,8 @@ function showMainTitle(){
     for(var game in gameList){
         out += "<div class='menuitem' onclick=\"showGameTitle('"+game+"')\">"+gameList[game]["title"]+"</div>"
     }
-    if(!user){out += "<div class='menuitem' onclick=\"window.location='/play/user'\">- show user games -</div>"}
+    if(!user){out += "<div class='menuitem' onclick=\"window.location='/play/user'\">- show all games -</div>"}
+    else{out += "<div class='menuitem' onclick=\"window.location='/play'\">- show only default games -</div>"}
     out += "<div class='menuitem' onclick=\"showCredits()\">- credits -</div>"
     out += "</div>"
     document.getElementById("main").innerHTML = out
