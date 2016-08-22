@@ -67,17 +67,6 @@ else:
     for f in os.listdir(os.path.join(dir,"games")):
         if f[-4:] == ".ave":
             shutil.copy(os.path.join(os.path.join(dir,"games"),f), os.path.join(b_dir,"games"))
-if sys.argv[1] == "javascript":
-    from javascript import get_game_info
-    gamelist = []
-    for f in os.listdir(os.path.join(dir,"games")):
-        if f[-4:] == ".ave":
-            with open(os.path.join(os.path.join(dir,"games"),f)) as file:
-                list_me = get_game_info(file.read())
-            if list_me is not None:
-                gamelist.append('"'+f[:-4]+'" : '+list_me)
-    with open(os.path.join(b_dir,"gamelist.js"),"w") as f:
-        f.write("gameList={"+",".join(gamelist)+"};")
     
 # copy version specific files
 shutil.copy(os.path.join(dir,"VERSION"), os.path.join(b_dir,"VERSION"))

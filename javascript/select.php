@@ -14,9 +14,35 @@ for($i=0;$i<21;$i++){
 </div>
 <div id='main'></div>
 </div>
-<script type='text/javascript'>
-showMainTitle()
-</script>
+
 <?php
+echo("
+<script type='text/javascript'>
+");
+if(isset($_GET['user'])){echo("user=true");} else {echo("user=false");}
+echo("
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType('application/json');
+    xobj.open('GET', '/gamelist.json', true); // Replace 'my_data' with the path to your file
+    xobj.onreadystatechange = function () {
+          if (xobj.readyState == 4 && xobj.status == '200') {
+            json_data = JSON.parse(xobj.responseText);
+            if(user){
+                gameList = json_data
+            } else {
+                gameList = Array()
+                for(var key in json_data){
+                    if(key.substring(0,5)!='user/' && json_data[key]['active']){
+                        gameList.push(json_data[key])
+                    }
+                }
+            }
+            showMainTitle()
+          }
+    };
+    xobj.send(null);
+</script>
+");
+
 include("../outro.php");
 ?>
