@@ -75,6 +75,9 @@ class Screen:
     def print_titles(self):
         self.print_file("title")
 
+    def print_download(self):
+        self.print_file("user")
+
     def print_credits(self):
         self.print_file("credits")
 

@@ -91,14 +91,43 @@ class AVE:
         self.games = Games(folder, self.screen, self.character)
 
     def start(self):
+        self.show_title_screen()
+
+    def show_title_screen(self):
         self.screen.print_titles()
-        game_to_load = self.screen.menu(self.games.titles(), 8, titles=True)
-        self.games[game_to_load].load()
+        game_to_load = self.screen.menu(self.games.titles()+["- user contributed games -"], 8, titles=True)
+        if game_to_load == len(self.games.titles()):
+            self.show_download_menu()
+        else:
+            the_game = self.games[game_to_load]
+            self.run_the_game(the_game)
+
+    def show_download_menu(self):
+        try:
+            def downloadavefile(file):
+                return urllib2.urlopen("http://avegame.co.uk/download/"+file).readlines()
+                
+            self.screen.print_download()
+            import json
+            import urllib2
+            the_json = json.load(urllib2.urlopen("http://avegame.co.uk/gamelist.json"))
+            menu_items = []
+            for key,value in the_json.items():
+                if 'user/' in key:#value['user']:
+                    menu_items.append([value['title'],value['author'],key])
+            game_n = self.screen.menu([a[0]+' by '+a[1] for a in menu_items],12)
+            the_game = Game(downloadavefile, self.screen, self.character, menu_items[game_n][2])
+            self.run_the_game(the_game)
+        except AVEToMenu:
+            self.show_title_screen()
+
+    def run_the_game(self, the_game):
+        the_game.load()
         again = True
         while again:
             again = False
             try:
-                self.games[game_to_load].begin()
+                the_game.begin()
             except AVEGameOver:
                 next = self.screen.gameover()
                 self.character.reset()
@@ -126,11 +155,14 @@ class Games:
         self.character = character
         self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join("..",folder))
         self.games = []
+        def avefile(path):
+            with open(path) as f:
+                return f.readlines()
         for game in os.listdir(self.path):
             if ".ave" in game:
-                g = Game(os.path.join(self.path,game), self.screen, self.character)
+                g = Game(avefile, self.screen, self.character, os.path.join(self.path,game))
                 if g.active:
-                    self.games.append(Game(os.path.join(self.path,game), self.screen, self.character))
+                    self.games.append(g)
 
     def titles(self):
         return [g.title for g in self.games]
@@ -148,29 +180,29 @@ class Games:
         return self.games[n]
 
 class Game:
-    def __init__(self, path, screen, character):
+    def __init__(self, avefile, screen, character, *args):
         self.screen = screen
         self.character = character
-        self.path = path
+        self.avefile = avefile
         self.title = ""
         self.description = ""
         self.author = ""
         self.active = True
         self.rooms = {}
-        with open(path) as f:
-            for line in f.readlines():
-                line = clean(line)
-                if len(line) > 0 and line[0] == "#":
-                    break
-                if line[:2] == "==" == line[-2:]:
-                    self.title = clean(line[2:-2])
-                if line[:2] == "--" == line[-2:]:
-                    self.description = clean(line[2:-2])
-                if line[:2] == "**" == line[-2:]:
-                    self.author = clean(line[2:-2])
-                if line[:2] == "~~" == line[-2:]:
-                    if clean(line[2:-2]) == "off":
-                        self.active = False
+        self.args = args
+        for line in avefile(*args):
+            line = clean(line)
+            if len(line) > 0 and line[0] == "#":
+                break
+            if line[:2] == "==" == line[-2:]:
+                self.title = clean(line[2:-2])
+            if line[:2] == "--" == line[-2:]:
+                self.description = clean(line[2:-2])
+            if line[:2] == "**" == line[-2:]:
+                self.author = clean(line[2:-2])
+            if line[:2] == "~~" == line[-2:]:
+                if clean(line[2:-2]) == "off":
+                   self.active = False
 
     def load(self):
         self.screen.clear()
@@ -179,8 +211,7 @@ class Game:
         preamb = True
         firstitem = True
         mode = "PREA"
-        with open(self.path) as f:
-            for line in f.readlines() + ['#']:
+        for line in self.avefile(*self.args) + ['#']:
                 if line[0]=="#" or line[0] == '%':
                     if not preamb and mode == "ROOM" and len(c_options) > 0:
                         rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
