@@ -1,6 +1,5 @@
 <?php
 include("../intro.php");
-echo("<script type='text/javascript' src='/ave/gamelist.js?time=".date("U")."'></script>");
 echo("<script type='text/javascript' src='/ave/fromave.js?time=".date("U")."'></script>");
 echo("<script type='text/javascript' src='/ave/gameselect.js?time=".date("U")."'></script>");
 ?>
