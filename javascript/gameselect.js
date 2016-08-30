@@ -2,9 +2,14 @@ function showMainTitle(){
     out = typeset(titleFromAVE())
     out += seperator()
     out += "<div id='menu'>"
+    count = 0
     for(var game in gameList){
+        count++
         out += "<div class='menuitem' onclick=\"showGameTitle('"+game+"')\">"+gameList[game]["title"]+"</div>"
     }
+
+    document.getElementById("maingameselect").style.height = 250+20.4*count
+
     if(!user){out += "<div class='menuitem' onclick=\"window.location='/play/user'\">- show all games -</div>"}
     else{out += "<div class='menuitem' onclick=\"window.location='/play'\">- show only default games -</div>"}
     out += "<div class='menuitem' onclick=\"showCredits()\">- credits -</div>"

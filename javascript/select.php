@@ -3,7 +3,7 @@ include("../intro.php");
 echo("<script type='text/javascript' src='/ave/fromave.js?time=".date("U")."'></script>");
 echo("<script type='text/javascript' src='/ave/gameselect.js?time=".date("U")."'></script>");
 ?>
-<div class='gameselect'>
+<div class='gameselect' id='maingameselect'>
 <div style='width:100%;text-align:center;margin-bottom:3px'>
 <?php
 for($i=0;$i<21;$i++){

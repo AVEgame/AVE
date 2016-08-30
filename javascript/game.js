@@ -42,15 +42,21 @@ function showMenu(st){
     menuItems="";
     shown = 0
     if(st>0){
-        menuItems+="<div class='menuitem' onClick='showMenu("+max(0,st-5)+")'>^";
+        menuItems+="<div class='menuitem' onClick='showMenu(";
+            if(st<=5){menuItems+=0} else {menuItems+=(st-4)}
+            menuItems+=")'>^";
         for(var i=0;i<5;i++){menuItems+="&nbsp;&nbsp;&nbsp;&nbsp;^";}
         menuItems+="</div>";
+        shown++
     }
-    for(var i=0;i<menu_ls.length;i++){
+    for(var i=st;i<menu_ls.length;i++){
         if(shown>=6 && i+1<menu_ls.length){
-            menuItems+="<div class='menuitem' onClick='showMenu("+(st+5)+")'>v";
+            menuItems+="<div class='menuitem' onClick='showMenu(";
+            if(st==0){menuItems+=(st+5)} else {menuItems+=(st+4)}
+            menuItems+=")'>v";
             for(var i=0;i<5;i++){menuItems+="&nbsp;&nbsp;&nbsp;&nbsp;v";}
             menuItems+="</div>";
+            break
         } else {
             addstr = "Array("
             for(var j=0;j<menu_ls[i]["adds"].length;j++){
