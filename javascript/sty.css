@@ -13,3 +13,6 @@ body {font-family:monospace}
           top:100px;text-align:center;position:relative;color:yellow;background-color:#32619e;padding:20px;display:none}
 #gameendtext {margin-bottom:10px}
 #main {color:white}
+
+#error {left:100px;width:352px;margin-right:-396px;border:2px solid black;height:80px;margin-bottom:-124px;
+          top:100px;text-align:center;position:relative;color:yellow;background-color:#32619e;padding:20px;display:none}

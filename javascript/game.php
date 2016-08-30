@@ -5,6 +5,9 @@ echo("<script type='text/javascript' src='/ave/game.js?time=".date("U")."'></scr
 ?>
 <div class='game'>
 <div style='width:100%;text-align:right;margin-bottom:3px'><span style='color:red'>A</span><span style='color:green'>V</span><span style='color:blue'>E</span></div>
+<div id='error'>
+Game not found<br />If you followed a link to get to this page, please <a href='https://github.com/AVEgame/AVE/issues' target='new'>submit a bug report on GitHub</a>.
+</div>
 <div id='gameend'>
 <div id='gameendtext'>GAME OVER</div>
 <div class='menuitem' onclick='gameRestart()'>Play again</div>
@@ -28,7 +31,11 @@ echo("
             json_data = JSON.parse(xobj.responseText);
             rooms = json_data['rooms']
             items = json_data['items']
-            gameRestart();
+            if(json_data['loaded']){
+                gameRestart();
+            } else {
+                gameerror();
+            }
           }
     };
     xobj.send(null); 

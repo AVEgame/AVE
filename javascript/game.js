@@ -132,6 +132,10 @@ function gameRestart(){
     document.getElementById("gameend").style.display="none";
 }
 
+function gameerror(){
+    document.getElementById("error").style.display="block"
+}
+
 function gameList(){
     window.location.href = '/play';
 }
