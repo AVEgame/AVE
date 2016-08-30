@@ -1,3 +1,5 @@
+menu_ls = Array()
+
 function loadRoom(id,add,sub){
     for(var i=0;i<add.length;i++){
         myInventory.push(add[i])
@@ -24,23 +26,9 @@ function loadRoom(id,add,sub){
     }
     details = getRoom(id);
     document.getElementById("roominfo").innerHTML=details[0];
-    menuItems="";
-    for(var i=0;i<details[1].length;i++){
-        addstr = "Array("
-        for(var j=0;j<details[1][i]["adds"].length;j++){
-            addstr +='"'+details[1][i]["adds"][j]+'"'
-            if(j<details[1][i]["adds"].length-1){addstr+=",";}
-        }
-        addstr +=")"
-        substr = "Array("
-        for(var j=0;j<details[1][i]["rems"].length;j++){
-            substr +='"'+details[1][i]["rems"][j]+'"'
-            if(j<details[1][i]["rems"].length-1){substr+=",";}
-        }
-        substr +=")"
-        menuItems+="<div class='menuitem' onClick='loadRoom(\""+details[1][i]["id"]+"\","+addstr+","+substr+")'>"+details[1][i]["option"]+"</div>";
-    }
-    document.getElementById("menu").innerHTML=menuItems;
+
+    menu_ls = details[1]
+    showMenu(0)
     inv = getInventory();
     inventory = "INVENTORY"
     for(var i=0;i<inv.length;i++){
@@ -48,6 +36,39 @@ function loadRoom(id,add,sub){
     }
     document.getElementById("inventory").innerHTML=inventory;
 
+}
+
+function showMenu(st){
+    menuItems="";
+    shown = 0
+    if(st>0){
+        menuItems+="<div class='menuitem' onClick='showMenu("+max(0,st-5)+")'>^";
+        for(var i=0;i<5;i++){menuItems+="&nbsp;&nbsp;&nbsp;&nbsp;^";}
+        menuItems+="</div>";
+    }
+    for(var i=0;i<menu_ls.length;i++){
+        if(shown>=6 && i+1<menu_ls.length){
+            menuItems+="<div class='menuitem' onClick='showMenu("+(st+5)+")'>v";
+            for(var i=0;i<5;i++){menuItems+="&nbsp;&nbsp;&nbsp;&nbsp;v";}
+            menuItems+="</div>";
+        } else {
+            addstr = "Array("
+            for(var j=0;j<menu_ls[i]["adds"].length;j++){
+                addstr +='"'+menu_ls[i]["adds"][j]+'"'
+                if(j<menu_ls[i]["adds"].length-1){addstr+=",";}
+            }
+                addstr +=")"
+            substr = "Array("
+            for(var j=0;j<menu_ls[i]["rems"].length;j++){
+                substr +='"'+menu_ls[i]["rems"][j]+'"'
+                if(j<menu_ls[i]["rems"].length-1){substr+=",";}
+            }
+            substr +=")"
+            menuItems+="<div class='menuitem' onClick='loadRoom(\""+menu_ls[i]["id"]+"\","+addstr+","+substr+")'>"+menu_ls[i]["option"]+"</div>";
+            shown++
+        }
+    }
+    document.getElementById("menu").innerHTML=menuItems;
 }
 
 function getRoom(id){
