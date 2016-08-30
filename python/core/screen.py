@@ -164,24 +164,26 @@ class Screen:
         delay = True
         self.stdscr.nodelay(1)
         for char in stuff:
-            if self.stdscr.getch() != -1:
-                delay = False
-            if char[2]!=" " and (delay or title):
-                sleep(.01)
-            if len(char)==3:
-                pad.addch(char[0], char[1], char[2])
-            if len(char)==4:
-                pad.addch(char[0], char[1], char[2], char[3])
-            pad.refresh(0,0, py,px, y+py,x+px)
+            if char[0] < y and char[1] < x:
+                if self.stdscr.getch() != -1:
+                    delay = False
+                if char[2]!=" " and (delay or title):
+                    sleep(.01)
+                if len(char)==3:
+                    pad.addch(char[0], char[1], char[2])
+                if len(char)==4:
+                    pad.addch(char[0], char[1], char[2], char[3])
+                pad.refresh(0,0, py,px, y+py,x+px)
         self.stdscr.nodelay(0)
 
     def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH-21):
         pad = self.newpad(y, x)
         for char in stuff:
-            if len(char)==3:
-                pad.addch(char[0], char[1], char[2])
-            if len(char)==4:
-                pad.addch(char[0], char[1], char[2], char[3])
+            if char[0] < y and char[1] < x:
+                if len(char)==3:
+                    pad.addch(char[0], char[1], char[2])
+                if len(char)==4:
+                    pad.addch(char[0], char[1], char[2], char[3])
         pad.refresh(0,0, py,px, y+py,x+px)
 
     def credit_menu(self):
