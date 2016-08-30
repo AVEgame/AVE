@@ -75,6 +75,7 @@ if sys.argv[1] == "javascript":
     shutil.copy(os.path.join(dir,"javascript/game.js"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/game.php"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/avetojs.php"), b_dir)
+    shutil.copy(os.path.join(dir,"javascript/avetoitems.php"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/gameselect.js"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/select.php"), b_dir)
     shutil.copy(os.path.join(dir,"javascript/sty.css"), b_dir)
