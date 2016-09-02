@@ -186,7 +186,6 @@ Go out to the garden => garden ? key
 
 # keyroom
 You smashed the window to collect the key. You unlock the door.
-It's a nice garden. ? garden_key
 Continue => gardendoor
 
 # garden
@@ -248,7 +247,7 @@ Continue => trollbridge_out
 The doorway has a keyhole. ?! door_opened
 It looks surprisingly similar to your garden door. ?! door_opened
 The door is unlocked. ? door_opened
-Try the Garden Key => ornate_doorway + door_opened ?! door_opened
+Try the Garden Key => ornate_doorway + door_opened ?! door_opened ? key
 Open the door => tesco_in ? door_opened
 Cross the bridge => trollbridge_out
 
@@ -341,4 +340,3 @@ Yorkshire Tea ? yorkshire
 
 % receipt
 Receipt
-
