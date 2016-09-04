@@ -31,8 +31,12 @@ function showGameTitle(id){
     out += seperator()
     out += "<div style='text-align:center'>By "+gameList[id]["author"]+"</div>"
     out += seperator()
-    out += "<div style='text-align:center'>"+gameList[id]["desc"]+"</div>"
+    if(!gameList[id]["desc"]){}else{
+    out += "<div style='text-align:center'>"
+        out += gameList[id]["desc"]
+    out += "</div>"
     out += seperator()
+    }
     out += "<div id='menu'>"
     out += "<div class='menuitem' onclick='loadGame(\""+id+"\")'>Play game</div>"
     out += "<div class='menuitem' onclick='showMainTitle()'>Back to main menu</div>"
