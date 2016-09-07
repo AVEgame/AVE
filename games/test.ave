@@ -10,6 +10,7 @@ Pick up the hammer => start + hammer ?! hammer
 Put down the hammer => start ~ hammer ? hammer
 Hit yourself on the head with the hammer => hammer ? hammer
 Test for PHP injection attack => inject
+Test new lines => newline
 Get up => up
 
 # up
@@ -23,6 +24,10 @@ Run => __WINNER__
 
 # inject
 Here: <?php echo('oops!');?>!
+Go back => start
+
+# newline
+There <newline> should <newline> be <newline> newlines!
 Go back => start
 
 # hammer

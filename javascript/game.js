@@ -25,6 +25,9 @@ function loadRoom(id,add,sub){
         return;
     }
     details = getRoom(id);
+    details[0] = details[0].replace("<","&lt;");
+    details[0] = details[0].replace(">","&gt;");
+    details[0] = details[0].replace("<newline>","<br />");
     document.getElementById("roominfo").innerHTML=details[0];
 
     menu_ls = details[1]

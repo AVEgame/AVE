@@ -330,14 +330,18 @@ class Room:
         stuff = []
         text = " ".join(included_lines)
         for word in text.split():
-            if x+len(word) > WIDTH-22:
-                y += 1
+            if word=="<newline>":
+                y+= 1
                 x = 0
-            for i,c in enumerate(word):
-                stuff.append((y,x,c))
+            else:
+                if x+len(word) > WIDTH-22:
+                    y += 1
+                    x = 0
+                for i,c in enumerate(word):
+                    stuff.append((y,x,c))
+                    x += 1
+                stuff.append((y,x," "))
                 x += 1
-            stuff.append((y,x," "))
-            x += 1
         self.screen.type(stuff)
 
         opts = []
