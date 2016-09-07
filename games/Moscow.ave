@@ -1,0 +1,269 @@
+== Moscow ==
+-- --
+** Alex Bolton **
+
+# start
+It is dark outside your hotel. You walk to the window, examining the concrete buildings surrounding you. You see something in the distance.
+Keep looking outside. => 1
+Have a drink at a local bar. => 2
+Change into your pyjamas. => 3
+
+# 1
+A ghostly figure is outside the building. You see the figure beckoning to you.
+Pick up your pyjamas => 1 + pjs ?! pjs
+Go outside to meet the ghostly figure. => 5
+Cower in bed. => 4
+
+# 2
+The bar is not very busy. The bartender is counting the vodka bottles on the wall. "One, two, three, four, five, ..." he says in Russian.
+Sit quietly and let the bartender keep counting. => 6
+Ask the bartender for a drink. => 7
+
+# 3
+Mmm, it's nice to wear pyjamas. You can completely forget about whatever was outside. I guess you're staying in tonight.
+Order room service sandwiches. => 8
+Make a hot chocolate. => 9
+
+# 4
+Having a good cower, eh? Did you bring your pyjamas?
+Yes, I'll put them on. => 10 ~ pjs ? pjs
+No, I didn't pick them up. => 10 ?! pjs
+
+# 5
+You leave the hotel. It is very cold outside. The snow is falling quickly to the ground. The ghost of a woman looks at you.
+Approach the ghost. => 12
+Do not approach the ghost. => 11
+
+# 6
+"Someone must be stealing my vodka bottles!" He looks at you. "Oh, hello George!" he says when he sees you (your name is George). "What can I get you?"
+"I thought you only served vodka?" => 13
+
+# 7
+You ask for a vodka. The bartender loses count and turns to you, annoyed. Customers begin to look at you, observing how the bartender reacts. He takes a deep breath to calm himself, performs some tai chi moves, and then speaks to you. "What kind of vodka would you like?" he asks.
+"I thought you only had one kind of vodka?" => 13
+Leave the bar. => 14
+
+# 8
+You call the recption and request beef sandwiches. A few minutes later you hear footsteps approaching the door. "Room service!" a voice calls as you hear a faint tapping on the door. "I have your beef sandwiches!" You open the door, take the beef sandwiches and sit on the bed. The sandwiches are delicious. The room attendant is still at the door when suddenly the police arrive. "Did you make those sandwiches yourself?" they ask the attendant. She is flustered and can't speak. "These sandwiches were stolen from a different hotel!" they say to you. "And you are under arrest for purchasing stolen goods!" Before you can argue you are in a jail cell with a long sentence ahead of you.
+Continue => __GAMEOVER__
+
+# 9
+You make a hot chocolate. The brown frothy liquid gently spins in the mug after being stirred. Steam rises from the mug and fades into the air.
+Drink the hot chocolate. => 15
+Leave the hot chocolate. => 16
+
+# 10
+There is a tapping at the door. Thank goodness you're tucked up, cowering in bed.
+Remain cowering. => 17
+
+# 11
+The ghost begins, "I need someone brave to help me recover my ring that was stolen by the skeleton king. Will you help me?"
+"Yes, I would be happy to help." => 19
+"No way, that sounds dangerous." => 18
+
+# 12
+As you approach the ghost, you can see the melted smile on her face. "What do you want?" you ask. "Come closer," the ghost requests.
+Keep a distance from the ghost. => 20
+Get closer to the ghost. => 21
+
+# 13
+"That is true," says the barman. He gives you a vodka. You thank the barman and approach two newcomers to the bar. They are playing chess.
+"Watcha playing?" => 22
+"Who's winning?" => 22
+"Queen's Gambit Accepted I see." => 22
+
+# 14
+"Actually, I'd rather go outside " you say. The bartender sighs. "Time wasters..." he mutters. You leave the bar. It is very cold outside. The snow crunches underfoot like a bag of very small ice cubes being crunched underfoot.
+Go to a different bar. => 2
+Go back to the hotel. => 23
+
+# 15
+The hot chocolate is a little too hot to drink, but it is delicious. The room phone rings. Ring ring, ring ring.
+Answer the phone. => 24
+
+# 16
+The steam from the hot chocolate gradually lessens as the drink cools. The room is quiet. The perfect time for some reading?
+Read your book. => 25
+Don't read your book. => 26
+
+# 17
+The tapping at the door continues. It is louder than before. You hear a ghostly scraping sound outside the wooden hotel room door.
+Remain cowering. => 27
+Go outside to see the ghost. => 28
+
+# 18
+"Very well," the ghost sighs. "I guess I'll have to find someone else to share my $$$CASH REWARD$$$..."
+"A cash reward, well why didn't you say so?" => 29
+
+# 19
+You hear the sound of a gingerbread biscuit snapping and find yourself next to the ghost in a grand hall. The hall is dark and filled with long empty benches. Tapestries of skeleton warriors winning heroic victories cover the walls. You ask the ghost where you are. "This is the great hall in the skeleton king's castle," she informs you. "Now follow me!" she cries as she begins to leave. Before she leaves, she changes direction and floats through a wall, calling "Help, I'm being pulled by some invisible force! Save me!" You leave the hall and see a staircase and a corridor.
+Ascend the staircase. => 30
+Proceed along the corridor. => 31
+
+# 20
+The wind is cold. The ghost is laughing as you stay where you are. You are shivering badly.
+Return to the hotel room. => 32
+Approach the ghost. => 32
+
+# 21
+The ghost touches your arm. A feeling of coldness spreads over you. You start to speak but you find you cannot.
+Continue => 32
+
+# 22
+"Go away, you are clearly an oaf!" one of the men says. "Yes, please leave us alone!" says the other. You return to the bar to get more vodka. A different pair of newcomers are playing a card game.
+Approach them. => 33
+Drink until you die from alcohol poisoning. => __GAMEOVER__
+
+# 23
+The pavement is covered in ice and snow. "Watch out, there's a murderer on the loose!" a policeman calls to you. You quicken your pace as you return to the hotel. You keep your distance from buildings, in case the murderer is hiding behind a corner. You slip on the ice. A man with a face like a filthy cauliflower approaches you. "And now to murder you," the man says.
+Get murdered. => __GAMEOVER__
+Don't get murdered. => 23a
+
+#23a
+You try not to get murdered but fail.
+Continue => __GAMEOVER__
+
+# 24
+"Hello," you say as you pick up the phone. "There's someone at reception for you," the receptionist says. "Who is it?" you ask, as you are not expecting anybody to call on you. You hear the receptionist asking for the visitor's name. "He says he can't give his name," the receptionist says.
+Go to meet the visitor. => 34
+Stay in the hotel room. => 35
+
+# 25
+In the book, a funeral director and a demoralised bus driver combine forces to go on a riverboat trip. It's a fun read, and it inspires you to make your own trip by river. You head to the Amazon and see the beautiful rainforest. Unfortunately you die, killed by obscure waterborne bacteria.
+Continue => __GAMEOVER__
+
+# 26
+You don't feel like doing much, do you?
+No. => 36
+
+# 27
+The ghost of a bureaucrat opens the door to the room. He is wearing a worn suit. He sighs. He requests Form 95C.
+Tell him that you do not have the form. => 37
+
+# 28
+A kind looking old lady enters the room as you open the door. She offers you a nice drink of hot chocolate to calm your fears.
+Drink the hot chocolate. => 28a
+Decline the hot chocolate. => 28b
+
+# 28a
+The hot chocolate is poisoned. You die.
+Continue => __GAMEOVER__
+
+# 28b
+"How dare you decline the cup of hot chocolate?" the old lady screams, stabbing you to death.
+Continue => __GAMEOVER__
+
+# 29
+"So you would only help a poor old ghost for a $$$CASH REWARD$$$?" the ghost asks. "For shame!" she screams, killing you.
+Continue => __GAMEOVER__
+
+# 30
+The staircase leads to a large wooden door. Silently, you try the door but it is locked. You see a skeleton guard. He is looking away from you, watching a corridor for intruders. Near to him are a sword and a key.
+Take the sword. => 39 + sword
+Take the key. => 38 + key
+
+# 31
+The corridor is long and poorly lit. No doors lead away from the corridor. After a few minutes you see the light from an approaching flaming torch, and you hear the steps of a large skeleton. There is nowhere to hide so you run back to the hall. The skeleton catches up to you. He is wearing a gold crown and a red velvet cape. "Guards! Guards!" he cries. You are intercepted by skeleton guards and executed.
+Continue => __GAMEOVER__
+
+# 32
+You are frozen to the spot. The ghost begins to fade away. The world begins to fade away.
+Continue => __GAMEOVER__
+
+# 33
+"Hello, we are here for a conference on Finite Element Methods," one of the card players says in English. You speak English and ask them what game they are playing. "It's called Set," the player says. "It's really easy to learn!" You learn the game and spend a pleasant time talking to the two men. After the bar closes, you invite the men back to your hotel room and continue playing - it's so addictive! Years pass, you spend so much time playing Set that you stop being invited to social events and you also lose your job. It's a lonely life and you die destitute, next to a flabby injured bird that got stuck in a drain.
+Continue => __GAMEOVER__
+
+# 34
+You go to the reception desk and see a man in a smart suit. You recognise him from years ago, from your university days. He was at the party where you all got caught in the act of defacing the chancellor's car with Latin puns. You never saw him after that party. He smiles as he sees you. You ask him where he's been all this time. "The evening when we all got busted, I became a pirate's butler," he begins to explain. "Some Somalians kidnapped me and made me work as a butler on their ships, hence the suit," he says, moving his hand in a demonstrative gesture from near his shoulder down to below his hip to emphasise his clothes.
+"Let's go and catch up!" => 40
+"Well it was great to see you!" (return to your room) => 41
+
+# 35
+"Well if he won't give his name then I won't come down to see him," you say. There is a pause. The receptionist relays more information. "He says it is very important that you see him."
+"Oh, all right then." (go downstairs) => 34
+"No, I'm fine here thank you." => 42
+
+# 36
+You sit silently in the room for days and die of dehydration.
+Continue => __GAMEOVER__
+
+# 37
+"Failure to produce Form 95C results in murder," the bureaucrat tells you. He murders you.
+Continue => __GAMEOVER__
+
+# 38
+You silently pick up the key. The skeleton guard does not notice you. You creep to the door and try the key in the lock. It fits, and you turn the key. This makes a noise and the skeleton guard turns to look at you.
+Fight the skeleton guard. => 43
+Run through the door and lock it behind you. => 44
+
+# 39
+You wield the sword and strike the skeleton. He falls to the ground, leaving a pile of bones.
+Pick up the key. => 45 + key
+Explore the corridor that the skeleton was guarding. => 31
+
+# 40
+You go out to a bar for some drinks. It's just like old times! You get so drunk that you end up defacing a stranger's car with your favourite puns. You are caught by the police and go to jail.
+Continue => __GAMEOVER__
+
+# 41
+"I'm sorry but I can't let you go," the man says. Somali pirates begin to swarm the lobby. "They said they would let me go if I could find someone to replace me!" he explains. "The work's not so bad, you get used to the conditions!" You serve for 10 years as a pirate's butler under difficult conditions. They say they will let you go if you can find someone to replace you. You can't think of anyone to replace you except for the man you met in the lobby, but the pirates say it has to be someone new. "The old chancellor at my university?" you suggest. "He's too old," the pirates reply. As you cannot think of anyone to replace you, you work as a butler until you are too old to work, whereupon the pirates make you walk the plank.
+Continue => __GAMEOVER__
+
+# 42
+Soon afterwards there is a knocking at the door. "Please let me in, I'm the person who runs the company that makes the software you like most," the man says. You look through the peephole and it is true! You let them in. "If only you had met me downstairs, I had a business proposition for you that could have made us both billionaires! I've forgotten what it is now - maybe murdering you will bring it back." Before you can protest they have shot you in the chest and left.
+Continue => __GAMEOVER__
+
+# 43
+The skeleton guard picks up the sword and runs towards you. With only a key and cosy pyjamas to defend yourself, you are quickly slaughtered. ? pjs
+The skeleton guard picks up the sword and runs towards you. With only a key to defend yourself, you are quickly slaughtered. ?! pjs
+Continue => __GAMEOVER__
+
+# 44
+You slam the door behind you and turn the key in the lock. You hear the skeleton warrior hacking at the door with his sword and calling for more guards. You are in a throne room. The room has many windows. The floor is made of wood and between the windows the walls are covered in tapestries depicting skeletons performing kingly deeds. There is a golden ring near to the throne. The ghost is frozen in the corner of the room.
+Talk to the ghost. => 47
+Grab the ring. => 48
+
+# 45
+As you pick up the key some skeleton guards approach you. They are armed with swords and are trying to surround you.
+Fight the skeleton guards. => 46a
+Try the key in the door. => 46b
+
+# 46a
+You kill several guards but more are approaching.
+Keep fighting. => 46a
+Give up. => 46c
+
+# 46b
+You run to the door and put the key in the lock. The key doesn't turn in the lock. You are stabbed in the side by a skeleton guard.
+Continue => __GAMEOVER__
+
+# 46c
+You are killed by the skeletons.
+Continue => __GAMEOVER__
+
+# 47
+The ghost is frozen and doesn't respond when you talk to her.
+Search the room. => 47a
+Tap the ghost with the key. => 47b
+
+# 47a
+You begin searching the room. The door breaks open and the skeleton king enters, flanked by guards. They rush towards you. You open a chest and rifle through the contents. The golden ring is inside! As you grab it, the ghost becomes reanimated and in a snap you are both back outside the hotel in Moscow. You hand the ring to the ghost. The ghost thanks you and gives you a commemorative medallion, before vanishing before your very eyes.
+Continue => __WINNER__
+
+# 47b
+You tap the ghost with the key. She becomes reanimated and grabs the ring. The door opens and the skeleton king enters, flanked by guards. The ghost begins to speak, "I brought a human for your special birthday feast, just like you asked." "Excellent, good work," the skeleton king says as he approaches the ghost. "You are going to taste delicious!" he says to you. "Guards, take this human to the kitchen!" You are cooked and served as the speciality dish at the skeleton king's jubilee feast.
+Continue => __GAMEOVER__
+
+# 48
+You approach the ring and grasp it. The ghost suddenly becomes animated and shrieks "No! That ring is a fake!" The skeletons break through the door and, armed with swords, they approach you. The ghost approaches them and the skeletons are apprehensive. But once one of them touches her and finds that it has no effect they round on you and stab you to death.
+Continue => __GAMEOVER__
+
+% pjs
+Cosy Pyjamas
+
+% sword
+Sword
+
+% key
+Key
