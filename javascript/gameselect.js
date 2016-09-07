@@ -8,7 +8,7 @@ function showMainTitle(){
         out += "<div class='menuitem' onclick=\"showGameTitle('"+game+"')\">"+gameList[game]["title"]+"</div>"
     }
 
-    document.getElementById("maingameselect").style.height = 250+20.4*count
+    document.getElementById("maingameselect").style.height = Math.max(250+20.4*count,400)
 
     if(!user){out += "<div class='menuitem' onclick=\"window.location='/play/user'\">- show all games -</div>"}
     else{out += "<div class='menuitem' onclick=\"window.location='/play'\">- show only default games -</div>"}

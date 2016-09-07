@@ -28,6 +28,11 @@ echo("
             json_data = JSON.parse(xobj.responseText);
             if(user){
                 gameList = json_data
+                for(var key in gameList){
+                    if(key.substring(0,5)!='user/' && json_data[key]['active']){
+                        gameList[key]['title'] = '&#9733; ' + gameList[key]['title']
+                    }
+                }
             } else {
                 gameList = Array()
                 for(var key in json_data){
