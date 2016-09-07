@@ -1,7 +1,6 @@
 == Murder! ==
 -- You are woken up by a strange noise at 2am. What is going on?... --
 ** Matthew Scroggs **
-~~ off ~~
 
 # start
 You wake up with a start. It's 2am. You hear a loud noise from outside. That must be what woke you up.
@@ -9,6 +8,10 @@ Look out of the window => window
 Stay in bed and listen => listen
 Head downstairs => downstairs
 Go back to sleep => morning
+
+# morning
+You wake up in the morning and realise that you have missed any chance of solving the murder.
+Continue => __GAMEOVER__
 
 # window
  ?! seen + seen
@@ -92,8 +95,12 @@ Get out of the car => train_station ? train_station ~ train_station
 # train_station
 You are at the train station.
 According to the timetables, the first train is at 9am. Until then, the station is closed. ?! day
-Sleep on a bench by the station => morning_train + day
+Sleep on a bench by the station => morning + day
 Get back in the car => car + train_station
+
+# tv_morning
+You fall asleep in front of the TV. Overnight the TV starts a fire and you die.
+Continue => __GAMEOVER__
 
 # supermarket
 You are at the supermarket.
@@ -189,6 +196,10 @@ Allow the poice officer to arrest you => morning_prison ? police_after_you
 Head to the bedroom => neigh_bed ?! police_after_you
 Head to the bathroom => neigh_bath ?! police_after_you
 
+# morning_prison
+You are in prison forever.
+Continue => __GAMEOVER__
+
 # neigh_stair_gun
 You shoot the police officer.
 Both police officers are dead. ? one_dead ~ police_after_you + police_car
@@ -236,7 +247,7 @@ Your neighbour's wife lies dead on the floor. ? neigh_wife_dead ?! wife_window
 Fight with the sword => neigh_wife_sword  ?! neigh_wife_dead ? sword + neigh_wife_dead 
 Fight with the knife => neigh_wife_knife ?! neigh_wife_dead ? knife
 Fight with your bare hands => neigh_wife_hands ?! neigh_wife_dead
-Sleep in your neighbour's bed => neigh_morning ? neigh_wife_dead
+Sleep in your neighbour's bed => morning ? neigh_wife_dead
 Throw your neighbour's wife's body out of the window => out_window ?! wife_window ? neigh_wife_dead + wife_window
 Shoot at the police out of the window => neigh_shoot ? wife_window ? gun ? police_after_you ?! one_shot
 Leave the bedroom => neigh_up ? neigh_wife_dead
@@ -347,8 +358,8 @@ Look inside the fridge => opposite_in_fridge ? escaped ?! day ?! sidekick
 Leave the fridge => opposite_kitchen
 
 # opposite_in_fridge_hit
-As you open the fridge, there is a sharp blow to the back of your head.
-Continue => morning_kitchen
+As you open the fridge, there is a sharp blow to the back of your head. It is fatal.
+Continue => __GAMEOVER__
 
 # opposite_in_fridge
 The fridge is empty.
@@ -367,8 +378,8 @@ Examine the safe => opposite_safe
 Examine the bureau => opposite_bureau
 
 # opposite_answerphone_hit
-As you lean over to look at the answerphone, there is a sharp blow to the back of your head.
-Continue => morning_answerphone
+As you lean over to look at the answerphone, there is a sharp blow to the back of your head. It is fatal.
+Continue => __GAMEOVER__
 
 # opposite_upstairs
 You are at the top of the stairs of the house opposite

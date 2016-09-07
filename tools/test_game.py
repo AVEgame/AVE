@@ -8,7 +8,11 @@ from core.screen import DummyScreen
 ds = DummyScreen()
 c = Character(ds)
 
-game = Game(sys.argv[1],ds,c)
+def avefile():
+    with open(sys.argv[1]) as f:
+                return f.readlines()
+
+game = Game(avefile,ds,c)
 game.load()
 not_inc = []
 for id in game.rooms:
