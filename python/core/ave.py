@@ -132,7 +132,7 @@ class AVE:
         try:
             def downloadavefile(file):
                 return urllib2.urlopen("http://avegame.co.uk/download/"+file).readlines()
-                
+
             self.screen.print_download()
             import json
             import urllib2
@@ -263,35 +263,26 @@ class Game:
                     if clean(line) == "__HIDDEN__":
                         c_hidden = True
                     elif clean(line) != "":
-                        next_item = {}#'name':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
+                        next_item = parse_req(line)
                         text = line
                         for a in attrs:
                             text = text.split(" "+a)[0]
                         next_item['name'] = clean(text)
-                        reqs = parse_req(line)
-                        for i in reqs:
-                            next_item[i] = reqs[i]
                         c_texts.append(next_item)
                 elif mode == "ROOM":
                     if "=>" in line:
                         lsp = line.split("=>")
-                        next_option = {'id':"",'option':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
+                        next_option = parse_req(line)
                         next_option['option'] = clean(lsp[0])
                         lsp = clean(lsp[1]).split()
                         next_option['id'] = clean(lsp[0])
-                        reqs = parse_req(line)
-                        for i in reqs:
-                            next_option[i] = reqs[i]
                         c_options.append(next_option)
                     elif clean(line) != "":
-                        next_line = {'text':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
+                        next_line = parse_req(line)
                         text = line
                         for a in attrs:
                             text = text.split(" "+a)[0]
                         next_line['text'] = clean(text)
-                        reqs = parse_req(line)
-                        for i in reqs:
-                            next_line[i] = reqs[i]
                         c_txt.append(next_line)
         self.rooms = rooms
         self.character.items = items
