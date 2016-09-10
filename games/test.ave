@@ -11,8 +11,30 @@ Put down the hammer => start ~ hammer ? hammer
 Hit yourself on the head with the hammer => hammer ? hammer
 Test for PHP injection attack => inject
 Test new lines => newline
+Test or => or
 Get up => up
 
+# or
+Testing or...
+Pick up A => or + A ?! A
+Put down A => or ~ A ? A
+Pick up B => or + B ?! B
+Put down B => or ~ B ? B
+Pick up C => or + C ?! C
+Put down C => or ~ C ? C
+A or B => or ? (A B)
+A or B or C => or ? (A B C)
+A or (B and C) => or ? (A B) ? (A C)
+A and B => or ? A ? B
+A or not B => or ? (A !B)
+Go back => start
+
+% A
+Item A
+% B
+Item B
+% C
+Item C
 # up
 You bash your head and fall back on the bed.
 Your head really hurts. What do you want to do?

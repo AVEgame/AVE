@@ -1,8 +1,26 @@
 from __future__ import division
 from core.utils import *
 from core.errors import *
-
+import re
 attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
+
+def parse_req(line):
+    pattern = re.compile("(\([^\)]*) ([^\)]*\))")
+    while pattern.search(line) is not None:
+        line = pattern.sub(r"\1,\2",line)
+    lsp = line.split()
+    reqs = {a:[] for b,a in attrs.items()}
+    for i in range(len(lsp)-1):
+        for a,b in attrs.items():
+            if lsp[i] == a:
+                if a in ["?","?!"]:
+                    lsp[i+1] = lsp[i+1].replace("(","")
+                    lsp[i+1] = lsp[i+1].replace(")","")
+                    reqs[b].append(lsp[i+1].split(","))
+                else:
+                    reqs[b].append(lsp[i+1])
+    return reqs
+
 
 class Item:
     def __init__(self, name, character):
@@ -58,20 +76,28 @@ class Character:
     def has(self, item):
         if type(item) == list:
             for a in item:
-                if a not in self.inventory_ids():
+                for b in a:
+                    if b in self.inventory_ids():
+                        break
+                    if b[0]=="!" and b[1:] not in self.inventory_ids():
+                        break
+                else:
                     return False
             return True
-        else:
-            return item in self.inventory_ids()
+        return item in self.inventory
 
     def unhas(self, item):
         if type(item) == list:
             for a in item:
-                if a in self.inventory_ids():
+                for b in a:
+                    if b not in self.inventory_ids():
+                        break
+                    if b[0]=="!" and b[1:] in self.inventory_ids():
+                        break
+                else:
                     return False
             return True
-        else:
-            return item not in self.inventory_ids()
+        return item in self.inventory
 
     def show_inventory(self):
         inv = []
@@ -237,16 +263,14 @@ class Game:
                     if clean(line) == "__HIDDEN__":
                         c_hidden = True
                     elif clean(line) != "":
-                        next_item = {'name':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
+                        next_item = {}#'name':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
                         text = line
                         for a in attrs:
                             text = text.split(" "+a)[0]
                         next_item['name'] = clean(text)
-                        lsp = line.split()
-                        for i in range(len(lsp)-1):
-                            for a,b in attrs.items():
-                                if lsp[i] == a:
-                                    next_item[b].append(lsp[i+1])
+                        reqs = parse_req(line)
+                        for i in reqs:
+                            next_item[i] = reqs[i]
                         c_texts.append(next_item)
                 elif mode == "ROOM":
                     if "=>" in line:
@@ -255,10 +279,9 @@ class Game:
                         next_option['option'] = clean(lsp[0])
                         lsp = clean(lsp[1]).split()
                         next_option['id'] = clean(lsp[0])
-                        for i in range(1,len(lsp),2):
-                            for a,b in attrs.items():
-                                if lsp[i] == a:
-                                    next_option[b].append(lsp[i+1])
+                        reqs = parse_req(line)
+                        for i in reqs:
+                            next_option[i] = reqs[i]
                         c_options.append(next_option)
                     elif clean(line) != "":
                         next_line = {'text':"",'needs':[],'unneeds':[],'adds':[],'rems':[]}
@@ -266,11 +289,9 @@ class Game:
                         for a in attrs:
                             text = text.split(" "+a)[0]
                         next_line['text'] = clean(text)
-                        lsp = line.split()
-                        for i in range(len(lsp)-1):
-                            for a,b in attrs.items():
-                                if lsp[i] == a:
-                                    next_line[b].append(lsp[i+1])
+                        reqs = parse_req(line)
+                        for i in reqs:
+                            next_line[i] = reqs[i]
                         c_txt.append(next_line)
         self.rooms = rooms
         self.character.items = items
