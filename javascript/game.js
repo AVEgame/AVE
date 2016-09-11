@@ -1,5 +1,29 @@
 menu_ls = Array()
 
+function checkneeds(line){
+    for(var j=0;j<line["needs"].length;j++){//?
+        for(var i=0;i<line["needs"][j].length;i++){
+            pass = false
+            if(myInventory.indexOf(line["needs"][j])!=-1 || (line["needs"][j].substring(0,1)=="!" && myInventory.indexOf(line["needs"][j].substring(1))==-1)){
+                pass=true;
+                break;
+            }
+        }
+        if(!pass){return false;}
+    }
+    for(var j=0;j<line["unneeds"].length;j++){//?
+        for(var i=0;i<line["unneeds"][j].length;i++){
+            pass = false
+            if(myInventory.indexOf(line["unneeds"][j])==-1 || (line["unneeds"][j].substring(0,1)=="!" && myInventory.indexOf(line["unneeds"][j].substring(1))!=-1)){
+                pass=true;
+                break;
+            }
+        }
+        if(!pass){return false;}
+    }
+    return true;
+}
+
 function loadRoom(id,add,sub){
     for(var i=0;i<add.length;i++){
         myInventory.push(add[i])
@@ -84,18 +108,7 @@ function getRoom(id){
     roomtext=""
     for(var i=0;i<rooms[id][1].length;i++){
         line=rooms[id][1][i]
-        pass=true;
-        for(var j=0;j<line["needs"].length;j++){//?
-            if(myInventory.indexOf(line["needs"][j])==-1){
-                pass=false;
-            }
-        }
-        for(var j=0;j<line["unneeds"].length;j++){//?!
-            if(myInventory.indexOf(line["unneeds"][j])!=-1){
-                pass=false;
-            }
-        }
-        if(pass){
+        if(checkneeds(line)){
             for(var j=0;j<line["adds"].length;j++){//+
                 myInventory.push(line["adds"][j]);
             }
@@ -112,18 +125,7 @@ function getRoom(id){
     options=Array();
     for(var i=0;i<rooms[id][2].length;i++){
         line=rooms[id][2][i]
-        pass=true;
-        for(var j=0;j<line["needs"].length;j++){//?
-            if(myInventory.indexOf(line["needs"][j])==-1){
-                pass=false;
-            }
-        }
-        for(var j=0;j<line["unneeds"].length;j++){//?!
-            if(myInventory.indexOf(line["unneeds"][j])!=-1){
-                pass=false;
-            }
-        }
-        if(pass){
+        if(checkneeds(line)){
             options.push(line)
         }
     }
@@ -136,18 +138,7 @@ function getInventory(){
         if((myInventory[i] in items) && (!items[myInventory[i]][1])){
             item = items[myInventory[i]]
             for(var j=0;j<item[0].length;j++){
-                pass=true;
-                for(var k=0;k<item[0][j]["needs"].length;k++){//?
-                    if(myInventory.indexOf(item[0][j]["needs"][k])==-1){
-                        pass=false;
-                    }
-                }
-                for(var k=0;k<item[0][j]["unneeds"].length;k++){//?
-                    if(myInventory.indexOf(item[0][j]["unneeds"][k])!=-1){
-                        pass=false;
-                    }
-                }
-                if(pass){
+                if(checkneeds(item[0][j])){
                     inve.push(item[0][j]["name"])
                 }
             }

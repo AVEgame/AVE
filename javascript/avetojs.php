@@ -22,6 +22,33 @@ function clean($string){
     $string = _clean($string);
     return $string;
 }
+
+function parse_req($line){
+    global $attrs;
+    while(preg_match("/(\([^\)]*) ([^\)]*\))/",$line)){
+        $line = preg_replace("/(\([^\)]*) ([^\)]*\))/","$1,$2",$line);
+    }
+    $lsp = explode($line," ");
+    $reqs = Array();
+    foreach($attrs as $b=>$a){
+        $reqs[$a] = Array();
+    }
+    for($i=0;$i<count($lsp)-1;$i++){
+        foreach($attrs as $a=>$b){
+            if($lsp[$i] == $a){
+                if($a == "?" || $a == "?!"){
+                    $lsp[$i+1] = str_replace("(","",$lsp[$i+1]);
+                    $lsp[$i+1] = str_replace(")","",$lsp[$i+1]);
+                    $reqs[$b][] = explode(",",$lsp[$i+1]);
+                } else {
+                    $reqs[$b][] = $lsp[i+1];
+                }
+            }
+        }
+    }
+    return $reqs;
+}
+
 $rooms = Array();
 $items = Array();
 $preamb = true;
@@ -78,54 +105,31 @@ foreach($txt as $line){if(strlen($line)>0){
         if(clean($line) == "__HIDDEN__"){
             $c_hidden = true;
         } else if(clean($line) != ""){
-            $next_item = Array("name"=>"","needs"=>[],"unneeds"=>[],"adds"=>[],"rems"=>[]);
+            $next_item = parse_req(clean($line));
             $text = $line;
             foreach($attrs as $a=>$b){
                 $text = explode(" ".$a,$text);
                 $text = $text[0];
             }
             $next_item["name"] = clean($text);
-            $lsp = explode(" ",$line);
-            for($i=0;$i<count($lsp)-1;$i++){
-                foreach($attrs as $a=>$b){
-                    if($lsp[$i] == $a){
-                        $next_item[$b][] = $lsp[$i+1];
-                    }
-                }
-            }
             $c_texts[] = $next_item;
         }
     } else if($mode == "ROOM"){
         if(strpos($line,"=>")!==false){
             $lsp = explode("=>",$line);
-            $next_option = Array("id"=>"","option"=>"","needs"=>Array(),"unneeds"=>Array(),"adds"=>Array(),"rems"=>Array());
+            $next_option = parse_req(clean($line));
             $next_option["option"] = clean($lsp[0]);
             $lsp = explode(" ",clean($lsp[1]));
             $next_option["id"] = clean($lsp[0]);
-            for($i=1;$i<count($lsp);$i+=2){
-                foreach($attrs as $a=>$b){
-                    if($lsp[$i] == $a){
-                        $next_option[$b][] = $lsp[$i+1];
-                    }
-                }
-            }
             $c_options[] = $next_option;
         } else if(clean($line) != ""){
-            $next_line = Array("text"=>"","needs"=>Array(),"unneeds"=>Array(),"adds"=>Array(),"rems"=>Array());
+            $next_line = parse_req(clean($line));
             $text = $line;
             foreach($attrs as $a=>$b){
                 $text = explode(" ".$a,$text);
                 $text = $text[0];
             }
             $next_line["text"] = clean($text);
-            $lsp = explode(" ",$line);
-            for($i=0;$i<count($lsp)-1;$i++){
-                foreach($attrs as $a=>$b){
-                    if($lsp[$i] == $a){
-                        $next_line[$b][] = $lsp[$i+1];
-                    }
-                }
-            }
             $c_txt[] = $next_line;
         }
     }
