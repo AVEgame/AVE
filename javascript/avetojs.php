@@ -28,7 +28,7 @@ function parse_req($line){
     while(preg_match("/(\([^\)]*) ([^\)]*\))/",$line)){
         $line = preg_replace("/(\([^\)]*) ([^\)]*\))/","$1,$2",$line);
     }
-    $lsp = explode($line," ");
+    $lsp = explode(" ",$line);
     $reqs = Array();
     foreach($attrs as $b=>$a){
         $reqs[$a] = Array();
@@ -41,7 +41,7 @@ function parse_req($line){
                     $lsp[$i+1] = str_replace(")","",$lsp[$i+1]);
                     $reqs[$b][] = explode(",",$lsp[$i+1]);
                 } else {
-                    $reqs[$b][] = $lsp[i+1];
+                    $reqs[$b][] = $lsp[$i+1];
                 }
             }
         }

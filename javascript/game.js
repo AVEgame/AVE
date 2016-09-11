@@ -4,7 +4,7 @@ function checkneeds(line){
     for(var j=0;j<line["needs"].length;j++){//?
         for(var i=0;i<line["needs"][j].length;i++){
             pass = false
-            if(myInventory.indexOf(line["needs"][j])!=-1 || (line["needs"][j].substring(0,1)=="!" && myInventory.indexOf(line["needs"][j].substring(1))==-1)){
+            if(myInventory.indexOf(line["needs"][j][i])!=-1 || (line["needs"][j][i].substring(0,1)=="!" && myInventory.indexOf(line["needs"][j][i].substring(1))==-1)){
                 pass=true;
                 break;
             }
@@ -14,7 +14,7 @@ function checkneeds(line){
     for(var j=0;j<line["unneeds"].length;j++){//?
         for(var i=0;i<line["unneeds"][j].length;i++){
             pass = false
-            if(myInventory.indexOf(line["unneeds"][j])==-1 || (line["unneeds"][j].substring(0,1)=="!" && myInventory.indexOf(line["unneeds"][j].substring(1))!=-1)){
+            if(myInventory.indexOf(line["unneeds"][j][i])==-1 || (line["unneeds"][j][i].substring(0,1)=="!" && myInventory.indexOf(line["unneeds"][j][i].substring(1))!=-1)){
                 pass=true;
                 break;
             }
