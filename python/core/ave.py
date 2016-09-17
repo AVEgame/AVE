@@ -17,7 +17,8 @@ def parse_req(line):
         for a,b in attrs.items():
             if lsp[i] == a:
                 if a in ["?","?!"]:
-                    lsp[i+1] = lsp[i+1].replace("(","")
+                    lsp[i+1] = lsp[i+1].replace("(","? ")
+                    lsp[i+1] = lsp[i+1].replace("(","?! ")
                     lsp[i+1] = lsp[i+1].replace(")","")
                     reqs[b].append(lsp[i+1].split(","))
                 else:
@@ -111,22 +112,42 @@ class Character:
             return True
         return self._has(item)
 
+    def _split_up(self, item):
+        for s,f in [
+                    ("==",lambda a,b:a==b),
+                    (">=",lambda a,b:a>=b),
+                    ("<=",lambda a,b:a<=b),
+                    ("<",lambda a,b:a<b),
+                    (">",lambda a,b:a>b),
+                    ("=",lambda a,b:a==b)
+                   ]:
+            if s in item:
+                return item.split(s,1)[0],f,item.split(s,1)[1]
+        return item, None, None
+
+    def _parse_number(self, num):
+        try:
+            return int(num)
+        except ValueError:
+            try:
+                return float(num)
+            except ValueError:
+                if "__R__" in num:
+                    import random
+                    if num == "__R__":
+                        return random.random()
+                    if re.match(r"__R__[0-9]",num):
+                        return random.random() * int(num.split("__R__",1)[1])
+                else:
+                    return self.numbers[num][0]
+
     def _has(self, item):
-        if self.is_number(item):
-            for s,f in [
-                        ("==",lambda a,b:a==b),
-                        (">=",lambda a,b:a>=b),
-                        ("<=",lambda a,b:a<=b),
-                        ("<",lambda a,b:a<b),
-                        (">",lambda a,b:a>b),
-                        ("=",lambda a,b:a==b)
-                       ]:
-                if s in item:
-                    try:
-                        return f(self.numbers[item.split(s,1)[0]][0], int(item.split(s,1)[1]))
-                    except ValueError:
-                        return f(self.numbers[item.split(s,1)[0]][0], self.numbers[item.split(s,1)[1]][0])
-            return self.numbers[item][0] > 0
+        item_,f,against = self._split_up(item)
+        if "__R__" in item_ or self.is_number(item_):
+            if f is None:
+                return self._parse_number(item_) > 0
+            else:
+                return f(self._parse_number(item_),self._parse_number(against))
         else:
             return item in self.inventory_ids()
 
@@ -366,10 +387,24 @@ class Game:
             raise AVEGameOver
         if id == "__WINNER__":
             raise AVEWinner
+        if "__R__" in id:
+            id = self._parse_random(id)
         if id in self.rooms:
             return self.rooms[id]
         else:
             return self.fail_room()
+
+    def _parse_random(self, id):
+        import random
+        rooms = id.split("(",1)[1].split(")",1)[0].split(",")
+        if "[" in id:
+            ls = []
+            nums = [int(i) for i in id.split("[",1)[1].split("]",1)[0].split(",")]
+            for r,n in zip(rooms, nums):
+                ls += [r]*n
+            return random.choice(ls)
+        else:
+            return random.choice(rooms)
 
     def begin(self):
         import curses
