@@ -9,11 +9,11 @@ import ugfx
 import buttons
 import pyb
 REPEATRATE = 331
-HEIGHT = 20
-WIDTH = 36
-
 DX=9
 DY=12
+HEIGHT = ugfx.width/DY
+WIDTH = ugfx.height/DX
+
 
 buttons.init()
 
@@ -73,9 +73,9 @@ class Screen:
         self.print_file("credits.tit")
 
     def put_ave_logo(self):
-        ugfx.text(320-DX*3,1,"A",ugfx.RED)
-        ugfx.text(320-DX*2,1,"V",ugfx.GREEN)
-        ugfx.text(320-DX,  1,"E",ugfx.BLUE)
+        ugfx.text(ugfx.width-DX*3,1,"A",ugfx.RED)
+        ugfx.text(ugfx.width-DX*2,1,"V",ugfx.GREEN)
+        ugfx.text(ugfx.width-DX,  1,"E",ugfx.BLUE)
 
     def print_file(self, filename):
         import os
@@ -109,18 +109,18 @@ class Screen:
         return self.gameend("YOU WIN!")
 
     def gameend(self,text):
-        ugfx.Label(50,50,220,50,text,style=s2,justification=ugfx.Label.CENTER)
+        ugfx.Label(50,50,ugfx.width-100,50,text,style=s2,justification=ugfx.Label.CENTER)
         return self.menu(["Play again","Play another game","Quit"], 3, wx=WIDTH-30, controls=False, titles=True)
 
     def show_inventory(self, inventory):
-        ugfx.area(220,DY,100,14*DY,ugfx.BLUE)
-        ugfx.text(220,DY,"INVENTORY",ugfx.WHITE)
+        ugfx.area(ugfx.width-100,DY,100,14*DY,ugfx.BLUE)
+        ugfx.text(ugfx.width-100,DY,"INVENTORY",ugfx.WHITE)
         for i in range(12):
             if i<len(inventory):
-                ugfx.text(220,DY*(2+i),inventory[i],ugfx.WHITE)
+                ugfx.text(ugfx.width-100,DY*(2+i),inventory[i],ugfx.WHITE)
 
     def type(self, text, py=0, px=0, y=HEIGHT, x=WIDTH-21, title=False):
-        ugfx.Label(0,0,215,13*DY,text,style=s,justification=ugfx.Label.LEFTTOP)
+        ugfx.Label(0,0,ugfx.width-105,13*DY,text,style=s,justification=ugfx.Label.LEFTTOP)
 
     def credit_menu(self):
         while True:
@@ -175,7 +175,7 @@ class Screen:
             wide = wx-4
         else:
             wide = wx
-        ugfx.area(0,240-y*DY,320,y*DY,ugfx.YELLOW)
+        ugfx.area(0,ugfx.height-y*DY,ugfx.width,y*DY,ugfx.YELLOW)
 
         start = min(max(0,selected-y//2),max(0,len(ls)-y))
         for y_pos in range(y):
@@ -186,16 +186,16 @@ class Screen:
             col = (4)
             if y_pos+start == selected:
                 col = (5)
-                ugfx.area(0,240-y*DY+y_pos*DY,320,DY,ugfx.RED)
-                ugfx.text(6,1+240-y*DY+y_pos*DY,title,ugfx.WHITE)
+                ugfx.area(0,ugfx.height-y*DY+y_pos*DY,ugfx.width,DY,ugfx.RED)
+                ugfx.text(6,1+ugfx.height-y*DY+y_pos*DY,title,ugfx.WHITE)
             else:
-                ugfx.text(6,1+240-y*DY+y_pos*DY,title,ugfx.BLACK)
+                ugfx.text(6,1+ugfx.height-y*DY+y_pos*DY,title,ugfx.BLACK)
 
         if controls:
             if start > 0:
-                ugfx.text(320-DX-1,240-y*DY+1,"^",ugfx.WHITE)
+                ugfx.text(ugfx.width-DX-1,ugfx.height-y*DY+1,"^",ugfx.WHITE)
             if start < max(0,len(ls) - y):
-                ugfx.text(320-DX-1,240-DY+1,"v",ugfx.WHITE)
+                ugfx.text(ugfx.width-DX-1,ugfx.height-DY+1,"v",ugfx.WHITE)
 
     def show_titles(self, title, description, author):
         stuff = []
@@ -226,4 +226,4 @@ class Screen:
                 raise e.AVEToMenu
 
     def show_loading(self):
-        ugfx.Label(50,50,220,50,"Loading... Please wait",style=s2,justification=ugfx.Label.CENTER)
+        ugfx.Label(50,50,ugfx,width-100,50,"Loading... Please wait",style=s2,justification=ugfx.Label.CENTER)
