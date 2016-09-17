@@ -8,6 +8,9 @@ def parse_req(line):
     pattern = re.compile("(\([^\)]*) ([^\)]*\))")
     while pattern.search(line) is not None:
         line = pattern.sub(r"\1,\2",line)
+    pattern2 = re.compile(" +(<|>=?) +")
+    while pattern2.search(line) is not None:
+        line = pattern2.sub(r"\1",line)
     lsp = line.split()
     reqs = {a:[] for b,a in attrs.items()}
     for i in range(len(lsp)-1):
@@ -47,19 +50,35 @@ class Item:
 
 class Character:
     def __init__(self, screen):
-        self.reset()
-        self.screen = screen
         self.items = []
+        self.screen = screen
+        self.reset()
+
+    def set_items(self, items):
+        self.items = items
+        self.reset_numbers()
+
+    def reset_numbers(self):
+        self.numbers = {}
+        for i in self.items:
+            if self.is_number(i):
+                self.numbers[i] = [self.items[i][3],Item(i,self)]
 
     def reset(self):
         self.inventory = []
         self.name = ""
+        self.reset_numbers()
 
     def _add_item(self, item):
-        self.inventory.append(Item(item,self))
+        if self.is_number(item):
+            self.numbers[item][0] += 1
+        else:
+            self.inventory.append(Item(item,self))
 
     def _remove_item(self, item):
-        if item in self.inventory_ids():
+        if self.is_number(item):
+            self.numbers[item][0] -= 1
+        elif item in self.inventory_ids():
             for a,b in enumerate(self.inventory):
                 if b.name == item:
                     self.inventory = self.inventory[:a] + self.inventory[a+1:]
@@ -77,30 +96,55 @@ class Character:
         if type(item) == list:
             for a in item:
                 for b in a:
-                    if b in self.inventory_ids():
+                    if self._has(b):
                         break
-                    if b[0]=="!" and b[1:] not in self.inventory_ids():
+                    if b[0]=="!" and not self._has(b[1:]):
                         break
                 else:
                     return False
             return True
-        return item in self.inventory
+        return self._has(item)
+
+    def _has(self, item):
+        if self.is_number(item):
+            if ">=" in item:
+                return self.numbers[item.split(">=",1)[0]][0] >= int(item.split(">=",1)[1])
+            elif "<=" in item:
+                return self.numbers[item.split("<=",1)[0]][0] <= int(item.split("<=",1)[1])
+            elif ">" in item:
+                return self.numbers[item.split(">",1)[0]][0] > int(item.split(">",1)[1])
+            elif "<" in item:
+                return self.numbers[item.split("<",1)[0]][0] < int(item.split("<",1)[1])
+            else:
+                return self.numbers[item][0] > 0
+        else:
+            return item in self.inventory_ids()
 
     def unhas(self, item):
         if type(item) == list:
             for a in item:
                 for b in a:
-                    if b not in self.inventory_ids():
+                    if not self._has(b):
                         break
-                    if b[0]=="!" and b[1:] in self.inventory_ids():
+                    if b[0]=="!" and self._has(b):
                         break
                 else:
                     return False
             return True
-        return item in self.inventory
+        return not self._has(item)
+
+    def is_number(self, item):
+        if item in self.items:
+            return self.items[item][2]
+        for s in ["<",">"]:
+            if item.split(s,1)[0] in self.items:
+                return self.items[item.split(s,1)[0]][2]
+        return False
 
     def show_inventory(self):
         inv = []
+        for n,item in self.numbers.values():
+            inv.append(item.get_name()+": "+str(n))
         for i in self.inventory:
             if not i.is_hidden():
                 inv.append(i.get_name())
@@ -136,16 +180,24 @@ class AVE:
             self.screen.print_download()
             import json
             import urllib2
-            the_json = json.load(urllib2.urlopen("http://avegame.co.uk/gamelist.json"))
-            menu_items = []
-            for key,value in the_json.items():
-                if 'user/' in key:#value['user']:
-                    menu_items.append([value['title'],value['author'],key])
-            game_n = self.screen.menu([a[0]+' by '+a[1] for a in menu_items],12)
-            the_game = Game(downloadavefile, self.screen, self.character, menu_items[game_n][2])
-            self.run_the_game(the_game)
+            try:
+                the_json = json.load(urllib2.urlopen("http://avegame.co.uk/gamelist.json"))
+                menu_items = []
+                for key,value in the_json.items():
+                    if 'user/' in key:#value['user']:
+                        menu_items.append([value['title'],value['author'],key])
+                game_n = self.screen.menu([a[0]+' by '+a[1] for a in menu_items],12)
+                the_game = Game(downloadavefile, self.screen, self.character, menu_items[game_n][2])
+                self.run_the_game(the_game)
+            except urllib2.URLError:
+                self.no_internet()
+                raise AVEToMenu
         except AVEToMenu:
             self.show_title_screen()
+
+    def no_internet(self):
+        self.screen.no_internet()
+        self.screen.menu([],1)
 
     def run_the_game(self, the_game):
         the_game.load()
@@ -242,7 +294,7 @@ class Game:
                     if not preamb and mode == "ROOM" and len(c_options) > 0:
                         rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
                     if not firstitem and mode == "ITEM":
-                        items[c_item] = [c_texts, c_hidden]
+                        items[c_item] = [c_texts, c_hidden, c_number, c_default]
                     if line[0] == "#":
                         mode = "ROOM"
                         preamb = False
@@ -257,12 +309,21 @@ class Game:
                         while len(line) > 0 and line[0] == "%":
                             line = line[1:]
                         c_item = clean(line)
-                        c_hidden = False
+                        c_hidden = True
+                        c_number = False
+                        c_default = None
                         c_texts = []
                 elif mode == "ITEM":
                     if clean(line) == "__HIDDEN__":
                         c_hidden = True
+                    if clean(line.split(" ",1)[0]) == "__NUMBER__":
+                        c_number = True
+                        try:
+                            c_default = int(line.split(" ",1)[1])
+                        except:
+                            c_default = 0
                     elif clean(line) != "":
+                        c_hidden = False
                         next_item = parse_req(line)
                         text = line
                         for a in attrs:
@@ -285,7 +346,7 @@ class Game:
                         next_line['text'] = clean(text)
                         c_txt.append(next_line)
         self.rooms = rooms
-        self.character.items = items
+        self.character.set_items(items)
 
     def __getitem__(self, id):
         return self.load_room(id)
@@ -341,6 +402,8 @@ class Room:
         x = 0
         stuff = []
         text = " ".join(included_lines)
+        for item,value in self.character.numbers.items():
+            text = str(value[0]).join(text.split("$"+item+"$"))
         for word in text.split():
             if word=="<newline>":
                 y+= 1

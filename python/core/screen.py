@@ -52,6 +52,12 @@ class Screen:
         curses.resizeterm(HEIGHT,WIDTH)
         self.stdscr.refresh()
 
+    def no_internet(self):
+        stuff = []
+        for i,c in enumerate("Unable to load from the internet. Press <q> to go back."):
+            stuff.append((0,i,c,curses.color_pair(8)))
+        self.show(stuff,15,5,1,56)
+
     def clear(self):
         pad = self.newpad()
         pad.refresh(0,0, 0,0, HEIGHT,WIDTH)
