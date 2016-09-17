@@ -8,7 +8,7 @@ def parse_req(line):
     pattern = re.compile("(\([^\)]*) ([^\)]*\))")
     while pattern.search(line) is not None:
         line = pattern.sub(r"\1,\2",line)
-    pattern2 = re.compile(" +(<|>=?) +")
+    pattern2 = re.compile(" +(((=|<|>)=?)|\+|-) +")
     while pattern2.search(line) is not None:
         line = pattern2.sub(r"\1",line)
     lsp = line.split()
@@ -70,7 +70,13 @@ class Character:
         self.reset_numbers()
 
     def _add_item(self, item):
-        if self.is_number(item):
+        if "=" in item and self.is_number(item.split("=",1)[0]):
+            self.numbers[item.split("=",1)[0]][0] = int(item.split("=",1)[1])
+        elif "+" in item and self.is_number(item.split("+",1)[0]):
+            self.numbers[item.split("+",1)[0]][0] += int(item.split("+",1)[1])
+        elif "-" in item and self.is_number(item.split("-",1)[0]):
+            self.numbers[item.split("-",1)[0]][0] -= int(item.split("-",1)[1])
+        elif self.is_number(item):
             self.numbers[item][0] += 1
         else:
             self.inventory.append(Item(item,self))
@@ -107,7 +113,9 @@ class Character:
 
     def _has(self, item):
         if self.is_number(item):
-            if ">=" in item:
+            if "==" in item:
+                return self.numbers[item.split("==",1)[0]][0] == int(item.split("==",1)[1])
+            elif ">=" in item:
                 return self.numbers[item.split(">=",1)[0]][0] >= int(item.split(">=",1)[1])
             elif "<=" in item:
                 return self.numbers[item.split("<=",1)[0]][0] <= int(item.split("<=",1)[1])
@@ -115,6 +123,8 @@ class Character:
                 return self.numbers[item.split(">",1)[0]][0] > int(item.split(">",1)[1])
             elif "<" in item:
                 return self.numbers[item.split("<",1)[0]][0] < int(item.split("<",1)[1])
+            elif "=" in item:
+                return self.numbers[item.split("=",1)[0]][0] == int(item.split("=",1)[1])
             else:
                 return self.numbers[item][0] > 0
         else:

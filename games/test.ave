@@ -11,8 +11,25 @@ Put down the hammer => start ~ hammer ? hammer
 Hit yourself on the head with the hammer => hammer ? hammer
 Test for PHP injection attack => inject
 Test new lines => newline
+Test numbers => nums
 Test or => or
 Get up => up
+
+% money
+Money
+__NUMBER__ 2
+
+# nums
+You have $money$ pounds.
+Here is a >= in a text line
+Add a pound => nums + money
+Spend a pound => nums ~ money ? money
+Drop all your money => nums + money=0 ? money
+You have exactly ten pounds => nums ? money==10
+You have exactly ten pounds => nums ? money=10
+Spend five pounds => nums + money-5 ? money>=5
+Spend two pounds => nums ~ money ~ money ? money >= 2
+Go back => start
 
 # or
 Testing or...
