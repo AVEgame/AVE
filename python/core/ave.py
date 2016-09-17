@@ -113,20 +113,20 @@ class Character:
 
     def _has(self, item):
         if self.is_number(item):
-            if "==" in item:
-                return self.numbers[item.split("==",1)[0]][0] == int(item.split("==",1)[1])
-            elif ">=" in item:
-                return self.numbers[item.split(">=",1)[0]][0] >= int(item.split(">=",1)[1])
-            elif "<=" in item:
-                return self.numbers[item.split("<=",1)[0]][0] <= int(item.split("<=",1)[1])
-            elif ">" in item:
-                return self.numbers[item.split(">",1)[0]][0] > int(item.split(">",1)[1])
-            elif "<" in item:
-                return self.numbers[item.split("<",1)[0]][0] < int(item.split("<",1)[1])
-            elif "=" in item:
-                return self.numbers[item.split("=",1)[0]][0] == int(item.split("=",1)[1])
-            else:
-                return self.numbers[item][0] > 0
+            for s,f in [
+                        ("==",lambda a,b:a==b),
+                        (">=",lambda a,b:a>=b),
+                        ("<=",lambda a,b:a<=b),
+                        ("<",lambda a,b:a<b),
+                        (">",lambda a,b:a>b),
+                        ("=",lambda a,b:a==b)
+                       ]:
+                if s in item:
+                    try:
+                        return f(self.numbers[item.split(s,1)[0]][0], int(item.split(s,1)[1]))
+                    except ValueError:
+                        return f(self.numbers[item.split(s,1)[0]][0], self.numbers[item.split(s,1)[1]][0])
+            return self.numbers[item][0] > 0
         else:
             return item in self.inventory_ids()
 
@@ -146,7 +146,7 @@ class Character:
     def is_number(self, item):
         if item in self.items:
             return self.items[item][2]
-        for s in ["<",">"]:
+        for s in ["<",">","="]:
             if item.split(s,1)[0] in self.items:
                 return self.items[item.split(s,1)[0]][2]
         return False
