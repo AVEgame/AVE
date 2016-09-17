@@ -8,7 +8,7 @@ def parse_req(line):
     pattern = re.compile("(\([^\)]*) ([^\)]*\))")
     while pattern.search(line) is not None:
         line = pattern.sub(r"\1,\2",line)
-    pattern2 = re.compile(" +(((=|<|>)=?)|\+|-) +")
+    pattern2 = re.compile(" +((=|<|>)=?) +")
     while pattern2.search(line) is not None:
         line = pattern2.sub(r"\1",line)
     lsp = line.split()
