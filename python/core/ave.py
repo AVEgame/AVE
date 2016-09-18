@@ -147,7 +147,6 @@ class Character:
             if f is None:
                 return self._parse_number(item_) > 0
             else:
-                print(item,self._parse_number(item_),self._parse_number(against),f(self._parse_number(item_),self._parse_number(against)))
                 return f(self._parse_number(item_),self._parse_number(against))
         else:
             return item in self.inventory_ids()
