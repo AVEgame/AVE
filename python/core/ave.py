@@ -175,7 +175,8 @@ class Character:
     def show_inventory(self):
         inv = []
         for n,item in self.numbers.values():
-            inv.append(item.get_name()+": "+str(n))
+            if not item.is_hidden():
+                inv.append(item.get_name()+": "+str(n))
         for i in self.inventory:
             if not i.is_hidden():
                 inv.append(i.get_name())
