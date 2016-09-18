@@ -72,11 +72,11 @@ class Character:
 
     def _add_item(self, item):
         if "=" in item and self.is_number(item.split("=",1)[0]):
-            self.numbers[item.split("=",1)[0]][0] = int(item.split("=",1)[1])
+            self.numbers[item.split("=",1)[0]][0] = self._parse_number(item.split("=",1)[1])
         elif "+" in item and self.is_number(item.split("+",1)[0]):
-            self.numbers[item.split("+",1)[0]][0] += int(item.split("+",1)[1])
+            self.numbers[item.split("+",1)[0]][0] += self._parse_number(item.split("+",1)[1])
         elif "-" in item and self.is_number(item.split("-",1)[0]):
-            self.numbers[item.split("-",1)[0]][0] -= int(item.split("-",1)[1])
+            self.numbers[item.split("-",1)[0]][0] -= self._parse_number(item.split("-",1)[1])
         elif self.is_number(item):
             self.numbers[item][0] += 1
         else:
