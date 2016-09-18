@@ -17,8 +17,8 @@ def parse_req(line):
         for a,b in attrs.items():
             if lsp[i] == a:
                 if a in ["?","?!"]:
-                    lsp[i+1] = lsp[i+1].replace("(","? ")
-                    lsp[i+1] = lsp[i+1].replace("(","?! ")
+                    lsp[i+1] = lsp[i+1].replace("(","")
+                    lsp[i+1] = lsp[i+1].replace("(","")
                     lsp[i+1] = lsp[i+1].replace(")","")
                     reqs[b].append(lsp[i+1].split(","))
                 else:
@@ -147,6 +147,7 @@ class Character:
             if f is None:
                 return self._parse_number(item_) > 0
             else:
+                print(item,self._parse_number(item_),self._parse_number(against),f(self._parse_number(item_),self._parse_number(against)))
                 return f(self._parse_number(item_),self._parse_number(against))
         else:
             return item in self.inventory_ids()
