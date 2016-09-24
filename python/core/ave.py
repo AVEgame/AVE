@@ -264,7 +264,7 @@ class Games:
         self.screen = screen
         self.character = character
         self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join("..",folder))
-        self.games = []
+        games = []
         def avefile(path):
             with open(path) as f:
                 return f.readlines()
@@ -272,7 +272,17 @@ class Games:
             if ".ave" in game:
                 g = Game(avefile, self.screen, self.character, os.path.join(self.path,game))
                 if g.active:
-                    self.games.append(g)
+                    games.append(g)
+        self.games = [None]*len(games)
+        ls = []
+        for g in games:
+            if g.number is not None:
+                self.games[g.number] = g
+            else:
+                ls.append(g)
+        while None in self.games:
+            self.games.remove(None)
+        self.games += ls
 
     def titles(self):
         return [g.title for g in self.games]
@@ -291,6 +301,7 @@ class Games:
 
 class Game:
     def __init__(self, avefile, screen, character, *args):
+        self.number = None
         self.screen = screen
         self.character = character
         self.avefile = avefile
@@ -306,6 +317,8 @@ class Game:
                 break
             if line[:2] == "==" == line[-2:]:
                 self.title = clean(line[2:-2])
+            if line[:2] == "@@" == line[-2:]:
+                self.number = int(clean(line[2:-2]))
             if line[:2] == "--" == line[-2:]:
                 self.description = clean(line[2:-2])
             if line[:2] == "**" == line[-2:]:
