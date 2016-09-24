@@ -149,6 +149,8 @@ class Character:
             else:
                 return f(self._parse_number(item_),self._parse_number(against))
         else:
+            if item == "__PYTHON__":
+                return True
             return item in self.inventory_ids()
 
     def unhas(self, item):
@@ -275,14 +277,17 @@ class Games:
                     games.append(g)
         self.games = [None]*len(games)
         ls = []
+        ordered = {}
         for g in games:
             if g.number is not None:
-                self.games[g.number] = g
+                ordered[g.number] = g
             else:
                 ls.append(g)
-        while None in self.games:
-            self.games.remove(None)
-        self.games += ls
+        self.games = []
+        for i in sorted(ordered.keys()):
+            self.games.append(ordered[i])
+        for g in ls:
+            self.games.append(g)
 
     def titles(self):
         return [g.title for g in self.games]
