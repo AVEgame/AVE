@@ -1,0 +1,31 @@
+== How to Write Your Own Game ==
+-- This game will guide you through the process of writing your own game. --
+** Matthew Scroggs **
+@@ 10 @@
+
+# start
+Welcome to the AVE game that will teach you how to write an AVE game!
+To test a game you have written you should download the latest Python version of AVE, or the VirtualBox image of it. ?! __PYTHON__
+Help me download and run the Python version => download ?! __PYTHON__
+Get started => go
+
+# go
+To start your game, make a new file called SOMETHING.ave (replace SOMETHING with the name of your game).
+If you want to test your game, place this file in the /games folder of your Python version of the game.
+<newline>At the top of this file write:
+<newline>  == The Name Of Your Game ==
+<newline>  -- A description of your game. --
+<newline>  ** Your Name **
+Write my first room => first
+
+# first
+To make the room in which your game will start, write:
+<newline>  # start
+<newline>On the next line after this, write the description of the room that will appear.
+Let the player choose where to go next => next
+
+# next
+To give the player the option of what to do next, write:
+<newline>  Go to a room <|=>|> id_of_room
+<newline>Selecting this option will send the player to the room that starts with "# id_of_room".
+Let the player pick up an item
