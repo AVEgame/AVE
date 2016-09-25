@@ -13,8 +13,13 @@ Test for PHP injection attack => inject
 Test new lines => newline
 Test numbers => nums
 Test random => rand
+Test links => links
 Test or => or
 Get up => up
+
+# links
+The AVE website is [AVEgame.co.uk](http://avegame.co.uk).
+Continue => start
 
 # rand
 Testing random.

@@ -45,6 +45,23 @@ def parse_req(line, id_of_text="text"):
                     reqs[b].append(lsp[i+1])
     return reqs
 
+def _remove_links(txt):
+    pattern = re.compile("\[(.*)\]\((.*)\)")
+    while pattern.search(txt) is not None:
+        txt = pattern.sub(r"\1",txt)
+    return txt
+
+def remove_links(txt):
+    out = ""
+    while "<|" in txt and "|>" in txt:
+        tsp = txt.split("<|",1)
+        out += _remove_links(tsp[0])
+        if "|>" in tsp[1]:
+            ttsp = tsp[1].split("|>",1)
+            out += "<|" + ttsp[0] + "|>"
+            txt = ttsp[1]
+    out += _remove_links(txt)
+    return out
 
 class Item:
     def __init__(self, name, character):
@@ -293,7 +310,7 @@ class Games:
         for game in os.listdir(self.path):
             if game[-4:] == ".ave":
                 g = Game(avefile, self.screen, self.character, os.path.join(self.path,game))
-                if g.active:
+                if g.active or (game=="test.ave" and os.getenv("DEBUG")):
                     games.append(g)
         self.games = [None]*len(games)
         ls = []
@@ -478,6 +495,7 @@ class Room:
         stuff = []
         text = " ".join(included_lines)
         com = False
+        text = remove_links(text)
         text = re.sub(r"([^ ])<\|",r"\1 <|",text)
         text = re.sub(r"\|>([^ ])",r"|> \1",text)
         for word in text.split():
