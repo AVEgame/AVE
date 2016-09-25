@@ -4,28 +4,51 @@
 @@ 10 @@
 
 # start
-Welcome to the AVE game that will teach you how to write an AVE game!
-To test a game you have written you should download the latest Python version of AVE, or the VirtualBox image of it. ?! __PYTHON__
-Help me download and run the Python version => download ?! __PYTHON__
+You wake up. It is the weekend, so you decide to write an AVE game.
+After spending some time thinking, you decide to write a shopping simulator.
+To test your game, you need to download the latest Python version of AVE, or the VirtualBox image of it. ?! __PYTHON__
+Help me download and run the Python version or image => download ?! __PYTHON__
 Get started => go
 
 # go
-To start your game, make a new file called SOMETHING.ave (replace SOMETHING with the name of your game).
-If you want to test your game, place this file in the /games folder of your Python version of the game.
-<newline>At the top of this file write:
-<newline>  == The Name Of Your Game ==
-<newline>  -- A description of your game. --
-<newline>  ** Your Name **
-Write my first room => first
+To start your game, you make a new file called shop.ave and write the following:
+<newline> <newline>
+== Shopping Simulator ==
+<newline>
+-- In this game, you go shopping. --
+<newline>
+** Billy Buxton **
+Write the first room => first
+Disable the game => disable
+
+# disable
+You write: <newline> <| ~~ off ~~ |> <newline> <newline>
+This causes the game to stop appearing in the game menu.
+You realise this was a mistake.
+Enable the game => enable
+
+# enable
+You delete <| ~~ off ~~ |> from your game so that it appears in the game menu again.
+Write the first room => first
+Disable the game => diable
 
 # first
-To make the room in which your game will start, write:
-<newline>  # start
-<newline>On the next line after this, write the description of the room that will appear.
-Let the player choose where to go next => next
+To make the room in which your game will start, you write:
+<newline> <newline> # start
+<newline> You are in a shop. What do you want to do?
+Give the player some options => next
 
 # next
-To give the player the option of what to do next, write:
-<newline>  Go to a room <|=>|> id_of_room
-<newline>Selecting this option will send the player to the room that starts with "# id_of_room".
-Let the player pick up an item
+What options do you want to give the player?
+Allow the player to go to the bread aisle => bread ?! bread + bread
+Allow the player to pick up a basket => basket ?! basket + basket
+Allow the player to pick up money => money ?! money + money
+
+# basket
+To allow the player to pick up a basket, you write the following under the description of <|# start:|>
+<newline> <newline> <|Pick up a basket => start + basket ?! basket|> <newline> <|% basket|> <newline> Shopping basket
+<newline> <newline> The first line makes the game show the option "Pick up a basket".
+This option will only appear if the player does not have a basket (?!) and will add a basket to the inventory (+).
+The next two lines set the display name of the basket to be "Shopping basket". If no display name were set, then the item would be invisible.
+Continue => next
+

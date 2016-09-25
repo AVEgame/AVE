@@ -4,15 +4,35 @@ from core.errors import *
 import re
 attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
 
-def parse_req(line):
-    pattern = re.compile("(\([^\)]*) ([^\)]*\))")
+def unescaped(line):
+    pattern = re.compile("<\|.*\|>")
     while pattern.search(line) is not None:
-        line = pattern.sub(r"\1,\2",line)
-    pattern2 = re.compile(" +((=|<|>)=?) +")
-    while pattern2.search(line) is not None:
-        line = pattern2.sub(r"\1",line)
-    lsp = line.split()
+        line = pattern.sub("",line)
+    return line
+
+def parse_req(line, id_of_text="text"):
+    com = False
     reqs = {a:[] for b,a in attrs.items()}
+    for i,c in enumerate(clean(line)):
+        if line[i:i+2] == "<|":
+            com = True
+        if line[i:i+2] == "|>":
+            com = False
+        if not com and (line[i:i+3] in [" + "," ~ "," ? "] or line[i:i+4] == " ?! "):
+            reqs[id_of_text] = clean(line[:i])
+            req = line[i:]
+            break
+    else:
+        reqs[id_of_text] = clean(line)
+        req = ""
+
+    pattern = re.compile("(\([^\)]*) ([^\)]*\))")
+    while pattern.search(req) is not None:
+        req = pattern.sub(r"\1,\2",req)
+    pattern2 = re.compile(" +((=|<|>)=?) +")
+    while pattern2.search(req) is not None:
+        req = pattern2.sub(r"\1",req)
+    lsp = req.split()
     for i in range(len(lsp)-1):
         for a,b in attrs.items():
             if lsp[i] == a:
@@ -271,7 +291,7 @@ class Games:
             with open(path) as f:
                 return f.readlines()
         for game in os.listdir(self.path):
-            if ".ave" in game:
+            if game[-4:] == ".ave":
                 g = Game(avefile, self.screen, self.character, os.path.join(self.path,game))
                 if g.active:
                     games.append(g)
@@ -340,61 +360,52 @@ class Game:
         firstitem = True
         mode = "PREA"
         for line in self.avefile(*self.args) + ['#']:
-                if line[0]=="#" or line[0] == '%':
-                    if not preamb and mode == "ROOM" and len(c_options) > 0:
-                        rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
-                    if not firstitem and mode == "ITEM":
-                        items[c_item] = [c_texts, c_hidden, c_number, c_default]
-                    if line[0] == "#":
-                        mode = "ROOM"
-                        preamb = False
-                        while len(line) > 0 and line[0] == "#":
-                            line = line[1:]
-                        c_room = clean(line)
-                        c_txt = []
-                        c_options = []
-                    elif line[0]=="%":
-                        mode = "ITEM"
-                        firstitem = False
-                        while len(line) > 0 and line[0] == "%":
-                            line = line[1:]
-                        c_item = clean(line)
-                        c_hidden = True
-                        c_number = False
-                        c_default = None
-                        c_texts = []
-                elif mode == "ITEM":
-                    if clean(line) == "__HIDDEN__":
-                        c_hidden = True
-                    if clean(line.split(" ",1)[0]) == "__NUMBER__":
-                        c_number = True
-                        try:
-                            c_default = int(line.split(" ",1)[1])
-                        except:
-                            c_default = 0
-                    elif clean(line) != "":
-                        c_hidden = False
-                        next_item = parse_req(line)
-                        text = line
-                        for a in attrs:
-                            text = text.split(" "+a)[0]
-                        next_item['name'] = clean(text)
-                        c_texts.append(next_item)
-                elif mode == "ROOM":
-                    if "=>" in line:
-                        lsp = line.split("=>")
-                        next_option = parse_req(line)
-                        next_option['option'] = clean(lsp[0])
-                        lsp = clean(lsp[1]).split()
-                        next_option['id'] = clean(lsp[0])
-                        c_options.append(next_option)
-                    elif clean(line) != "":
-                        next_line = parse_req(line)
-                        text = line
-                        for a in attrs:
-                            text = text.split(" "+a)[0]
-                        next_line['text'] = clean(text)
-                        c_txt.append(next_line)
+            if line[0]=="#" or line[0] == '%':
+                if not preamb and mode == "ROOM" and len(c_options) > 0:
+                    rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
+                if not firstitem and mode == "ITEM":
+                    items[c_item] = [c_texts, c_hidden, c_number, c_default]
+                if line[0] == "#":
+                    mode = "ROOM"
+                    preamb = False
+                    while len(line) > 0 and line[0] == "#":
+                        line = line[1:]
+                    c_room = clean(line)
+                    c_txt = []
+                    c_options = []
+                elif line[0]=="%":
+                    mode = "ITEM"
+                    firstitem = False
+                    while len(line) > 0 and line[0] == "%":
+                        line = line[1:]
+                    c_item = clean(line)
+                    c_hidden = True
+                    c_number = False
+                    c_default = None
+                    c_texts = []
+            elif mode == "ITEM":
+                if clean(line) == "__HIDDEN__":
+                    c_hidden = True
+                if clean(line.split(" ",1)[0]) == "__NUMBER__":
+                    c_number = True
+                    try:
+                        c_default = int(line.split(" ",1)[1])
+                    except:
+                        c_default = 0
+                elif clean(line) != "":
+                    c_hidden = False
+                    next_item = parse_req(line,'name')
+                    c_texts.append(next_item)
+            elif mode == "ROOM":
+                if "=>" in unescaped(line):
+                    lsp = line.split("=>")
+                    next_option = parse_req(line)
+                    next_option['option'] = clean(lsp[0])
+                    lsp = clean(lsp[1]).split()
+                    next_option['id'] = clean(lsp[0])
+                    c_options.append(next_option)
+                elif clean(line) != "":
+                    c_txt.append(parse_req(line))
         self.rooms = rooms
         self.character.set_items(items)
 
@@ -466,13 +477,23 @@ class Room:
         x = 0
         stuff = []
         text = " ".join(included_lines)
-        for item,value in self.character.numbers.items():
-            text = str(value[0]).join(text.split("$"+item+"$"))
+        com = False
+        text = re.sub(r"([^ ])<\|",r"\1 <|",text)
+        text = re.sub(r"\|>([^ ])",r"|> \1",text)
         for word in text.split():
-            if word=="<newline>":
+            if word[:2]=="<|":
+                com = True
+                word = clean(word[2:])
+            if word[-2:]=="|>":
+                com = False
+                word = clean(word[:-2])
+            if not com and "$" in word:
+                for item,value in self.character.numbers.items():
+                    word = str(value[0]).join(word.split("$"+item+"$"))
+            if not com and word=="<newline>":
                 y+= 1
                 x = 0
-            else:
+            elif word != "":
                 if x+len(word) > WIDTH-22:
                     y += 1
                     x = 0
