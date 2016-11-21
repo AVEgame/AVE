@@ -49,9 +49,7 @@ function loadRoom(id,add,sub){
         return;
     }
     details = getRoom(id);
-    details[0] = details[0].replace(/</g,"&lt;");
-    details[0] = details[0].replace(/>/g,"&gt;");
-    details[0] = details[0].replace(/&lt;newline&gt;/g,"<br />");
+
     document.getElementById("roominfo").innerHTML=details[0];
 
     menu_ls = details[1]
@@ -129,7 +127,35 @@ function getRoom(id){
             options.push(line)
         }
     }
+    roomtext = text_parse(roomtext)
     return Array(roomtext,options)
+}
+function text_parse(txt){
+    out = ""
+    while(txt!=""){
+        tsp = txt.split("<|",1)
+        out += parse_part(tsp[0])
+        if(tsp.length==1){
+            txt = ""
+        } else {
+            tsp = tsp[1].split("|>",1)
+            out += tsp[0]
+            if(tsp.length==1){
+                txt = ""
+            } else {
+                txt = tsp[1]
+            }
+        }
+    }
+    return out
+}
+
+function parse_part(txt){
+    txt = txt.replace(/</g,"&lt;");
+    txt = txt.replace(/>/g,"&gt;");
+    txt = txt.replace(/&lt;newline&gt;/g,"<br />");
+    txt = txt.replace(/\[([^\]]+)\]\(([^\)]+)\)/,"<a href='$2'>$1</a>")
+    return txt
 }
 
 function getInventory(){
@@ -148,7 +174,8 @@ function getInventory(){
 }
 
 function gameRestart(){
-    myInventory=Array();
+    myInventory=Array("__WEB__");
+    myNumbers=Array();
     loadRoom("start",Array(),Array());
     document.getElementById("gameend").style.display="none";
 }
