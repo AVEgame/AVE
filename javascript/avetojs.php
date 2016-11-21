@@ -80,7 +80,7 @@ foreach($txt as $line){if(strlen($line)>0){
             $rooms[$c_room] = Array($c_room, $c_txt, $c_options);
         }
         if(!$firstitem && $mode == "ITEM"){
-            $items[$c_item] = Array($c_texts, $c_hidden);
+            $items[$c_item] = Array($c_texts, $c_hidden, $c_number, $c_default);
         }
         if(substr($line,0,1) == "#"){
             $mode = "ROOM";
@@ -99,11 +99,19 @@ foreach($txt as $line){if(strlen($line)>0){
             }
             $c_item = clean($line);
             $c_hidden = false;
+            $c_number = false;
+            $c_default = 0;
             $c_texts = Array();
         }
     } else if($mode == "ITEM"){
         if(clean($line) == "__HIDDEN__"){
             $c_hidden = true;
+        } else if(substr(clean($line),0,10) == "__NUMBER__"){
+            $c_number = true;
+            $sp = explode(" ",clean($line));
+            if(count($sp)>1){
+                $c_default = $sp[1]/1;
+            }
         } else if(clean($line) != ""){
             $next_item = parse_req(clean($line));
             $text = $line;

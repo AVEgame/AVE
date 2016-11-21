@@ -1,6 +1,7 @@
 menu_ls = Array()
 
 function checkneeds(line){
+    /// NEED TO ADD NUMBERS TO THIS
     for(var j=0;j<line["needs"].length;j++){//?
         for(var i=0;i<line["needs"][j].length;i++){
             pass = false
@@ -11,7 +12,7 @@ function checkneeds(line){
         }
         if(!pass){return false;}
     }
-    for(var j=0;j<line["unneeds"].length;j++){//?
+    for(var j=0;j<line["unneeds"].length;j++){//?!
         for(var i=0;i<line["unneeds"][j].length;i++){
             pass = false
             if(myInventory.indexOf(line["unneeds"][j][i])==-1 || (line["unneeds"][j][i].substring(0,1)=="!" && myInventory.indexOf(line["unneeds"][j][i].substring(1))!=-1)){
@@ -26,11 +27,10 @@ function checkneeds(line){
 
 function loadRoom(id,add,sub){
     for(var i=0;i<add.length;i++){
-        myInventory.push(add[i])
+        inventory_add(add[i])
     }
     for(var i=0;i<sub.length;i++){
-        index=myInventory.indexOf(sub[i]);
-        if(index!=-1){myInventory.splice(index,1)}
+        inventory_remove(sub[i]);
     }
     if(id=="__GAMEOVER__" || id=="__WINNER__"){
         menu = document.getElementById("menu").innerHTML;
@@ -102,19 +102,45 @@ function showMenu(st){
     document.getElementById("menu").innerHTML=menuItems;
 }
 
+function parse_number(n){
+    /// THIS NEEDS DOING
+    return n/1
+}
+
+function inventory_add(item){
+    if(item.indexOf("=")!=-1 && myNumberNames.indexOf(item.split("=")[0])!=-1){
+        myNumbers[item.split("=")[0]] = item.split("=")[1]
+    } else if(item.indexOf("+")!=-1 && myNumberNames.indexOf(item.split("+")[0])!=-1){
+        myNumbers[item.split("+")[0]] += item.split("+")[1]
+    } else if(item.indexOf("-")!=-1 && myNumberNames.indexOf(item.split("-")[0])!=-1){
+        myNumbers[item.split("-")[0]] -= item.split("-")[1]
+    } else if(myNumberNames.indexOf(item)!=-1){
+        myNumbers[item.split("-")[0]] ++
+    } else {
+        myInventory.push(item)
+    }
+}
+function inventory_remove(item){
+    if(myNumberNames.indexOf(item)!=-1){
+        myNumbers[item] --
+    } else {
+        index=myInventory.indexOf(item);
+        if(index!=-1){
+            myInventory.splice(index,1);
+        }
+    }
+}
+
 function getRoom(id){
     roomtext=""
     for(var i=0;i<rooms[id][1].length;i++){
         line=rooms[id][1][i]
         if(checkneeds(line)){
             for(var j=0;j<line["adds"].length;j++){//+
-                myInventory.push(line["adds"][j]);
+                inventory_add(line["adds"][j]);
             }
             for(var j=0;j<line["rems"].length;j++){//~
-                index=myInventory.indexOf(line["rems"][j]);
-                if(index!=-1){
-                    myInventory.splice(index,1);
-                }
+                inventory_remove(item)
             }
         roomtext += line["text"] + " "
         }
@@ -155,11 +181,17 @@ function parse_part(txt){
     txt = txt.replace(/>/g,"&gt;");
     txt = txt.replace(/&lt;newline&gt;/g,"<br />");
     txt = txt.replace(/\[([^\]]+)\]\(([^\)]+)\)/,"<a href='$2'>$1</a>")
+    for(var i=0;i<myNumberNames.length;i++){
+        txt = txt.replace("$"+myNumberNames[i]+"$",myNumbers[myNumberNames[i]])
+    }
     return txt
 }
 
 function getInventory(){
     var inve = Array()
+    for(var i=0;i<myNumberNames.length;i++){
+        inve.push(myNumberNames[i] + ": "+ myNumbers[myNumberNames[i]])
+    }
     for(var i=0;i<myInventory.length;i++){
         if((myInventory[i] in items) && (!items[myInventory[i]][1])){
             item = items[myInventory[i]]
@@ -176,6 +208,14 @@ function getInventory(){
 function gameRestart(){
     myInventory=Array("__WEB__");
     myNumbers=Array();
+    myNumberNames=Array();
+    for(item in items){
+        if(items[item][2]){
+            myNumberNames.push(item)
+            myNumbers[item] = items[item][3]
+        }
+    }
+    alert(myNumberNames)
     loadRoom("start",Array(),Array());
     document.getElementById("gameend").style.display="none";
 }
