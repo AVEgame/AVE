@@ -3,9 +3,20 @@ function showMainTitle(){
     out += seperator()
     out += "<div id='menu'>"
     count = 0
+    nums = Array()
     for(var game in gameList){
-        count++
-        out += "<div class='menuitem' onclick=\"showGameTitle('"+game+"')\">"+gameList[game]["title"]+"</div>"
+        if(nums.indexOf(gameList[game]["n"])==-1){
+            nums[nums.length]=gameList[game]["n"]
+        }
+    }
+    nums.sort()
+    for(var i=0;i<nums.length;i++){
+        for(var game in gameList){
+            if(gameList[game]["n"]==nums[i]){
+                count++
+                out += "<div class='menuitem' onclick=\"showGameTitle('"+game+"')\">"+gameList[game]["title"]+"</div>"
+            }
+        }
     }
 
     document.getElementById("maingameselect").style.height = Math.max(250+20.4*count,400)
