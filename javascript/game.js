@@ -225,6 +225,8 @@ function text_parse(txt){
             txt = ""
         } else {
             tsp = tsp[1].split("|>",1)
+            tsp[0] = tsp[0].replace(/</g,"&lt;");
+            tsp[0] = tsp[0].replace(/>/g,"&gt;");
             out += tsp[0]
             if(tsp.length==1){
                 txt = ""
