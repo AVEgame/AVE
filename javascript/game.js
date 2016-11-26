@@ -1,11 +1,11 @@
 menu_ls = Array()
 
 function checkneeds(line){
-    /// NEED TO ADD NUMBERS TO THIS
+    /// FINALLY make random room destinations work
     for(var j=0;j<line["needs"].length;j++){//?
         for(var i=0;i<line["needs"][j].length;i++){
             pass = false
-            if(myInventory.indexOf(line["needs"][j][i])!=-1 || (line["needs"][j][i].substring(0,1)=="!" && myInventory.indexOf(line["needs"][j][i].substring(1))==-1)){
+            if(has(line["needs"][j][i])){
                 pass=true;
                 break;
             }
@@ -15,7 +15,7 @@ function checkneeds(line){
     for(var j=0;j<line["unneeds"].length;j++){//?!
         for(var i=0;i<line["unneeds"][j].length;i++){
             pass = false
-            if(myInventory.indexOf(line["unneeds"][j][i])==-1 || (line["unneeds"][j][i].substring(0,1)=="!" && myInventory.indexOf(line["unneeds"][j][i].substring(1))!=-1)){
+            if(!has(line["unneeds"][j][i])){
                 pass=true;
                 break;
             }
@@ -25,7 +25,70 @@ function checkneeds(line){
     return true;
 }
 
+function has(thing){
+    if(thing.indexOf("==")!=-1){
+        tsp = thing.split("==")
+        return (parse_number(tsp[0])==parse_number(tsp[1]))
+    } else if(thing.indexOf(">=")!=-1){
+        tsp = thing.split(">=")
+        return (parse_number(tsp[0])>=parse_number(tsp[1]))
+    } else if(thing.indexOf("<=")!=-1){
+        tsp = thing.split("<=")
+        return (parse_number(tsp[0])<=parse_number(tsp[1]))
+    } else if(thing.indexOf(">")!=-1){
+        tsp = thing.split(">")
+        return (parse_number(tsp[0])>parse_number(tsp[1]))
+    } else if(thing.indexOf("<")!=-1){
+        tsp = thing.split("<")
+        return (parse_number(tsp[0])<parse_number(tsp[1]))
+    } else if(thing.indexOf("=")!=-1){
+        tsp = thing.split("=")
+        return (parse_number(tsp[0])==parse_number(tsp[1]))
+    } else {
+        return (myInventory.indexOf(thing)!=-1 || (thing.substring(0,1)=="!" && myInventory.indexOf(thing.substring(1))==-1));
+    }
+}
+
+function parse_number(thing){
+    if(myNumberNames.indexOf(thing)!=-1){
+        return myNumbers[thing]
+    }
+    if(thing.indexOf("__R__")!=-1){
+        if(thing=="__R__"){
+            return Math.random()
+        } else {
+            return Math.random()*parseFloat(thing.split("__R__")[1] )
+        }
+    }
+    return parseFloat(thing)
+}
+
 function loadRoom(id,add,sub){
+    if(id.indexOf("__R__")!=-1){
+        weights = Array()
+        options = id.split("(")[1].split(")")[0].split(",")
+        if(id.indexOf("[")!=-1){
+            wsp = id.split("[")[1].split("]")[0].split(",")
+        }
+        for(var i=0;i<options.length;i++){
+            if(id.indexOf("[")!=-1){
+                if(i>0){
+                    weights.push(parseFloat(wsp[i])+weights[i-1])
+                } else {
+                    weights.push(parseFloat(wsp[i]))
+                }
+            } else {
+                weights.push(1)
+            }
+        }
+        next = Math.random()*weights[weights.length-1]
+        for(var i=0;i<options.length;i++){
+            if(next < weights[i]){
+                id = options[i]
+                break
+            }
+        }
+    }
     for(var i=0;i<add.length;i++){
         inventory_add(add[i])
     }
@@ -100,11 +163,6 @@ function showMenu(st){
         }
     }
     document.getElementById("menu").innerHTML=menuItems;
-}
-
-function parse_number(n){
-    /// THIS NEEDS DOING
-    return n/1
 }
 
 function inventory_add(item){
@@ -215,7 +273,6 @@ function gameRestart(){
             myNumbers[item] = items[item][3]
         }
     }
-    alert(myNumberNames)
     loadRoom("start",Array(),Array());
     document.getElementById("gameend").style.display="none";
 }
