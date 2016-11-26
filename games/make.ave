@@ -43,7 +43,7 @@ Write the checkout => checkout ? checkout ? money
 No more, I'm done => done ? money ?! checkout ? bread ? basket
 
 # done
-Congratulations, you have written an AVE game!
+Congratulations, you have written an AVE game! You can play the shopping simulator at [http://avegame.co.uk/play/shop.ave].
 Continue => __WINNER__
 
 # basket
@@ -139,6 +139,3 @@ Start writing a game => go
 The Python version of AVE cannot run natively on your computer, so you should run the VirtualBox image.
 More details about how to do this can be found [http://avegame.co.uk/docs/virtualbox.md](here).
 Start writing a game => go
-
-
-
