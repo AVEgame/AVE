@@ -48,7 +48,7 @@ def parse_req(line, id_of_text="text"):
 def _remove_links(txt):
     pattern = re.compile("\[(.*)\]\((.*)\)")
     while pattern.search(txt) is not None:
-        txt = pattern.sub(r"\1",txt)
+        txt = pattern.sub(r"\2",txt)
     return txt
 
 def remove_links(txt):

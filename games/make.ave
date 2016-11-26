@@ -43,7 +43,7 @@ Write the checkout => checkout ? checkout ? money
 No more, I'm done => done ? money ?! checkout ? bread ? basket
 
 # done
-Congratulations, you have written an AVE game! You can play the shopping simulator at [http://avegame.co.uk/play/shop.ave].
+Congratulations, you have written an AVE game! You can play the shopping simulator at [http://avegame.co.uk/play/shop.ave](avegame.co.uk/play/shop.ave).
 Continue => __WINNER__
 
 # basket
