@@ -80,7 +80,7 @@ function loadRoom(id,add,sub){
                     weights.push(parseFloat(wsp[i]))
                 }
             } else {
-                weights.push(1)
+                weights.push(i+1)
             }
         }
         next = Math.random()*weights[weights.length-1]
