@@ -44,6 +44,8 @@ function has(thing){
     } else if(thing.indexOf("=")!=-1){
         tsp = thing.split("=")
         return (parse_number(tsp[0])==parse_number(tsp[1]))
+    } else if(myNumberNames.indexOf(thing)!=-1){
+        return (myNumbers[thing]>0)
     } else {
         return (myInventory.indexOf(thing)!=-1 || (thing.substring(0,1)=="!" && myInventory.indexOf(thing.substring(1))==-1));
     }
