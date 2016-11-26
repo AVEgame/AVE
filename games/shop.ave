@@ -1,0 +1,43 @@
+== Shopping Simulator ==
+-- In this game, you go shopping. --
+** Billy Buxton **
+~~ off ~~
+
+# start
+You are in a shop. What do you want to do?
+Pick up a basket => start + basket ?! basket
+Go to the bread aisle => bread
+Get money from the cash machine => cash
+
+# cash
+How much do you want to withdraw?
+1 => gotcash + money+1
+10 => gotcash + money+10
+
+% money
+Money
+__NUMBER__
+
+# gotcash
+You have withdrawn cash.
+Go back in the shop => start
+Get more cash => cash
+
+% basket
+Shopping basket
+
+# bread
+You are in the bread aisle.
+Put some brown bread in your basket => bread ?! brownbread + brownbread ? basket
+Pick up some brown bread => bread ?! brownbread + brownbread ?! basket
+Go to the checkout => checkout ? brownbread
+Go back to the entrance => start
+
+% brownbread
+Brown bread
+
+# checkout
+You do not have enough money. ? money<2
+You buy the bread. ? money>=2
+Continue => __GAMEOVER__ ? money<2
+Continue => __WINNER__ ? money>=2

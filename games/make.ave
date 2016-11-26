@@ -12,12 +12,8 @@ Get started => go
 
 # go
 To start your game, you make a new file called shop.ave and write the following:
-<newline> <newline>
-== Shopping Simulator ==
-<newline>
--- In this game, you go shopping. --
-<newline>
-** Billy Buxton **
+<newline> <newline> == Shopping Simulator == <newline> -- In this game, you go shopping. --
+<newline> ** Billy Buxton **
 Write the first room => first
 Disable the game => disable
 
@@ -30,7 +26,7 @@ Enable the game => enable
 # enable
 You delete <| ~~ off ~~ |> from your game so that it appears in the game menu again.
 Write the first room => first
-Disable the game => diable
+Disable the game => disable
 
 # first
 To make the room in which your game will start, you write:
@@ -43,12 +39,106 @@ What options do you want to give the player?
 Allow the player to go to the bread aisle => bread ?! bread + bread
 Allow the player to pick up a basket => basket ?! basket + basket
 Allow the player to pick up money => money ?! money + money
+Write the checkout => checkout ? checkout ? money
+No more, I'm done => done ? money ?! checkout ? bread ? basket
+
+# done
+Congratulations, you have written an AVE game!
+Continue => __WINNER__
 
 # basket
 To allow the player to pick up a basket, you write the following under the description of <|# start:|>
-<newline> <newline> <|Pick up a basket => start + basket ?! basket|> <newline> <|% basket|> <newline> Shopping basket
-<newline> <newline> The first line makes the game show the option "Pick up a basket".
+<newline> <newline> <|Pick up a basket => start + basket ?! basket|> <newline> <newline>
+This line makes the game show the option "Pick up a basket".
 This option will only appear if the player does not have a basket (?!) and will add a basket to the inventory (+).
-The next two lines set the display name of the basket to be "Shopping basket". If no display name were set, then the item would be invisible.
+Later in the file, you write:
+<newline> <newline> <|% basket|> <newline> Shopping basket <newline> <newline>
+These two lines set the display name of the basket to be "Shopping basket". If no display name were set, then the item would be invisible.
 Continue => next
+
+# bread
+Under the description of <|# start|>, you write: <newline>
+<| Go to the bread aisle => bread |> <newline>
+This allows the player to go to a new room, named "bread".
+Make the "bread" room => breadroom
+
+# breadroom
+To make the bread aisle, you write the following: <newline> <newline>
+<|# bread|> <newline>
+<|You are in the bread aisle.|>
+Let the player get some bread => breadroom2
+
+# breadroom2
+To let the player pick up bread, you write: <newline> <newline>
+<|Put some brown bread in your basket => bread ?! brownbread + brownbread ? basket|> <newline>
+<|Pick up some brown bread => bread ?! brownbread + brownbread ?! basket|> <newline> <newline>
+If the player has the basket, this will let the player put bread into the basket. Otherwise, the player
+can pick bread up. Later in the file you write: <newline> <newline>
+<| % brownbread |> <newline> Brown bread <newline> <newline>
+This gives the bread the name "Brown bread" and makes it visible.
+Allow the user to go somewhere else => breadroom3
+
+To allow the user to go elsewhere, you write: <newline> <newline>
+<|Go to the checkout => checkout ? brownbread|> <newline>
+<|Go back to the entrance => start|> <newline> <newline>
+This allows the user to go to the checkout or back to the starting room. + checkout
+Write the checkout room => checkout ? money
+Go back to the start room to add more things => next
+
+# checkout
+You write: ~ checkout
+<newline> <newline>
+<| # checkout |> <newline>
+<| You do not have enough money. ? money<2 |> <newline>
+<| You buy the bread. ? money>=2 |> <newline>
+<| Continue => __GAMEOVER__ ? money<2 |> <newline>
+<| Continue => __WINNER__ ? money>=2 |> <newline> <newline>
+This will let the player win if the player has more than (or equal to) 2 money and lose if the player has less than 2 money.
+The special rooms __GAMEOVER__ and __WINNER__ will make the game over or winning boxes appear on the screen.
+Continue => next
+
+# money
+To allow the player to go to the cash machine, you write the following under <|# start|>: <newline> <newline>
+<| Get money from the cash machine => cash |>
+Let the player use the cash machine => money2
+
+# money2
+To let the player take out 1 or 10 money, you write: <newline> <newline>
+<| # cash |> <newline>
+How much do you want to withdraw? <newline>
+<| 1 => gotcash + money+1 |> <newline>
+<| 10 => gotcash + money+10 |> <newline> <newline>
+To make money work as a number, you write: <newline> <newline>
+<| % money |> <newline>
+Money <newline>
+<| __NUMBER__ |> <newline> <newline>
+The special property <|__NUMBER__|> makes money a number, with start value 0.
+Let the player continue => money3
+
+# money3
+To let the player either go back inside or get more money, you write: <newline> <newline>
+<| # gotcash |> <newline>
+You have withdrawn cash. <newline>
+<| Go back in the shop => start |> <newline>
+<| Get more cash => cash |> <newline>
+Continue => next
+
+# download
+What operating system are you using?
+Windows => windows
+Linux => unix
+Mac => unix
+Other => windows
+
+# unix
+On Linux and Mac, you can download and run the python version of AVE on your computer.
+More details about how to do this can be found [http://avegame.co.uk/docs/python.md](here).
+Start writing a game => go
+
+# windows
+The Python version of AVE cannot run natively on your computer, so you should run the VirtualBox image.
+More details about how to do this can be found [http://avegame.co.uk/docs/virtualbox.md](here).
+Start writing a game => go
+
+
 
