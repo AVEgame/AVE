@@ -15,7 +15,15 @@ Test numbers => nums
 Test random => rand
 Test links => links
 Test or => or
+Test version => version
 Get up => up
+
+# version
+You are using the Python version. ? __PYTHON__
+You are using the website version. ? __WEB__
+You are using the badge version. ? __BADGE__
+You are using the app. ? __APP__
+Continue => start
 
 # links
 The AVE website is [AVEgame.co.uk](http://avegame.co.uk).
