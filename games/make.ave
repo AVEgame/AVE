@@ -78,6 +78,7 @@ can pick bread up. Later in the file you write: <newline> <newline>
 This gives the bread the name "Brown bread" and makes it visible.
 Allow the user to go somewhere else => breadroom3
 
+# breadroom3
 To allow the user to go elsewhere, you write: <newline> <newline>
 <|Go to the checkout => checkout ? brownbread|> <newline>
 <|Go back to the entrance => start|> <newline> <newline>
