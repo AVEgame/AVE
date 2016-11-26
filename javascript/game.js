@@ -169,11 +169,11 @@ function showMenu(st){
 
 function inventory_add(item){
     if(item.indexOf("=")!=-1 && myNumberNames.indexOf(item.split("=")[0])!=-1){
-        myNumbers[item.split("=")[0]] = item.split("=")[1]
+        myNumbers[item.split("=")[0]] = parseFloat(item.split("=")[1])
     } else if(item.indexOf("+")!=-1 && myNumberNames.indexOf(item.split("+")[0])!=-1){
-        myNumbers[item.split("+")[0]] += item.split("+")[1]
+        myNumbers[item.split("+")[0]] += parseFloat(item.split("+")[1])
     } else if(item.indexOf("-")!=-1 && myNumberNames.indexOf(item.split("-")[0])!=-1){
-        myNumbers[item.split("-")[0]] -= item.split("-")[1]
+        myNumbers[item.split("-")[0]] -= parseFloat(item.split("-")[1])
     } else if(myNumberNames.indexOf(item)!=-1){
         myNumbers[item.split("-")[0]] ++
     } else {
