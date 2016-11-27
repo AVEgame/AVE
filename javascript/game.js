@@ -45,7 +45,7 @@ function has(thing){
         tsp = thing.split("=")
         return (parse_number(tsp[0])==parse_number(tsp[1]))
     } else if(myNumberNames.indexOf(thing)!=-1){
-        return (myNumbers[thing]>0)
+        return (myNumbers[thing][0]>0)
     } else {
         return (myInventory.indexOf(thing)!=-1 || (thing.substring(0,1)=="!" && myInventory.indexOf(thing.substring(1))==-1));
     }
@@ -53,7 +53,7 @@ function has(thing){
 
 function parse_number(thing){
     if(myNumberNames.indexOf(thing)!=-1){
-        return myNumbers[thing]
+        return myNumbers[thing][0]
     }
     if(thing.indexOf("__R__")!=-1){
         if(thing=="__R__"){
@@ -169,20 +169,20 @@ function showMenu(st){
 
 function inventory_add(item){
     if(item.indexOf("=")!=-1 && myNumberNames.indexOf(item.split("=")[0])!=-1){
-        myNumbers[item.split("=")[0]] = parseFloat(item.split("=")[1])
+        myNumbers[item.split("=")[0]][0] = parse_number(item.split("=")[1])
     } else if(item.indexOf("+")!=-1 && myNumberNames.indexOf(item.split("+")[0])!=-1){
-        myNumbers[item.split("+")[0]] += parseFloat(item.split("+")[1])
+        myNumbers[item.split("+")[0]][0] += parse_number(item.split("+")[1])
     } else if(item.indexOf("-")!=-1 && myNumberNames.indexOf(item.split("-")[0])!=-1){
-        myNumbers[item.split("-")[0]] -= parseFloat(item.split("-")[1])
+        myNumbers[item.split("-")[0]][0] -= parse_number(item.split("-")[1])
     } else if(myNumberNames.indexOf(item)!=-1){
-        myNumbers[item.split("-")[0]] ++
+        myNumbers[item.split("-")[0]][0] ++
     } else {
         myInventory.push(item)
     }
 }
 function inventory_remove(item){
     if(myNumberNames.indexOf(item)!=-1){
-        myNumbers[item] --
+        myNumbers[item][0] --
     } else {
         index=myInventory.indexOf(item);
         if(index!=-1){
@@ -244,7 +244,7 @@ function parse_part(txt){
     txt = txt.replace(/&lt;newline&gt;/g,"<br />");
     txt = txt.replace(/\[([^\]]+)\]\(([^\)]+)\)/,"<a href='$2'>$1</a>")
     for(var i=0;i<myNumberNames.length;i++){
-        txt = txt.replace("$"+myNumberNames[i]+"$",myNumbers[myNumberNames[i]])
+        txt = txt.replace("$"+myNumberNames[i]+"$",myNumbers[myNumberNames[i]][0])
     }
     return txt
 }
@@ -252,7 +252,16 @@ function parse_part(txt){
 function getInventory(){
     var inve = Array()
     for(var i=0;i<myNumberNames.length;i++){
-        inve.push(myNumberNames[i] + ": "+ myNumbers[myNumberNames[i]])
+        if(myNumbers[myNumberNames[i]][2]){
+            the_name = ""
+            item = myNumbers[myNumberNames[i]][1]
+            for(var j=0;j<item.length;j++){
+                if(checkneeds(item[j])){
+                    the_name=item[j]["name"]
+                }
+            }
+            inve.push(the_name + ": "+ myNumbers[myNumberNames[i]][0])
+        }
     }
     for(var i=0;i<myInventory.length;i++){
         if((myInventory[i] in items) && (!items[myInventory[i]][1])){
@@ -274,7 +283,7 @@ function gameRestart(){
     for(item in items){
         if(items[item][2]){
             myNumberNames.push(item)
-            myNumbers[item] = items[item][3]
+            myNumbers[item] = Array(parseFloat(items[item][3]),items[item][0],items[item][1])
         }
     }
     loadRoom("start",Array(),Array());
