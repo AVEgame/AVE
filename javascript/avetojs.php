@@ -26,8 +26,8 @@ function clean($string){
 function do_comments($text){
     $comments = Array();
     while(strpos($text,"<|")!==false){
-        $lsp = explode($text,"<|",1);
-        $lsp[1] = explode($lsp[1],"|>",1);
+        $lsp = explode("<|",$text,1);
+        $lsp[1] = explode("|>",$lsp[1],1);
         $text = $lsp[0]."<<".count($comments).">>".$lsp[1][1];
         $comments[] = $lsp[1][0];
     }
