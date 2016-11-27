@@ -23,10 +23,34 @@ function clean($string){
     return $string;
 }
 
+function do_comments($text){
+    $comments = Array();
+    while(strpos($text,"<|")!==false){
+        $lsp = explode($text,"<|",1);
+        $lsp[1] = explode($lsp[1],"|>",1);
+        $text = $lsp[0]."<<".count($comments).">>".$lsp[1][1];
+        $comments[] = $lsp[1][0];
+    }
+    return Array($text,$comments);
+}
+
+function undo_comments($text,$comments){
+    foreach($comments as $i=>$j){
+        $text = str_replace("<<".$i.">>",$j,$text);
+    }
+    return $text;
+}
+
 function parse_req($line){
     global $attrs;
+    $doc = do_comments($line);
+    $line = $doc[0];
+    $comments = $doc[1];
     while(preg_match("/(\([^\)]*) ([^\)]*\))/",$line)){
         $line = preg_replace("/(\([^\)]*) ([^\)]*\))/","$1,$2",$line);
+    }
+    while(preg_match("/ +((>|<|=)=?) +/",$line)){
+        $line = preg_replace("/ +((=|>|<)=?) +/","$1",$line);
     }
     $lsp = explode(" ",$line);
     $reqs = Array();
@@ -37,11 +61,11 @@ function parse_req($line){
         foreach($attrs as $a=>$b){
             if($lsp[$i] == $a){
                 if($a == "?" || $a == "?!"){
-                    $lsp[$i+1] = str_replace("(","",$lsp[$i+1]);
-                    $lsp[$i+1] = str_replace(")","",$lsp[$i+1]);
-                    $reqs[$b][] = explode(",",$lsp[$i+1]);
+                    $lsp[$i+1] = str_replace("(","",undo_comments($lsp[$i+1],$comments));
+                    $lsp[$i+1] = str_replace(")","",undo_comments($lsp[$i+1],$comments));
+                    $reqs[$b][] = explode(",",undo_comments($lsp[$i+1],$comments));
                 } else {
-                    $reqs[$b][] = $lsp[$i+1];
+                    $reqs[$b][] = undo_comments($lsp[$i+1],$comments);
                 }
             }
         }
@@ -114,12 +138,14 @@ foreach($txt as $line){if(strlen($line)>0){
             }
         } else if(clean($line) != ""){
             $next_item = parse_req(clean($line));
-            $text = $line;
+            $doc = do_comments($line);
+            $text = $doc[0];
+            $comments = $doc[1];
             foreach($attrs as $a=>$b){
                 $text = explode(" ".$a,$text);
                 $text = $text[0];
             }
-            $next_item["name"] = clean($text);
+            $next_item["name"] = clean(undo_comments($text,$comments));
             $c_texts[] = $next_item;
         }
     } else if($mode == "ROOM"){
@@ -132,12 +158,14 @@ foreach($txt as $line){if(strlen($line)>0){
             $c_options[] = $next_option;
         } else if(clean($line) != ""){
             $next_line = parse_req(clean($line));
-            $text = $line;
+            $doc = do_comments($line);
+            $text = $doc[0];
+            $comments = $doc[1];
             foreach($attrs as $a=>$b){
                 $text = explode(" ".$a,$text);
                 $text = $text[0];
             }
-            $next_line["text"] = clean($text);
+            $next_line["text"] = clean(undo_comments($text,$comments));
             $c_txt[] = $next_line;
         }
     }
