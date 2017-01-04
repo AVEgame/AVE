@@ -77,7 +77,7 @@ You drink the tea. It is everything you ever hoped for. You feel revived.
 Continue => __WINNER__
 
 # lose
-You drink the tea. It is disgusing. Why would you choose PG Tips. It's over, you've had enough. Life isn't worth it anymore.
+You drink the tea. It is disgusting. Why would you choose PG Tips?! It's over, you've had enough. Life isn't worth it anymore.
 Continue => __GAMEOVER__
 
 # kettle
@@ -307,7 +307,7 @@ Blunt Pencil ?! sharpener
 Sharp Pencil ? sharpener
 
 % hat
-Woolen Hat
+Woollen Hat
 
 % teabag
 Tea Bag
