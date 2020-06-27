@@ -1,11 +1,13 @@
-from ave import AVE, errors
+#!/usr/bin/python
+from ave import AVE
+from ave.exceptions import AVEQuit
 import os
 
 if os.getenv("DEBUG"):
     try:
         ave = AVE()
         ave.start()
-    except errors.AVEQuit:
+    except AVEQuit:
         ave.exit()
         print("Goodbye...")
     finally:
@@ -15,7 +17,7 @@ else:
         try:
             ave = AVE()
             ave.start()
-        except errors.AVEQuit:
+        except AVEQuit:
             ave.exit()
             print("Goodbye...")
             break

@@ -1,5 +1,5 @@
 from .utils import clean
-from .errors import AVEGameOver, AVEWinner, AVEToMenu, AVEQuit
+from .exceptions import AVEGameOver, AVEWinner, AVEToMenu, AVEQuit
 import re
 attrs = {"+": "adds", "?": "needs", "?!": "unneeds", "~": "rems"}
 

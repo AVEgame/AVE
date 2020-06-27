@@ -1,6 +1,6 @@
 # dimensions: (height) 45
 #             (width)  80
-from .errors import AVEToMenu, AVEQuit
+from .exceptions import AVEToMenu, AVEQuit
 from .utils import comment, clean_newlines
 import curses
 import signal
