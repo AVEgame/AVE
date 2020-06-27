@@ -79,7 +79,7 @@ class Item:
             name = []
             for line in self.character.items[self.name][0]:
                 if self.character.has(line['needs']) \
-                    and self.character.unhas(line['unneeds']):
+                        and self.character.unhas(line['unneeds']):
                     name.append(line['name'])
             name = " ".join(name)
             if name != "":

@@ -119,10 +119,10 @@ class Screen:
                             stuff.append((y, x, " ", curses.color_pair(3)))
                         elif c == "A" and len(line) > x + 1 \
                                 and line[x + 1] == "V" \
-                                and len(line) > x+2 and line[x+2] == "E":
+                                and len(line) > x + 2 and line[x + 2] == "E":
                             stuff.append((y, x, "A", curses.color_pair(6)))
                         elif x >= 1 and line[x - 1] == "A" and c == "V" \
-                                and len(line) > x + 1 and line[x+1] == "E":
+                                and len(line) > x + 1 and line[x + 1] == "E":
                             stuff.append((y, x, "V", curses.color_pair(7)))
                         elif x >= 2 and line[x - 2] == "A" \
                                 and line[x - 1] == "V" and c == "E":
