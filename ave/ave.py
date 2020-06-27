@@ -495,7 +495,10 @@ class Room:
         from .screen import WIDTH
         included_lines = []
         for line in self.text:
-            if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
+            if (
+                self.character.has(line['needs'])
+                and self.character.unhas(line['unneeds'])
+            ):
                 self.character.add_items(line['adds'])
                 self.character.remove_items(line['rems'])
                 included_lines.append(line['text'])
