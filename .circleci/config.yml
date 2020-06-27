@@ -18,7 +18,7 @@ jobs:
           name: Install flake8 and pytest
       - python/save-cache
       - run:
-          command: python3 -m flake8 . --exclude=__init__.py
+          command: python3 -m flake8 . --exclude=__init__.py --ignore=E722
           name: Flake8 checks
       - run:
           command: python3 -m pytest test/

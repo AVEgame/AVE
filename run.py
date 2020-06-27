@@ -1,6 +1,4 @@
-#!/usr/bin/env python
 from ave import AVE, errors
-from curses import wrapper
 import os
 
 if os.getenv("DEBUG"):
