@@ -1,8 +1,7 @@
 # dimensions: (height) 45
 #             (width)  80
-from __future__ import division
-from core.utils import *
-from core.errors import *
+from .utils import *
+from .errors import *
 import curses
 import signal
 HEIGHT = 25
@@ -70,10 +69,10 @@ class Screen:
         curses.endwin()
 
     def print_room_desc(self,desc):
-        print desc
+        print(desc)
 
     def print_options(self,options,n):
-        print options
+        print(options)
 
     def newpad(self, y=HEIGHT, x=WIDTH):
         return curses.newpad(y, x)

@@ -1,25 +1,23 @@
 #!/usr/bin/env python
-from __future__ import division
-from core.ave import AVE
+from ave import AVE, errors
 from curses import wrapper
-from core.errors import *
 import os
 
 if os.getenv("DEBUG"):
     try:
-            ave = AVE()
-            ave.start()
-    except AVEQuit:
-            ave.exit()
-            print("Goodbye...")
+        ave = AVE()
+        ave.start()
+    except errors.AVEQuit:
+        ave.exit()
+        print("Goodbye...")
     finally:
-            ave.exit()
+        ave.exit()
 else:
     while True:
         try:
             ave = AVE()
             ave.start()
-        except AVEQuit:
+        except errors.AVEQuit:
             ave.exit()
             print("Goodbye...")
             break

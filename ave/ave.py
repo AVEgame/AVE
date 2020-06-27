@@ -1,14 +1,15 @@
-from __future__ import division
-from core.utils import *
-from core.errors import *
+from .utils import clean
+from .errors import *
 import re
-attrs = {"+":"adds","?":"needs","?!":"unneeds","~":"rems"}
+attrs = {"+":"adds", "?": "needs", "?!": "unneeds", "~": "rems"}
+
 
 def unescaped(line):
     pattern = re.compile("<\|.*\|>")
     while pattern.search(line) is not None:
-        line = pattern.sub("",line)
+        line = pattern.sub("", line)
     return line
+
 
 def parse_req(line, id_of_text="text"):
     com = False
@@ -45,11 +46,13 @@ def parse_req(line, id_of_text="text"):
                     reqs[b].append(lsp[i+1])
     return reqs
 
+
 def _remove_links(txt):
     pattern = re.compile("\[(.*)\]\((.*)\)")
     while pattern.search(txt) is not None:
         txt = pattern.sub(r"\2",txt)
     return txt
+
 
 def remove_links(txt):
     out = ""
@@ -62,6 +65,7 @@ def remove_links(txt):
             txt = ttsp[1]
     out += _remove_links(txt)
     return out
+
 
 class Item:
     def __init__(self, name, character):
@@ -85,6 +89,7 @@ class Item:
         if self.name in self.character.items:
             return self.character.items[self.name][1]
         return True
+
 
 class Character:
     def __init__(self, screen):
@@ -151,12 +156,12 @@ class Character:
 
     def _split_up(self, item):
         for s,f in [
-                    ("==",lambda a,b:a==b),
-                    (">=",lambda a,b:a>=b),
-                    ("<=",lambda a,b:a<=b),
-                    ("<",lambda a,b:a<b),
-                    (">",lambda a,b:a>b),
-                    ("=",lambda a,b:a==b)
+                    ("==", lambda a, b: a == b),
+                    (">=", lambda a, b: a >= b),
+                    ("<=", lambda a, b: a <= b),
+                    ("<", lambda a, b: a < b),
+                    (">", lambda a, b: a > b),
+                    ("=", lambda a, b: a == b)
                    ]:
             if s in item:
                 return item.split(s,1)[0],f,item.split(s,1)[1]
@@ -224,9 +229,10 @@ class Character:
     def inventory_ids(self):
         return [item.name for item in self.inventory]
 
+
 class AVE:
     def __init__(self, folder="games"):
-        from screen import Screen
+        from .screen import Screen
         self.screen = Screen()
         self.character = Character(self.screen)
         self.games = Games(folder, self.screen, self.character)
@@ -297,6 +303,7 @@ class AVE:
     def exit(self):
         self.screen.close()
 
+
 class Games:
     def __init__(self, folder, screen, character):
         import os
@@ -340,6 +347,7 @@ class Games:
 
     def __getitem__(self,n):
         return self.games[n]
+
 
 class Game:
     def __init__(self, avefile, screen, character, *args):
@@ -471,6 +479,7 @@ class Game:
     def show_title(self):
         self.screen.show_titles(self.title, self.description, self.author)
 
+
 class Room:
     def __init__(self, id, text, options, screen, character):
         self.id = id
@@ -483,7 +492,7 @@ class Room:
         return "Room with id " + self.id
 
     def show(self):
-        from core.screen import WIDTH
+        from .screen import WIDTH
         included_lines = []
         for line in self.text:
             if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
@@ -496,29 +505,29 @@ class Room:
         text = " ".join(included_lines)
         com = False
         text = remove_links(text)
-        text = re.sub(r"([^ ])<\|",r"\1 <|",text)
-        text = re.sub(r"\|>([^ ])",r"|> \1",text)
+        text = re.sub(r"([^ ])<\|", r"\1 <|", text)
+        text = re.sub(r"\|>([^ ])", r"|> \1", text)
         for word in text.split():
-            if word[:2]=="<|":
+            if word[:2] == "<|":
                 com = True
                 word = clean(word[2:])
-            if word[-2:]=="|>":
+            if word[-2:] == "|>":
                 com = False
                 word = clean(word[:-2])
             if not com and "$" in word:
-                for item,value in self.character.numbers.items():
-                    word = str(value[0]).join(word.split("$"+item+"$"))
-            if not com and word=="<newline>":
-                y+= 1
+                for item, value in self.character.numbers.items():
+                    word = str(value[0]).join(word.split("$" + item + "$"))
+            if not com and word == "<newline>":
+                y += 1
                 x = 0
             elif word != "":
-                if x+len(word) > WIDTH-22:
+                if x + len(word) > WIDTH-22:
                     y += 1
                     x = 0
-                for i,c in enumerate(word):
-                    stuff.append((y,x,c))
+                for i, c in enumerate(word):
+                    stuff.append((y, x, c))
                     x += 1
-                stuff.append((y,x," "))
+                stuff.append((y, x, " "))
                 x += 1
         self.screen.type(stuff)
 
@@ -527,12 +536,15 @@ class Room:
         rems = []
         ids = []
         for option in self.options:
-            if self.character.has(option['needs']) and self.character.unhas(option['unneeds']):
+            if (
+                self.character.has(option['needs'])
+                and self.character.unhas(option['unneeds'])
+            ):
                 opts.append(option['option'])
                 adds.append(option['adds'])
                 rems.append(option['rems'])
                 ids.append(option['id'])
         self.character.show_inventory()
-        num = self.screen.menu(opts, add=adds, rem=rems, y=min(8,len(opts)), character=self.character)
+        num = self.screen.menu(opts, add=adds, rem=rems, y=min(8, len(opts)),
+                               character=self.character)
         return ids[num]
-

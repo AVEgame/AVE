@@ -1,0 +1,30 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - run:
+          command: pip3 install -r requirements.txt
+          name: Install dependencies
+      - run:
+          command: pip3 install flake8 pytest
+          name: Install flake8 and pytest
+      - python/save-cache
+      - run:
+          command: python3 -m flake8 . --exclude=__init__.py
+          name: Flake8 checks
+      - run:
+          command: python3 -m pytest test/
+          name: Test
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
