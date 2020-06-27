@@ -1,11 +1,11 @@
 from .utils import clean
-from .errors import *
+from .errors import AVEGameOver, AVEWinner, AVEToMenu, AVEQuit
 import re
-attrs = {"+":"adds", "?": "needs", "?!": "unneeds", "~": "rems"}
+attrs = {"+": "adds", "?": "needs", "?!": "unneeds", "~": "rems"}
 
 
 def unescaped(line):
-    pattern = re.compile("<\|.*\|>")
+    pattern = re.compile(r"<\|.*\|>")
     while pattern.search(line) is not None:
         line = pattern.sub("", line)
     return line
@@ -13,13 +13,14 @@ def unescaped(line):
 
 def parse_req(line, id_of_text="text"):
     com = False
-    reqs = {a:[] for b,a in attrs.items()}
-    for i,c in enumerate(clean(line)):
-        if line[i:i+2] == "<|":
+    reqs = {a: [] for b, a in attrs.items()}
+    for i, c in enumerate(clean(line)):
+        if line[i: i + 2] == "<|":
             com = True
-        if line[i:i+2] == "|>":
+        if line[i: i + 2] == "|>":
             com = False
-        if not com and (line[i:i+3] in [" + "," ~ "," ? "] or line[i:i+4] == " ?! "):
+        if not com and (line[i: i + 3] in [" + ", " ~ ", " ? "]
+                        or line[i: i + 4] == " ?! "):
             reqs[id_of_text] = clean(line[:i])
             req = line[i:]
             break
@@ -27,40 +28,40 @@ def parse_req(line, id_of_text="text"):
         reqs[id_of_text] = clean(line)
         req = ""
 
-    pattern = re.compile("(\([^\)]*) ([^\)]*\))")
+    pattern = re.compile(r"(\([^\)]*) ([^\)]*\))")
     while pattern.search(req) is not None:
-        req = pattern.sub(r"\1,\2",req)
-    pattern2 = re.compile(" +((=|<|>)=?) +")
+        req = pattern.sub(r"\1,\2", req)
+    pattern2 = re.compile(r" +((=|<|>)=?) +")
     while pattern2.search(req) is not None:
-        req = pattern2.sub(r"\1",req)
+        req = pattern2.sub(r"\1", req)
     lsp = req.split()
-    for i in range(len(lsp)-1):
-        for a,b in attrs.items():
+    for i in range(len(lsp) - 1):
+        for a, b in attrs.items():
             if lsp[i] == a:
-                if a in ["?","?!"]:
-                    lsp[i+1] = lsp[i+1].replace("(","")
-                    lsp[i+1] = lsp[i+1].replace("(","")
-                    lsp[i+1] = lsp[i+1].replace(")","")
-                    reqs[b].append(lsp[i+1].split(","))
+                if a in ["?", "?!"]:
+                    lsp[i + 1] = lsp[i + 1].replace("(", "")
+                    lsp[i + 1] = lsp[i + 1].replace("(", "")
+                    lsp[i + 1] = lsp[i + 1].replace(")", "")
+                    reqs[b].append(lsp[i + 1].split(","))
                 else:
-                    reqs[b].append(lsp[i+1])
+                    reqs[b].append(lsp[i + 1])
     return reqs
 
 
 def _remove_links(txt):
-    pattern = re.compile("\[(.*)\]\((.*)\)")
+    pattern = re.compile(r"\[(.*)\]\((.*)\)")
     while pattern.search(txt) is not None:
-        txt = pattern.sub(r"\2",txt)
+        txt = pattern.sub(r"\2", txt)
     return txt
 
 
 def remove_links(txt):
     out = ""
     while "<|" in txt and "|>" in txt:
-        tsp = txt.split("<|",1)
+        tsp = txt.split("<|", 1)
         out += _remove_links(tsp[0])
         if "|>" in tsp[1]:
-            ttsp = tsp[1].split("|>",1)
+            ttsp = tsp[1].split("|>", 1)
             out += "<|" + ttsp[0] + "|>"
             txt = ttsp[1]
     out += _remove_links(txt)
@@ -76,9 +77,10 @@ class Item:
         if self.name in self.character.items:
             name = []
             for line in self.character.items[self.name][0]:
-                if self.character.has(line['needs']) and self.character.unhas(line['unneeds']):
-                    #self.character.add_items(line['adds'])
-                    #self.character.remove_items(line['rems'])
+                if (
+                    self.character.has(line['needs'])
+                    and self.character.unhas(line['unneeds'])
+                ):
                     name.append(line['name'])
             name = " ".join(name)
             if name != "":
@@ -105,7 +107,7 @@ class Character:
         self.numbers = {}
         for i in self.items:
             if self.is_number(i):
-                self.numbers[i] = [self.items[i][3],Item(i,self)]
+                self.numbers[i] = [self.items[i][3], Item(i, self)]
 
     def reset(self):
         self.inventory = []
@@ -113,22 +115,25 @@ class Character:
         self.reset_numbers()
 
     def _add_item(self, item):
-        if "=" in item and self.is_number(item.split("=",1)[0]):
-            self.numbers[item.split("=",1)[0]][0] = self._parse_number(item.split("=",1)[1])
-        elif "+" in item and self.is_number(item.split("+",1)[0]):
-            self.numbers[item.split("+",1)[0]][0] += self._parse_number(item.split("+",1)[1])
-        elif "-" in item and self.is_number(item.split("-",1)[0]):
-            self.numbers[item.split("-",1)[0]][0] -= self._parse_number(item.split("-",1)[1])
+        if "=" in item and self.is_number(item.split("=", 1)[0]):
+            self.numbers[item.split("=", 1)[0]][0] = self._parse_number(
+                item.split("=", 1)[1])
+        elif "+" in item and self.is_number(item.split("+", 1)[0]):
+            self.numbers[item.split("+", 1)[0]][0] += self._parse_number(
+                item.split("+", 1)[1])
+        elif "-" in item and self.is_number(item.split("-", 1)[0]):
+            self.numbers[item.split("-", 1)[0]][0] -= self._parse_number(
+                item.split("-", 1)[1])
         elif self.is_number(item):
             self.numbers[item][0] += 1
         else:
-            self.inventory.append(Item(item,self))
+            self.inventory.append(Item(item, self))
 
     def _remove_item(self, item):
         if self.is_number(item):
             self.numbers[item][0] -= 1
         elif item in self.inventory_ids():
-            for a,b in enumerate(self.inventory):
+            for a, b in enumerate(self.inventory):
                 if b.name == item:
                     self.inventory = self.inventory[:a] + self.inventory[a+1:]
                     break
@@ -147,7 +152,7 @@ class Character:
                 for b in a:
                     if self._has(b):
                         break
-                    if b[0]=="!" and not self._has(b[1:]):
+                    if b[0] == "!" and not self._has(b[1:]):
                         break
                 else:
                     return False
@@ -155,16 +160,16 @@ class Character:
         return self._has(item)
 
     def _split_up(self, item):
-        for s,f in [
-                    ("==", lambda a, b: a == b),
-                    (">=", lambda a, b: a >= b),
-                    ("<=", lambda a, b: a <= b),
-                    ("<", lambda a, b: a < b),
-                    (">", lambda a, b: a > b),
-                    ("=", lambda a, b: a == b)
-                   ]:
+        for s, f in [
+                     ("==", lambda a, b: a == b),
+                     (">=", lambda a, b: a >= b),
+                     ("<=", lambda a, b: a <= b),
+                     ("<", lambda a, b: a < b),
+                     (">", lambda a, b: a > b),
+                     ("=", lambda a, b: a == b)
+        ]:
             if s in item:
-                return item.split(s,1)[0],f,item.split(s,1)[1]
+                return item.split(s, 1)[0], f, item.split(s, 1)[1]
         return item, None, None
 
     def _parse_number(self, num):
@@ -178,18 +183,19 @@ class Character:
                     import random
                     if num == "__R__":
                         return random.random()
-                    if re.match(r"__R__[0-9]",num):
-                        return random.random() * int(num.split("__R__",1)[1])
+                    if re.match(r"__R__[0-9]", num):
+                        return random.random() * int(num.split("__R__", 1)[1])
                 else:
                     return self.numbers[num][0]
 
     def _has(self, item):
-        item_,f,against = self._split_up(item)
+        item_, f, against = self._split_up(item)
         if "__R__" in item_ or self.is_number(item_):
             if f is None:
                 return self._parse_number(item_) > 0
             else:
-                return f(self._parse_number(item_),self._parse_number(against))
+                return f(self._parse_number(item_),
+                         self._parse_number(against))
         else:
             if item == "__PYTHON__":
                 return True
@@ -201,7 +207,7 @@ class Character:
                 for b in a:
                     if not self._has(b):
                         break
-                    if b[0]=="!" and self._has(b):
+                    if b[0] == "!" and self._has(b):
                         break
                 else:
                     return False
@@ -211,16 +217,16 @@ class Character:
     def is_number(self, item):
         if item in self.items:
             return self.items[item][2]
-        for s in ["<",">","="]:
-            if item.split(s,1)[0] in self.items:
-                return self.items[item.split(s,1)[0]][2]
+        for s in ["<", ">", "="]:
+            if item.split(s, 1)[0] in self.items:
+                return self.items[item.split(s, 1)[0]][2]
         return False
 
     def show_inventory(self):
         inv = []
-        for n,item in self.numbers.values():
+        for n, item in self.numbers.values():
             if not item.is_hidden():
-                inv.append(item.get_name()+": "+str(n))
+                inv.append(item.get_name() + ": " + str(n))
         for i in self.inventory:
             if not i.is_hidden():
                 inv.append(i.get_name())
@@ -242,7 +248,9 @@ class AVE:
 
     def show_title_screen(self):
         self.screen.print_titles()
-        game_to_load = self.screen.menu(self.games.titles()+["- user contributed games -"], 8, titles=True)
+        game_to_load = self.screen.menu(
+            self.games.titles() + ["- user contributed games -"], 8,
+            titles=True)
         if game_to_load == len(self.games.titles()):
             self.show_download_menu()
         else:
@@ -252,19 +260,24 @@ class AVE:
     def show_download_menu(self):
         try:
             def downloadavefile(file):
-                return urllib2.urlopen("http://avegame.co.uk/download/"+file).readlines()
+                return urllib2.urlopen(
+                    "http://avegame.co.uk/download/" + file).readlines()
 
             self.screen.print_download()
             import json
             import urllib2
             try:
-                the_json = json.load(urllib2.urlopen("http://avegame.co.uk/gamelist.json"))
+                the_json = json.load(urllib2.urlopen(
+                    "http://avegame.co.uk/gamelist.json"))
                 menu_items = []
-                for key,value in the_json.items():
-                    if 'user/' in key:#value['user']:
-                        menu_items.append([value['title'],value['author'],key])
-                game_n = self.screen.menu([a[0]+' by '+a[1] for a in menu_items],12)
-                the_game = Game(downloadavefile, self.screen, self.character, menu_items[game_n][2])
+                for key, value in the_json.items():
+                    if 'user/' in key:
+                        menu_items.append([value['title'], value['author'],
+                                           key])
+                game_n = self.screen.menu(
+                    [a[0] + ' by ' + a[1] for a in menu_items], 12)
+                the_game = Game(downloadavefile, self.screen,
+                                self.character, menu_items[game_n][2])
                 self.run_the_game(the_game)
             except urllib2.URLError:
                 self.no_internet()
@@ -274,7 +287,7 @@ class AVE:
 
     def no_internet(self):
         self.screen.no_internet()
-        self.screen.menu([],1)
+        self.screen.menu([], 1)
 
     def run_the_game(self, the_game):
         the_game.load()
@@ -309,15 +322,20 @@ class Games:
         import os
         self.screen = screen
         self.character = character
-        self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.join("..",folder))
+        self.path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            os.path.join("..", folder))
         games = []
+
         def avefile(path):
             with open(path) as f:
                 return f.readlines()
+
         for game in os.listdir(self.path):
             if game[-4:] == ".ave":
-                g = Game(avefile, self.screen, self.character, os.path.join(self.path,game))
-                if g.active or (game=="test.ave" and os.getenv("DEBUG")):
+                g = Game(avefile, self.screen, self.character,
+                         os.path.join(self.path, game))
+                if g.active or (game == "test.ave" and os.getenv("DEBUG")):
                     games.append(g)
         self.games = [None]*len(games)
         ls = []
@@ -340,12 +358,12 @@ class Games:
         return [g.description for g in self.games]
 
     def titles_and_descriptions(self):
-        return zip(self.titles(),self.descriptions())
+        return zip(self.titles(), self.descriptions())
 
-    def game(self,n):
+    def game(self, n):
         return self.games[n]
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         return self.games[n]
 
 
@@ -375,7 +393,7 @@ class Game:
                 self.author = clean(line[2:-2])
             if line[:2] == "~~" == line[-2:]:
                 if clean(line[2:-2]) == "off":
-                   self.active = False
+                    self.active = False
 
     def load(self):
         self.screen.clear()
@@ -384,10 +402,19 @@ class Game:
         preamb = True
         firstitem = True
         mode = "PREA"
+        c_hidden = None
+        c_room = None
+        c_txt = None
+        c_options = None
+        c_default = None
+        c_number = None
+        c_item = None
+        c_texts = None
         for line in self.avefile(*self.args) + ['#']:
-            if line[0]=="#" or line[0] == '%':
+            if line[0] == "#" or line[0] == '%':
                 if not preamb and mode == "ROOM" and len(c_options) > 0:
-                    rooms[c_room] = Room(c_room, c_txt, c_options, self.screen, self.character)
+                    rooms[c_room] = Room(c_room, c_txt, c_options,
+                                         self.screen, self.character)
                 if not firstitem and mode == "ITEM":
                     items[c_item] = [c_texts, c_hidden, c_number, c_default]
                 if line[0] == "#":
@@ -398,7 +425,7 @@ class Game:
                     c_room = clean(line)
                     c_txt = []
                     c_options = []
-                elif line[0]=="%":
+                elif line[0] == "%":
                     mode = "ITEM"
                     firstitem = False
                     while len(line) > 0 and line[0] == "%":
@@ -411,15 +438,15 @@ class Game:
             elif mode == "ITEM":
                 if clean(line) == "__HIDDEN__":
                     c_hidden = True
-                if clean(line.split(" ",1)[0]) == "__NUMBER__":
+                if clean(line.split(" ", 1)[0]) == "__NUMBER__":
                     c_number = True
                     try:
-                        c_default = int(line.split(" ",1)[1])
+                        c_default = int(line.split(" ", 1)[1])
                     except:
                         c_default = 0
                 elif clean(line) != "":
                     c_hidden = False
-                    next_item = parse_req(line,'name')
+                    next_item = parse_req(line, 'name')
                     c_texts.append(next_item)
             elif mode == "ROOM":
                 if "=>" in unescaped(line):
@@ -451,18 +478,18 @@ class Game:
 
     def _parse_random(self, id):
         import random
-        rooms = id.split("(",1)[1].split(")",1)[0].split(",")
+        rooms = id.split("(", 1)[1].split(")", 1)[0].split(",")
         if "[" in id:
             ls = []
-            nums = [int(i) for i in id.split("[",1)[1].split("]",1)[0].split(",")]
-            for r,n in zip(rooms, nums):
-                ls += [r]*n
+            nums = [int(i) for i
+                    in id.split("[", 1)[1].split("]", 1)[0].split(",")]
+            for r, n in zip(rooms, nums):
+                ls += [r] * n
             return random.choice(ls)
         else:
             return random.choice(rooms)
 
     def begin(self):
-        import curses
         self.show_title()
         room = self['start']
         while True:
@@ -472,8 +499,10 @@ class Game:
             room = self[next]
 
     def fail_room(self):
-        options = [{'id':"__GAMEOVER__",'option':"Continue",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
-        text = [{'text':"You fall off the edge of the game... (404 Error)",'needs':[],'unneeds':[],'adds':[],'rems':[]}]
+        options = [{'id': "__GAMEOVER__", 'option': "Continue",
+                    'needs': [], 'unneeds': [], 'adds': [], 'rems': []}]
+        text = [{'text': "You fall off the edge of the game... (404 Error)",
+                 'needs': [], 'unneeds': [], 'adds': [], 'rems': []}]
         return Room("fail", text, options, self.screen, self.character)
 
     def show_title(self):
