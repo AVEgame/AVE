@@ -19,8 +19,9 @@ def parse_req(line, id_of_text="text"):
             com = True
         if line[i: i + 2] == "|>":
             com = False
-        if not com and (line[i: i + 3] in [" + ", " ~ ", " ? "]
-                        or line[i: i + 4] == " ?! "):
+        if not com \
+                and line[i: i + 3] in [" + ", " ~ ", " ? "] \
+                or line[i: i + 4] == " ?! ":
             reqs[id_of_text] = clean(line[:i])
             req = line[i:]
             break
@@ -77,10 +78,8 @@ class Item:
         if self.name in self.character.items:
             name = []
             for line in self.character.items[self.name][0]:
-                if (
-                    self.character.has(line['needs'])
-                    and self.character.unhas(line['unneeds'])
-                ):
+                if self.character.has(line['needs']) \
+                    and self.character.unhas(line['unneeds']):
                     name.append(line['name'])
             name = " ".join(name)
             if name != "":
@@ -135,7 +134,8 @@ class Character:
         elif item in self.inventory_ids():
             for a, b in enumerate(self.inventory):
                 if b.name == item:
-                    self.inventory = self.inventory[:a] + self.inventory[a+1:]
+                    self.inventory = self.inventory[:a] \
+                        + self.inventory[a + 1:]
                     break
 
     def add_items(self, items):
@@ -161,12 +161,12 @@ class Character:
 
     def _split_up(self, item):
         for s, f in [
-                     ("==", lambda a, b: a == b),
-                     (">=", lambda a, b: a >= b),
-                     ("<=", lambda a, b: a <= b),
-                     ("<", lambda a, b: a < b),
-                     (">", lambda a, b: a > b),
-                     ("=", lambda a, b: a == b)
+            ("==", lambda a, b: a == b),
+            (">=", lambda a, b: a >= b),
+            ("<=", lambda a, b: a <= b),
+            ("<", lambda a, b: a < b),
+            (">", lambda a, b: a > b),
+            ("=", lambda a, b: a == b)
         ]:
             if s in item:
                 return item.split(s, 1)[0], f, item.split(s, 1)[1]
@@ -337,7 +337,7 @@ class Games:
                          os.path.join(self.path, game))
                 if g.active or (game == "test.ave" and os.getenv("DEBUG")):
                     games.append(g)
-        self.games = [None]*len(games)
+        self.games = [None] * len(games)
         ls = []
         ordered = {}
         for g in games:
@@ -524,10 +524,8 @@ class Room:
         from .screen import WIDTH
         included_lines = []
         for line in self.text:
-            if (
-                self.character.has(line['needs'])
-                and self.character.unhas(line['unneeds'])
-            ):
+            if self.character.has(line['needs']) \
+                    and self.character.unhas(line['unneeds']):
                 self.character.add_items(line['adds'])
                 self.character.remove_items(line['rems'])
                 included_lines.append(line['text'])
@@ -553,7 +551,7 @@ class Room:
                 y += 1
                 x = 0
             elif word != "":
-                if x + len(word) > WIDTH-22:
+                if x + len(word) > WIDTH - 22:
                     y += 1
                     x = 0
                 for i, c in enumerate(word):
@@ -568,10 +566,8 @@ class Room:
         rems = []
         ids = []
         for option in self.options:
-            if (
-                self.character.has(option['needs'])
-                and self.character.unhas(option['unneeds'])
-            ):
+            if self.character.has(option['needs']) \
+                    and self.character.unhas(option['unneeds']):
                 opts.append(option['option'])
                 adds.append(option['adds'])
                 rems.append(option['rems'])

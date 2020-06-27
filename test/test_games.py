@@ -58,12 +58,11 @@ def test_all_rooms_defined(filename):
             else:
                 dests = [key['id']]
             for d in dests:
-                if (
-                    d not in game.rooms
-                    and d != "__GAMEOVER__"
-                    and d != "__WINNER__"
-                    and d not in not_inc
-                ):
+                if d in game.rooms:
+                    continue
+                if d == "__GAMEOVER__" or d == "__WINNER__":
+                    continue
+                if d not in not_inc:
                     not_inc.append(d)
 
     if len(not_inc) > 0:

@@ -22,7 +22,7 @@ class DummyScreen:
 
 class Screen:
     def __init__(self):
-        print("\x1b[8;"+str(HEIGHT)+";"+str(WIDTH)+"t")
+        print("\x1b[8;" + str(HEIGHT) + ";" + str(WIDTH) + "t")
         self.stdscr = curses.initscr()
         curses.start_color()
         curses.use_default_colors()
@@ -117,14 +117,15 @@ class Screen:
                             stuff.append((y, x, " ", curses.color_pair(2)))
                         elif c == "=":
                             stuff.append((y, x, " ", curses.color_pair(3)))
-                        elif (c == "A" and len(line) > x+1 and line[x+1] == "V"
-                              and len(line) > x+2 and line[x+2] == "E"):
+                        elif c == "A" and len(line) > x + 1 \
+                                and line[x + 1] == "V" \
+                                and len(line) > x+2 and line[x+2] == "E":
                             stuff.append((y, x, "A", curses.color_pair(6)))
-                        elif (x >= 1 and line[x - 1] == "A" and c == "V"
-                              and len(line) > x + 1 and line[x+1] == "E"):
+                        elif x >= 1 and line[x - 1] == "A" and c == "V" \
+                                and len(line) > x + 1 and line[x+1] == "E":
                             stuff.append((y, x, "V", curses.color_pair(7)))
-                        elif (x >= 2 and line[x - 2] == "A"
-                              and line[x - 1] == "V" and c == "E"):
+                        elif x >= 2 and line[x - 2] == "A" \
+                                and line[x - 1] == "V" and c == "E":
                             stuff.append((y, x, "E", curses.color_pair(8)))
                         else:
                             stuff.append((y, x, c, curses.color_pair(0)))
@@ -251,18 +252,18 @@ class Screen:
 
     def show_menu(self, ls, y, py, selected, wx, controls):
         if controls:
-            wide = wx-4
+            wide = wx - 4
         else:
             wide = wx
         start = min(max(0, selected - y // 2), max(0, len(ls) - y))
         pad = self.newpad(y + 1, wx)
         for y_pos in range(y):
             if start + y_pos < len(ls):
-                title = ls[start+y_pos]
+                title = ls[start + y_pos]
             else:
                 title = ""
             col = curses.color_pair(4)
-            if y_pos+start == selected:
+            if y_pos + start == selected:
                 col = curses.color_pair(5)
             pad.addstr(
                 y_pos, 0,
@@ -302,10 +303,10 @@ class Screen:
         y += 1
         x = 0
         for word in description.split():
-            if x + len(word) > WIDTH-9:
+            if x + len(word) > WIDTH - 9:
                 x = 0
                 y += 1
-                if y > HEIGHT-5:
+                if y > HEIGHT - 5:
                     break
             for c in word:
                 stuff.append((y, x, c))
@@ -331,7 +332,7 @@ class Screen:
                 curses.color_pair(8)]
         for t in text[: yw]:
             half = (WIDTH - 9 - len(t)) // 2
-            for x in range(WIDTH-9):
+            for x in range(WIDTH - 9):
                 if half <= x < half + len(t):
                     temp_stuff.append((y, x, t[x - half]))
                 elif x % 4 != 3:
