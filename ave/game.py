@@ -328,7 +328,6 @@ class ThingWithRequirements:
             character.remove(item)
 
 
-
 class TextWithRequirements(ThingWithRequirements):
     def __init__(self, text, **kwargs):
         self.text = text

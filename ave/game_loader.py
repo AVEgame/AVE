@@ -8,6 +8,13 @@ from .game import (TextWithRequirements, OptionWithRequirements,
 from .ave_format import symbols, attributes
 
 
+def between(text, pre, post):
+    if pre not in text or post not in text:
+        return ""
+    else:
+        return text.split(pre, 1)[1].split(post, 1)[0]
+
+
 def _replacements(string):
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
                            "../VERSION")) as f:
@@ -32,7 +39,7 @@ def _escape(matches):
 
 
 def escape(line):
-    return re.sub(r"<\|(.*)\|>", _escape, line)
+    return re.sub(r"<\|(.*?)\|>", _escape, line)
 
 
 def unescape(text):
@@ -50,16 +57,14 @@ def parse_requirements(req, id_of_text="text"):
     while pattern2.search(req) is not None:
         req = pattern2.sub(r"\1", req)
     lsp = req.split()
-    for i in range(len(lsp) - 1):
-        for a, b in attributes.items():
-            if lsp[i] == a:
-                if a in ["?", "?!"]:
-                    lsp[i + 1] = lsp[i + 1].replace("(", "")
-                    lsp[i + 1] = lsp[i + 1].replace("(", "")
-                    lsp[i + 1] = lsp[i + 1].replace(")", "")
-                    reqs[b].append(lsp[i + 1].split(","))
-                else:
-                    reqs[b].append(lsp[i + 1])
+    for i, j in zip(lsp[:-1:2], lsp[1::2]):
+        b = attributes[i]
+        if i in ["?", "?!"]:
+            j = j.replace("(", "")
+            j = j.replace(")", "")
+            reqs[b].append(j.split(","))
+        else:
+            reqs[b].append(j)
     return reqs
 
 
@@ -73,11 +78,22 @@ def parse_line(line):
 
 def parse_option(line):
     text, rest = line.split("=>", 1)
-    test = unescape(clean(text))
-    destination, req = (rest.strip() + " ").split(" ", 1)
-    destination = clean(destination)
+    text = unescape(clean(text))
+    dest, req = (rest.strip() + " ").split(" ", 1)
+    dest = dest.strip()
     reqs = parse_requirements(req)
-    return OptionWithRequirements(text=text, destination=destination, **reqs)
+    if dest.startswith("__R__"):
+        dests = [unescape(clean(i)) for i in
+                 between(dest, "(", ")").split(",")]
+        if "[" in dest:
+            random = [int(i) for i in between(dest, "[", "]").split(",")]
+        else:
+            random = [1 for d in dests]
+        return OptionWithRequirements(
+            text=text, destination=dests, random=random, **reqs)
+    else:
+        return OptionWithRequirements(
+            text=text, destination=dest, **reqs)
 
 
 def parse_text_line(line):

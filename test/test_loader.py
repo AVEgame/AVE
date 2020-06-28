@@ -10,9 +10,10 @@ from ave.game_loader import escape, unescape
     "A<|???|> B C <|D=>E|>"
 ])
 def test_unescape_escape_string(string):
-    assert unescape(escape(string)) == re.sub(r"<\|(.*)\|>", r"\1", string)
+    assert unescape(escape(string)) == re.sub(r"<\|(.*?)\|>", r"\1", string)
 
 
 def test_escape_string():
     assert "=>" not in escape("test <|=>|> escaping")
     assert "=>" in escape("test => escaping")
+    assert "=>" in escape("test <|a|> => <|???|>escaping")
