@@ -1,24 +1,16 @@
 import pytest
 import os
-from ave.ave import Character
-from ave.screen import DummyScreen
-from ave.file_handler import load_game_from_file
+from ave import (config, AVE, Character, DummyScreen,
+                 load_game_from_file, load_game_from_library)
 
+config.debug = True
 path = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "../games")
 games = [os.path.join(path, filename) for filename in os.listdir(path)
          if filename[-4:] == ".ave"]
 
 
-@pytest.mark.parametrize('filename', games)
-def test_all_rooms_acessible(filename):
-    ds = DummyScreen()
-    c = Character(ds)
-
-    game = load_game_from_file(filename)
-    game.character = c
-    game.screen = ds
-    game.load()
+def run_access_test(game):
     ach = ["start"]
     for id in game.rooms:
         for key in game[id].options:
@@ -38,16 +30,7 @@ def test_all_rooms_acessible(filename):
         assert False
 
 
-@pytest.mark.parametrize('filename', games)
-def test_all_rooms_defined(filename):
-    ds = DummyScreen()
-    c = Character(ds)
-
-    game = load_game_from_file(filename)
-    game.character = c
-    game.screen = ds
-
-    game.load()
+def run_defined_test(game):
     not_inc = []
     for id in game.rooms:
         for key in game[id].options:
@@ -70,6 +53,34 @@ def test_all_rooms_defined(filename):
         assert False
 
 
+def run_start_test(game):
+    assert game["start"].id != "fail"
+
+
+@pytest.mark.parametrize('filename', games)
+def test_all_rooms_acessible(filename):
+    ds = DummyScreen()
+    c = Character(ds)
+
+    game = load_game_from_file(filename)
+    game.character = c
+    game.screen = ds
+    game.load()
+    run_access_test(game)
+
+
+@pytest.mark.parametrize('filename', games)
+def test_all_rooms_defined(filename):
+    ds = DummyScreen()
+    c = Character(ds)
+
+    game = load_game_from_file(filename)
+    game.character = c
+    game.screen = ds
+    game.load()
+    run_defined_test(game)
+
+
 @pytest.mark.parametrize('filename', games)
 def test_has_start(filename):
     ds = DummyScreen()
@@ -78,6 +89,25 @@ def test_has_start(filename):
     game = load_game_from_file(filename)
     game.character = c
     game.screen = ds
-
     game.load()
-    assert game["start"].id != "fail"
+    run_start_test(game)
+
+
+def test_game_library():
+    ave = AVE(dummy=True)
+    ave.get_download_menu()
+
+
+def test_load_game_from_library():
+    ds = DummyScreen()
+    c = Character(ds)
+
+    ave = AVE(dummy=True)
+    game = load_game_from_library(
+        ave.get_download_menu()[0][2])
+    game.character = c
+    game.screen = ds
+    game.load()
+    run_defined_test(game)
+    run_access_test(game)
+    run_start_test(game)

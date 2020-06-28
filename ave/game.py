@@ -172,11 +172,13 @@ class Character:
 
 
 class Game:
-    def __init__(self, file, title="untitled", number=None,
+    def __init__(self, file=None, url=None,
+                 title="untitled", number=None,
                  description="", author="anonymous",
                  active=True, character=None, screen=None):
-        self.number = number
         self.file = file
+        self.url = url
+        self.number = number
         self.title = title
         self.description = description
         self.author = author
@@ -186,10 +188,15 @@ class Game:
         self.screen = screen
 
     def load(self):
-        if self.rooms is None:
-            from .file_handler import load_rooms_and_items_from_file
-            self.rooms, self.character.items = load_rooms_and_items_from_file(
-                self.file)
+        if self.file is not None:
+            from .game_loader import load_full_game_from_file as lfg
+            arg = self.file
+        elif self.url is not None:
+            from .game_loader import load_full_game_from_url as lfg
+            arg = self.url
+        else:
+            raise ValueError("One of url and file must be set to load a game.")
+        self.rooms, self.items = lfg(arg)
 
     def __getitem__(self, id):
         return self.load_room(id)

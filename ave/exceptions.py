@@ -1,3 +1,6 @@
+from urllib.error import HTTPError as AVENoInternet
+
+
 class AVEQuit(BaseException):
     pass
 

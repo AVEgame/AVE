@@ -1,9 +1,12 @@
 import re
+import os
+import json
+import urllib.request
 from .game import Game, Room, attrs
+from .exceptions import AVENoInternet
 
 
 def _replacements(string):
-    import os
     with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
                            "../VERSION")) as f:
         v = f.read().strip()
@@ -80,40 +83,7 @@ def remove_links(txt):
     return out
 
 
-def load_game_from_file(file):
-    title = "untitled"
-    number = None
-    description = ""
-    author = "anonymous"
-    active = True
-    with open(file) as f:
-        for line in f:
-            line = line.strip()
-            if line.startswith("#"):
-                # Preamble has ended
-                break
-            if line[:2] == "==" == line[-2:]:
-                title = clean(line[2:-2])
-            if line[:2] == "@@" == line[-2:]:
-                number = int(clean(line[2:-2]))
-            if line[:2] == "--" == line[-2:]:
-                description = clean(line[2:-2])
-            if line[:2] == "**" == line[-2:]:
-                author = clean(line[2:-2])
-            if line[:2] == "~~" == line[-2:]:
-                if clean(line[2:-2]) == "off":
-                    active = False
-
-    game = Game(file, title=title, number=number, description=description,
-                author=author, active=active)
-    return game
-
-
-def load_game_from_url(url):
-    pass
-
-
-def load_rooms_and_items_from_file(file, screen=None, character=None):
+def load_full_game(text):
     rooms = {}
     items = {}
     preamb = True
@@ -127,9 +97,8 @@ def load_rooms_and_items_from_file(file, screen=None, character=None):
     c_number = None
     c_item = None
     c_texts = None
-    with open(file) as f:
-        for line in f:
-            if line[0] == "#" or line[0] == '%':
+    for line in text.split("\n"):
+            if line.startswith("#") or line.startswith("%"):
                 if not preamb and mode == "ROOM" and len(c_options) > 0:
                     rooms[c_room] = Room(c_room, c_txt, c_options)
                 if not firstitem and mode == "ITEM":
@@ -180,3 +149,62 @@ def load_rooms_and_items_from_file(file, screen=None, character=None):
     if not firstitem and mode == "ITEM":
         items[c_item] = [c_texts, c_hidden, c_number, c_default]
     return rooms, items
+
+
+def load_game_from_file(file):
+    title = "untitled"
+    number = None
+    description = ""
+    author = "anonymous"
+    active = True
+    with open(file) as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith("#") or line.startswith("%"):
+                # Preamble has ended
+                break
+            if line[:2] == "==" == line[-2:]:
+                title = clean(line[2:-2])
+            if line[:2] == "@@" == line[-2:]:
+                number = int(clean(line[2:-2]))
+            if line[:2] == "--" == line[-2:]:
+                description = clean(line[2:-2])
+            if line[:2] == "**" == line[-2:]:
+                author = clean(line[2:-2])
+            if line[:2] == "~~" == line[-2:]:
+                if clean(line[2:-2]) == "off":
+                    active = False
+
+    return Game(file=file, title=title, number=number,
+                description=description,
+                author=author, active=active)
+
+
+def load_game_from_library(url):
+    info = load_library_json()[url]
+    return Game(url="http://avegame.co.uk/download/" + url,
+                title=info["title"], description=info["desc"],
+                author=info["author"], active=info["active"],
+                number=info["n"])
+
+
+library_json = None
+
+
+def load_library_json():
+    global library_json
+    if library_json is None:
+        with urllib.request.urlopen(
+                "http://avegame.co.uk/gamelist.json") as f:
+            library_json = json.load(f)
+    return library_json
+
+
+def load_full_game_from_file(file):
+    with open(file) as f:
+        return load_full_game(f.read())
+
+
+def load_full_game_from_url(url):
+    with urllib.request.urlopen(url) as f:
+        return load_full_game(f.read().decode('utf-8'))
