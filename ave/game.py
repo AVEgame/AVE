@@ -1,30 +1,24 @@
 import re
 from .exceptions import AVEGameOver, AVEWinner
 
-attrs = {"+": "adds", "?": "needs", "?!": "unneeds", "~": "rems"}
+
+class BaseItem:
+    pass
 
 
-class Item:
-    def __init__(self, name, character):
-        self.name = name
-        self.character = character
+class Number(BaseItem):
+    def __init__(self, id=id, names=[], hidden=True, default=0):
+        self.id = id
+        self.hidden = hidden
+        self.names = names
+        self.default = default
 
-    def get_name(self):
-        if self.name in self.character.items:
-            name = []
-            for line in self.character.items[self.name][0]:
-                if self.character.has(line['needs']) \
-                        and self.character.unhas(line['unneeds']):
-                    name.append(line['name'])
-            name = " ".join(name)
-            if name != "":
-                return name
-        return self.name
 
-    def is_hidden(self):
-        if self.name in self.character.items:
-            return self.character.items[self.name][1]
-        return True
+class Item(BaseItem):
+    def __init__(self, id=None, names=[], hidden=True):
+        self.id = id
+        self.hidden = hidden
+        self.names = names
 
 
 class Character:
@@ -60,7 +54,7 @@ class Character:
         elif self.is_number(item):
             self.numbers[item][0] += 1
         else:
-            self.inventory.append(Item(item, self))
+            self.inventory.append(item)
 
     def _remove_item(self, item):
         if self.is_number(item):
@@ -159,15 +153,15 @@ class Character:
     def get_inventory(self):
         inv = []
         for n, item in self.numbers.values():
-            if not item.is_hidden():
+            if not item.hidden:
                 inv.append(item.get_name() + ": " + str(n))
         for i in self.inventory:
-            if not i.is_hidden():
+            if not i.hidden:
                 inv.append(i.get_name())
         return inv
 
     def inventory_ids(self):
-        return [item.name for item in self.inventory]
+        return [item.id for item in self.inventory]
 
 
 class Game:
@@ -246,7 +240,7 @@ class Game:
 
 
 class Room:
-    def __init__(self, id, text, options):
+    def __init__(self, id=None, text="", options=[]):
         self.id = id
         self.text = text
         self.options = options
@@ -309,3 +303,57 @@ class Room:
         num = screen.menu(opts, add=adds, rem=rems, y=min(8, len(opts)),
                           character=character)
         return ids[num]
+
+
+class ThingWithRequirements:
+    def __init__(self, adds=[], needs=[], unneeds=[], rems=[]):
+        self.adds = adds
+        self.needs = needs
+        self.unneeds = unneeds
+        self.rems = rems
+
+    def has_requirements(self, character):
+        for item in self.needs:
+            if not character.has(item):
+                return False
+        if item in self.unneeds:
+            if character.has(item):
+                return False
+        return True
+
+    def get_items(self, character):
+        for item in self.adds:
+            character.add(item)
+        for item in self.rems:
+            character.remove(item)
+
+
+
+class TextWithRequirements(ThingWithRequirements):
+    def __init__(self, text, **kwargs):
+        self.text = text
+        super().__init__(**kwargs)
+
+
+class OptionWithRequirements(ThingWithRequirements):
+    def __init__(self, text, destination, random=None, **kwargs):
+        self.text = text
+        self.destination = destination
+        if random is None:
+            self.random = False
+        else:
+            self.random = True
+            self.probabilities = random
+        super().__init__(**kwargs)
+
+    def get_destinations(self):
+        if self.random:
+            return self.destination
+        else:
+            return [self.destination]
+
+
+class NameWithRequirements(ThingWithRequirements):
+    def __init__(self, text, **kwargs):
+        self.text = text
+        super().__init__(**kwargs)

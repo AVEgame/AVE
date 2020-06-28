@@ -43,7 +43,7 @@ Money
 __NUMBER__
 % two
 Two
-__NUMBER__ 2
+__NUMBER__(2)
 
 # nums
 You have $money$ pounds.

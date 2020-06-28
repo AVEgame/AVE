@@ -2,7 +2,10 @@ import re
 import os
 import json
 import urllib.request
-from .game import Game, Room, attrs
+from .game import Game, Room, Item, Number
+from .game import (TextWithRequirements, OptionWithRequirements,
+                   NameWithRequirements)
+from .ave_format import symbols, attributes
 
 
 def _replacements(string):
@@ -13,35 +16,33 @@ def _replacements(string):
     return string
 
 
+def remove_links(txt):
+    return re.sub(r"\[(.*)\]\((.*)\)", r"\2", txt)
+
+
 def clean(string):
     return _replacements(string.strip())
 
 
-def unescaped(line):
-    pattern = re.compile(r"<\|.*\|>")
-    while pattern.search(line) is not None:
-        line = pattern.sub("", line)
-    return line
+def _escape(matches):
+    text = matches[1]
+    for i, j in symbols.items():
+        text = text.replace(i, j)
+    return text
 
 
-def parse_req(line, id_of_text="text"):
-    com = False
-    reqs = {a: [] for b, a in attrs.items()}
-    for i, c in enumerate(clean(line)):
-        if line[i: i + 2] == "<|":
-            com = True
-        if line[i: i + 2] == "|>":
-            com = False
-        if not com \
-                and line[i: i + 3] in [" + ", " ~ ", " ? "] \
-                or line[i: i + 4] == " ?! ":
-            reqs[id_of_text] = clean(line[:i])
-            req = line[i:]
-            break
-    else:
-        reqs[id_of_text] = clean(line)
-        req = ""
+def escape(line):
+    return re.sub(r"<\|(.*)\|>", _escape, line)
 
+
+def unescape(text):
+    for i, j in symbols.items():
+        text = text.replace(j, i)
+    return text
+
+
+def parse_requirements(req, id_of_text="text"):
+    reqs = {a: [] for a in attributes.values()}
     pattern = re.compile(r"(\([^\)]*) ([^\)]*\))")
     while pattern.search(req) is not None:
         req = pattern.sub(r"\1,\2", req)
@@ -50,7 +51,7 @@ def parse_req(line, id_of_text="text"):
         req = pattern2.sub(r"\1", req)
     lsp = req.split()
     for i in range(len(lsp) - 1):
-        for a, b in attrs.items():
+        for a, b in attributes.items():
             if lsp[i] == a:
                 if a in ["?", "?!"]:
                     lsp[i + 1] = lsp[i + 1].replace("(", "")
@@ -62,93 +63,88 @@ def parse_req(line, id_of_text="text"):
     return reqs
 
 
-def _remove_links(txt):
-    pattern = re.compile(r"\[(.*)\]\((.*)\)")
-    while pattern.search(txt) is not None:
-        txt = pattern.sub(r"\2", txt)
-    return txt
+def parse_line(line):
+    i = min([line.index(a) if a in line else len(line) for a in
+             [" " + b + " " for b in attributes]])
+    text = unescape(clean(line[:i]))
+    reqs = parse_requirements(line[i:])
+    return text, reqs
 
 
-def remove_links(txt):
-    out = ""
-    while "<|" in txt and "|>" in txt:
-        tsp = txt.split("<|", 1)
-        out += _remove_links(tsp[0])
-        if "|>" in tsp[1]:
-            ttsp = tsp[1].split("|>", 1)
-            out += "<|" + ttsp[0] + "|>"
-            txt = ttsp[1]
-    out += _remove_links(txt)
-    return out
+def parse_option(line):
+    text, rest = line.split("=>", 1)
+    test = unescape(clean(text))
+    destination, req = (rest.strip() + " ").split(" ", 1)
+    destination = clean(destination)
+    reqs = parse_requirements(req)
+    return OptionWithRequirements(text=text, destination=destination, **reqs)
+
+
+def parse_text_line(line):
+    text, reqs = parse_line(line)
+    return TextWithRequirements(text=text, **reqs)
+
+
+def parse_name_part(line):
+    text, reqs = parse_line(line)
+    return NameWithRequirements(text=text, **reqs)
+
+
+def parse_room(id, room):
+    room = escape(room)
+    text = []
+    options = []
+    for line in room.split("\n"):
+        line = clean(line)
+        if "=>" in line:
+            options.append(parse_option(line))
+        elif clean(line) != "":
+            text.append(parse_text_line(line))
+    return Room(id=id, text=text, options=options)
+
+
+def parse_item(id, item):
+    item = escape(item)
+    hidden = None
+    number = False
+    default = None
+    names = []
+    for line in item.split("\n"):
+        line = clean(line)
+        if line.startswith("__HIDDEN__"):
+            hidden = True
+        elif line.startswith("__NUMBER__"):
+            number = True
+            if "(" in line:
+                try:
+                    default = int(line.split("(", 1)[1].split(")")[0])
+                except ValueError:
+                    default = 0
+        elif line != "":
+            if hidden is None:
+                hidden = False
+            names.append(parse_name_part(line))
+    if number:
+        return Number(id=id, names=names, hidden=hidden, default=default)
+    else:
+        return Item(id=id, names=names, hidden=hidden)
 
 
 def load_full_game(text):
     rooms = {}
+    for room in re.split(r"(^|\n)#", text)[1:]:
+        room_id, room = re.split(r"(^|\n)%", room)[0].split("\n", 1)
+        room_id = clean(room_id)
+        if room_id != "":
+            rooms[room_id] = parse_room(room_id, room)
+
     items = {}
-    preamb = True
-    firstitem = True
-    mode = "PREA"
-    c_hidden = None
-    c_room = None
-    c_txt = None
-    c_options = None
-    c_default = None
-    c_number = None
-    c_item = None
-    c_texts = None
-    for line in text.split("\n"):
-        if line.startswith("#") or line.startswith("%"):
-            if not preamb and mode == "ROOM" and len(c_options) > 0:
-                rooms[c_room] = Room(c_room, c_txt, c_options)
-            if not firstitem and mode == "ITEM":
-                items[c_item] = [c_texts, c_hidden, c_number, c_default]
-            if line[0] == "#":
-                mode = "ROOM"
-                preamb = False
-                while len(line) > 0 and line[0] == "#":
-                    line = line[1:]
-                c_room = clean(line)
-                c_txt = []
-                c_options = []
-            elif line[0] == "%":
-                mode = "ITEM"
-                firstitem = False
-                while len(line) > 0 and line[0] == "%":
-                    line = line[1:]
-                c_item = clean(line)
-                c_hidden = True
-                c_number = False
-                c_default = None
-                c_texts = []
-        elif mode == "ITEM":
-            if clean(line) == "__HIDDEN__":
-                c_hidden = True
-            if clean(line.split(" ", 1)[0]) == "__NUMBER__":
-                c_number = True
-                try:
-                    c_default = int(line.split(" ", 1)[1])
-                except ValueError:
-                    c_default = 0
-                except IndexError:
-                    c_default = 0
-            elif clean(line) != "":
-                c_hidden = False
-                next_item = parse_req(line, 'name')
-                c_texts.append(next_item)
-        elif mode == "ROOM":
-            if "=>" in unescaped(line):
-                lsp = line.split("=>")
-                next_option = parse_req(line)
-                next_option['option'] = clean(lsp[0])
-                lsp = clean(lsp[1]).split()
-                next_option['id'] = clean(lsp[0])
-                c_options.append(next_option)
-            elif clean(line) != "":
-                c_txt.append(parse_req(line))
-    if not preamb and mode == "ROOM" and len(c_options) > 0:
-        rooms[c_room] = Room(c_room, c_txt, c_options)
-    if not firstitem and mode == "ITEM":
-        items[c_item] = [c_texts, c_hidden, c_number, c_default]
+    for item in re.split(r"(^|\n)%", text)[1:]:
+        item_id, item = re.split(r"(^|\n)#", item)[0].split("\n", 1)
+        item_id = clean(item_id)
+        if item_id != "":
+            items[item_id] = parse_item(item_id, item)
+
     return rooms, items
 
 

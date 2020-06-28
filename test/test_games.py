@@ -11,16 +11,12 @@ games = [os.path.join(path, filename) for filename in os.listdir(path)
 
 
 def run_access_test(game):
-    ach = ["start"]
-    for id in game.rooms:
-        for key in game[id].options:
-            if key['id'].startswith("__R__"):
-                for d in key["id"][6:].split(")")[0].split(","):
-                    if d not in ach:
-                        ach.append(key)
-            elif key['id'] not in ach:
-                ach.append(key['id'])
-
+    ach = {"start"}
+    for room in game.rooms.values():
+        for option in room.options:
+            for d in option.get_destinations():
+                ach.add(d)
+    print(ach)
     not_ach = [i for i in game.rooms if i not in ach]
 
     if len(not_ach) > 0:
@@ -31,20 +27,14 @@ def run_access_test(game):
 
 
 def run_defined_test(game):
-    not_inc = []
-    for id in game.rooms:
-        for key in game[id].options:
-            if key['id'].startswith("__R__"):
-                dests = key["id"][6:].split(")")[0].split(",")
-            else:
-                dests = [key['id']]
-            for d in dests:
-                if d in game.rooms:
-                    continue
+    not_inc = set()
+    for room in game.rooms.values():
+        for option in room.options:
+            for d in option.get_destinations():
                 if d == "__GAMEOVER__" or d == "__WINNER__":
                     continue
-                if d not in not_inc:
-                    not_inc.append(d)
+                if d not in game.rooms:
+                    not_inc.add(d)
 
     if len(not_inc) > 0:
         print("Rooms not defined:")
