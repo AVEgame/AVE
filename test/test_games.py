@@ -1,7 +1,7 @@
 import pytest
 import os
-from ave import (config, AVE, Character, DummyScreen,
-                 load_game_from_file, load_game_from_library)
+from ave import config, AVE
+from ave import load_game_from_file, load_game_from_library
 
 config.debug = True
 path = os.path.join(
@@ -59,36 +59,21 @@ def run_start_test(game):
 
 @pytest.mark.parametrize('filename', games)
 def test_all_rooms_acessible(filename):
-    ds = DummyScreen()
-    c = Character(ds)
-
     game = load_game_from_file(filename)
-    game.character = c
-    game.screen = ds
     game.load()
     run_access_test(game)
 
 
 @pytest.mark.parametrize('filename', games)
 def test_all_rooms_defined(filename):
-    ds = DummyScreen()
-    c = Character(ds)
-
     game = load_game_from_file(filename)
-    game.character = c
-    game.screen = ds
     game.load()
     run_defined_test(game)
 
 
 @pytest.mark.parametrize('filename', games)
 def test_has_start(filename):
-    ds = DummyScreen()
-    c = Character(ds)
-
     game = load_game_from_file(filename)
-    game.character = c
-    game.screen = ds
     game.load()
     run_start_test(game)
 
@@ -99,14 +84,8 @@ def test_game_library():
 
 
 def test_load_game_from_library():
-    ds = DummyScreen()
-    c = Character(ds)
-
     ave = AVE(dummy=True)
-    game = load_game_from_library(
-        ave.get_download_menu()[0][2])
-    game.character = c
-    game.screen = ds
+    game = load_game_from_library(ave.get_download_menu()[0][2])
     game.load()
     run_defined_test(game)
     run_access_test(game)

@@ -28,9 +28,8 @@ class Item:
 
 
 class Character:
-    def __init__(self, screen):
+    def __init__(self):
         self.items = []
-        self.screen = screen
         self.reset()
 
     def set_items(self, items):
@@ -157,7 +156,7 @@ class Character:
                 return self.items[item.split(s, 1)[0]][2]
         return False
 
-    def show_inventory(self):
+    def get_inventory(self):
         inv = []
         for n, item in self.numbers.values():
             if not item.is_hidden():
@@ -165,7 +164,7 @@ class Character:
         for i in self.inventory:
             if not i.is_hidden():
                 inv.append(i.get_name())
-        self.screen.show_inventory(inv)
+        return inv
 
     def inventory_ids(self):
         return [item.name for item in self.inventory]
@@ -306,7 +305,7 @@ class Room:
                 adds.append(option['adds'])
                 rems.append(option['rems'])
                 ids.append(option['id'])
-        character.show_inventory()
+        screen.show_inventory(character.get_inventory())
         num = screen.menu(opts, add=adds, rem=rems, y=min(8, len(opts)),
                           character=character)
         return ids[num]

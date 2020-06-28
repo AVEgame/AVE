@@ -12,7 +12,7 @@ class AVE:
         else:
             from .screen import Screen
         self.screen = Screen()
-        self.character = Character(self.screen)
+        self.character = Character()
         self.games = None
 
     def reset(self):
@@ -20,11 +20,11 @@ class AVE:
 
     def start(self):
         if config.debug:
-            self.debug_start()
+            self._debug_start()
         else:
             self._actual_start()
 
-    def debug_start(self):
+    def _debug_start(self):
         try:
             self.reset()
             self.show_title_screen()
@@ -71,7 +71,7 @@ class AVE:
                     else:
                         assert g.number not in ordered_games
                         ordered_games[g.number] = g
-        self.games = Games([
+        self.games = GameLibrary([
             ordered_games[i]
             for i in sorted(ordered_games.keys())] + other_games)
 
@@ -136,7 +136,7 @@ class AVE:
         self.screen.close()
 
 
-class Games:
+class GameLibrary:
     def __init__(self, games):
         self.games = games
 
