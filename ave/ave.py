@@ -3,6 +3,7 @@ from .exceptions import AVEGameOver, AVEWinner, AVEToMenu, AVEQuit
 from .game import Character
 from . import config
 
+
 class AVE:
     def __init__(self):
         from .screen import Screen
