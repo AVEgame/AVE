@@ -1,7 +1,8 @@
 import pytest
 import os
-from ave.ave import Game, Character
+from ave.ave import Character
 from ave.screen import DummyScreen
+from ave.file_handler import load_game_from_file
 
 path = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "../games")
@@ -14,11 +15,9 @@ def test_all_rooms_acessible(filename):
     ds = DummyScreen()
     c = Character(ds)
 
-    def avefile():
-        with open(filename) as f:
-            return f.readlines()
-
-    game = Game(avefile, ds, c)
+    game = load_game_from_file(filename)
+    game.character = c
+    game.screen = ds
     game.load()
     ach = ["start"]
     for id in game.rooms:
@@ -44,11 +43,10 @@ def test_all_rooms_defined(filename):
     ds = DummyScreen()
     c = Character(ds)
 
-    def avefile():
-        with open(filename) as f:
-            return f.readlines()
+    game = load_game_from_file(filename)
+    game.character = c
+    game.screen = ds
 
-    game = Game(avefile, ds, c)
     game.load()
     not_inc = []
     for id in game.rooms:
@@ -70,3 +68,16 @@ def test_all_rooms_defined(filename):
         for key in not_inc:
             print(" ", key)
         assert False
+
+
+@pytest.mark.parametrize('filename', games)
+def test_has_start(filename):
+    ds = DummyScreen()
+    c = Character(ds)
+
+    game = load_game_from_file(filename)
+    game.character = c
+    game.screen = ds
+
+    game.load()
+    assert game["start"].id != "fail"
