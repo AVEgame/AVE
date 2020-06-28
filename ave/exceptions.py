@@ -1,4 +1,4 @@
-from urllib.error import HTTPError as AVENoInternet
+from urllib.error import HTTPError as AVENoInternet  # noqa: F401
 
 
 class AVEQuit(BaseException):

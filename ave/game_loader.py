@@ -3,7 +3,6 @@ import os
 import json
 import urllib.request
 from .game import Game, Room, attrs
-from .exceptions import AVENoInternet
 
 
 def _replacements(string):
@@ -98,52 +97,54 @@ def load_full_game(text):
     c_item = None
     c_texts = None
     for line in text.split("\n"):
-            if line.startswith("#") or line.startswith("%"):
-                if not preamb and mode == "ROOM" and len(c_options) > 0:
-                    rooms[c_room] = Room(c_room, c_txt, c_options)
-                if not firstitem and mode == "ITEM":
-                    items[c_item] = [c_texts, c_hidden, c_number, c_default]
-                if line[0] == "#":
-                    mode = "ROOM"
-                    preamb = False
-                    while len(line) > 0 and line[0] == "#":
-                        line = line[1:]
-                    c_room = clean(line)
-                    c_txt = []
-                    c_options = []
-                elif line[0] == "%":
-                    mode = "ITEM"
-                    firstitem = False
-                    while len(line) > 0 and line[0] == "%":
-                        line = line[1:]
-                    c_item = clean(line)
-                    c_hidden = True
-                    c_number = False
-                    c_default = None
-                    c_texts = []
-            elif mode == "ITEM":
-                if clean(line) == "__HIDDEN__":
-                    c_hidden = True
-                if clean(line.split(" ", 1)[0]) == "__NUMBER__":
-                    c_number = True
-                    try:
-                        c_default = int(line.split(" ", 1)[1])
-                    except:
-                        c_default = 0
-                elif clean(line) != "":
-                    c_hidden = False
-                    next_item = parse_req(line, 'name')
-                    c_texts.append(next_item)
-            elif mode == "ROOM":
-                if "=>" in unescaped(line):
-                    lsp = line.split("=>")
-                    next_option = parse_req(line)
-                    next_option['option'] = clean(lsp[0])
-                    lsp = clean(lsp[1]).split()
-                    next_option['id'] = clean(lsp[0])
-                    c_options.append(next_option)
-                elif clean(line) != "":
-                    c_txt.append(parse_req(line))
+        if line.startswith("#") or line.startswith("%"):
+            if not preamb and mode == "ROOM" and len(c_options) > 0:
+                rooms[c_room] = Room(c_room, c_txt, c_options)
+            if not firstitem and mode == "ITEM":
+                items[c_item] = [c_texts, c_hidden, c_number, c_default]
+            if line[0] == "#":
+                mode = "ROOM"
+                preamb = False
+                while len(line) > 0 and line[0] == "#":
+                    line = line[1:]
+                c_room = clean(line)
+                c_txt = []
+                c_options = []
+            elif line[0] == "%":
+                mode = "ITEM"
+                firstitem = False
+                while len(line) > 0 and line[0] == "%":
+                    line = line[1:]
+                c_item = clean(line)
+                c_hidden = True
+                c_number = False
+                c_default = None
+                c_texts = []
+        elif mode == "ITEM":
+            if clean(line) == "__HIDDEN__":
+                c_hidden = True
+            if clean(line.split(" ", 1)[0]) == "__NUMBER__":
+                c_number = True
+                try:
+                    c_default = int(line.split(" ", 1)[1])
+                except ValueError:
+                    c_default = 0
+                except IndexError:
+                    c_default = 0
+            elif clean(line) != "":
+                c_hidden = False
+                next_item = parse_req(line, 'name')
+                c_texts.append(next_item)
+        elif mode == "ROOM":
+            if "=>" in unescaped(line):
+                lsp = line.split("=>")
+                next_option = parse_req(line)
+                next_option['option'] = clean(lsp[0])
+                lsp = clean(lsp[1]).split()
+                next_option['id'] = clean(lsp[0])
+                c_options.append(next_option)
+            elif clean(line) != "":
+                c_txt.append(parse_req(line))
     if not preamb and mode == "ROOM" and len(c_options) > 0:
         rooms[c_room] = Room(c_room, c_txt, c_options)
     if not firstitem and mode == "ITEM":
