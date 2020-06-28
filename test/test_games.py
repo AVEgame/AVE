@@ -1,5 +1,5 @@
 import pytest
-import os
+-import os
 from ave import config, AVE
 from ave import load_game_from_file, load_game_from_library
 
@@ -87,6 +87,4 @@ def test_load_game_from_library():
     ave = AVE(dummy=True)
     game = load_game_from_library(ave.get_download_menu()[0][2])
     game.load()
-    run_defined_test(game)
-    run_access_test(game)
     run_start_test(game)
