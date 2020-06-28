@@ -19,3 +19,7 @@ class AVEGameOver(BaseException):
 
 class AVEWinner(BaseException):
     pass
+
+
+class ScreenIsDummy(BaseException):
+    pass

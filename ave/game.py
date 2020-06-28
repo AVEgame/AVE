@@ -252,11 +252,9 @@ class Room:
         from .screen import WIDTH
         included_lines = []
         for line in self.text:
-            if character.has(line['needs']) \
-                    and character.unhas(line['unneeds']):
-                character.add_items(line['adds'])
-                character.remove_items(line['rems'])
-                included_lines.append(line['text'])
+            if line.has_requirements(character):
+                line.get_items(character)
+                included_lines.append(line.text)
         y = 0
         x = 0
         stuff = []
@@ -293,12 +291,11 @@ class Room:
         rems = []
         ids = []
         for option in self.options:
-            if character.has(option['needs']) \
-                    and character.unhas(option['unneeds']):
-                opts.append(option['option'])
-                adds.append(option['adds'])
-                rems.append(option['rems'])
-                ids.append(option['id'])
+            if option.has_requirements(character):
+                opts.append(option.text)
+                adds.append(option.adds)
+                rems.append(option.rems)
+                ids.append(option.destination)
         screen.show_inventory(character.get_inventory())
         num = screen.menu(opts, add=adds, rem=rems, y=min(8, len(opts)),
                           character=character)
@@ -316,7 +313,7 @@ class ThingWithRequirements:
         for item in self.needs:
             if not character.has(item):
                 return False
-        if item in self.unneeds:
+        for item in self.unneeds:
             if character.has(item):
                 return False
         return True

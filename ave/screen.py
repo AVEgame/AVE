@@ -1,6 +1,6 @@
 # dimensions: (height) 45
 #             (width)  80
-from .exceptions import AVEToMenu, AVEQuit
+from .exceptions import AVEToMenu, AVEQuit, ScreenIsDummy
 from .utils import comment, clean_newlines
 import curses
 import signal
@@ -16,7 +16,12 @@ signal.signal(signal.SIGWINCH, catch_resize)
 
 
 class DummyScreen:
-    def clear(self):
+    def __getattribute__(self, attr):
+        if attr == "menu":
+            raise ScreenIsDummy()
+        return self
+
+    def __call__(self, *args, **kwargs):
         pass
 
 
