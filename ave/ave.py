@@ -43,7 +43,7 @@ class AVE:
                 self.exit()
                 print("Goodbye...")
                 break
-            except:  # noqa: F722
+            except:  # noqa: E722
                 self.exit()
                 break
 
