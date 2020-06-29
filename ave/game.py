@@ -1,4 +1,3 @@
-import re
 from random import randrange
 from .exceptions import AVEGameOver, AVEWinner
 
@@ -60,7 +59,7 @@ class Character:
 
     def has(self, item):
         if item in self.numbers:
-            return numbers[inventory] > 0
+            return self.numbers[item] > 0
         else:
             return item in self.inventory
 
@@ -75,7 +74,7 @@ class Character:
 
     def get_inventory(self, items):
         inv = []
-        for i, m in self.numbers.values():
+        for i, n in self.numbers.values():
             item = items[i]
             if not item.hidden:
                 inv.append(item.get_name(self) + ": " + str(n))
@@ -185,9 +184,9 @@ class Room:
         return "Room with id " + self.id
 
     def get_text(self, character):
-        ## TODO: <newline>
-        ## TODO: $variable$
-        ## TODO: AND, OR, NOT, NUMBERS EQUAL ETC
+        # TODO: <newline>
+        # TODO: $variable$
+        # TODO: AND, OR, NOT, NUMBERS EQUAL ETC
         lines = []
         for line in self.text:
             if line.has_requirements(character):

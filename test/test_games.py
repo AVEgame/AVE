@@ -2,7 +2,6 @@ import pytest
 import os
 from ave import config, AVE
 from ave import load_game_from_file, load_game_from_library
-from ave.exceptions import ScreenIsDummy
 
 config.debug = True
 path = os.path.join(

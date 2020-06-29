@@ -12,22 +12,22 @@ class RequiredItem(Requirement):
 
 
 class RequiredNumber(Requirement):
-    def __init__(self, item, sign=">", value=0  ):
+    def __init__(self, item, sign=">", value=0):
         self.item = item
         self.sign = sign
         self.value = value
 
     def has(self, character):
         n = character.numbers[self.item]
-        if sign == ">":
+        if self.sign == ">":
             return n > self.value
-        if sign == "<":
+        if self.sign == "<":
             return n < self.value
-        if sign == ">=":
+        if self.sign == ">=":
             return n >= self.value
-        if sign == "<=":
+        if self.sign == "<=":
             return n <= self.value
-        if sign == "=" or sign == "==":
+        if self.sign == "=" or self.sign == "==":
             return n == self.value
 
 

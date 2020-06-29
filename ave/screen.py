@@ -260,7 +260,7 @@ class Screen:
                     selected -= len(ls)
                 self.show_menu(ls, y, py, selected, wx, controls)
             if key == ord('q'):
-                if titles:
+                if credits:
                     raise AVEQuit
                 else:
                     raise AVEToMenu
