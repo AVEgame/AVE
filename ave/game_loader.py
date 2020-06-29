@@ -28,6 +28,7 @@ def remove_links(txt):
 
 
 def clean(string):
+    string = string.replace("<newline>", "\n")
     return _replacements(string.strip())
 
 
@@ -49,6 +50,7 @@ def unescape(text):
 
 
 def parse_requirements(req, id_of_text="text"):
+    # TODO: AND, OR, NOT, NUMBERS EQUAL ETC
     reqs = {a: [] for a in attributes.values()}
     pattern = re.compile(r"(\([^\)]*) ([^\)]*\))")
     while pattern.search(req) is not None:

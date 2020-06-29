@@ -184,9 +184,7 @@ class Room:
         return "Room with id " + self.id
 
     def get_text(self, character):
-        # TODO: <newline>
         # TODO: $variable$
-        # TODO: AND, OR, NOT, NUMBERS EQUAL ETC
         lines = []
         for line in self.text:
             if line.has_requirements(character):
