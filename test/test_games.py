@@ -61,10 +61,8 @@ def test_first_room(filename):
     ave = AVE(dummy=True)
     game = load_game_from_file(filename)
     game.load()
-    try:
-        game["start"].show(ave.character, ave.screen)
-    except ScreenIsDummy:
-        pass
+    game["start"].get_text(ave.character)
+    game["start"].get_options(ave.character)
 
 
 def test_game_library():

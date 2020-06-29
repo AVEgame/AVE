@@ -1,9 +1,19 @@
 import re
+from random import randrange
 from .exceptions import AVEGameOver, AVEWinner
 
 
 class BaseItem:
-    pass
+    def get_name(self, character):
+        if self.hidden:
+            return None
+        out = []
+        for name in self.names:
+            if name.has_requirements(character):
+                out.append(name.text)
+        if len(out) == 0:
+            return None
+        return " ".join(out)
 
 
 class Number(BaseItem):
@@ -23,142 +33,58 @@ class Item(BaseItem):
 
 class Character:
     def __init__(self):
-        self.items = []
-        self.reset()
-
-    def set_items(self, items):
-        self.items = items
-        self.reset_numbers()
-
-    def reset_numbers(self):
-        self.numbers = {}
-        for i in self.items:
-            if self.is_number(i):
-                self.numbers[i] = [self.items[i][3], Item(i, self)]
-
-    def reset(self):
         self.inventory = []
-        self.name = ""
-        self.reset_numbers()
+        self.numbers = {}
 
-    def _add_item(self, item):
-        if "=" in item and self.is_number(item.split("=", 1)[0]):
-            self.numbers[item.split("=", 1)[0]][0] = self._parse_number(
-                item.split("=", 1)[1])
-        elif "+" in item and self.is_number(item.split("+", 1)[0]):
-            self.numbers[item.split("+", 1)[0]][0] += self._parse_number(
-                item.split("+", 1)[1])
-        elif "-" in item and self.is_number(item.split("-", 1)[0]):
-            self.numbers[item.split("-", 1)[0]][0] -= self._parse_number(
-                item.split("-", 1)[1])
-        elif self.is_number(item):
-            self.numbers[item][0] += 1
+    def reset(self, items):
+        self.inventory = []
+        self.numbers = {}
+        for i in items.values():
+            if self.is_number(i):
+                self.numbers[i.id] = i.default
+
+    def add(self, item, value=1):
+        if item in self.numbers:
+            self.numbers[item] += value
+        elif item not in self.inventory:
+            self.inventory.append(item)
+
+    def set(self, item, value):
+        self.numbers[item] = value
+
+    def remove(self, item, value=1):
+        if item in self.numbers:
+            self.numbers[item] -= value
         else:
             self.inventory.append(item)
 
-    def _remove_item(self, item):
-        if self.is_number(item):
-            self.numbers[item][0] -= 1
-        elif item in self.inventory_ids():
-            for a, b in enumerate(self.inventory):
-                if b.name == item:
-                    self.inventory = self.inventory[:a] \
-                        + self.inventory[a + 1:]
-                    break
-
-    def add_items(self, items):
-        for item in items:
-            self._add_item(item)
-
-    def remove_items(self, items):
-        for item in items:
-            self._remove_item(item)
-
     def has(self, item):
-        if type(item) == list:
-            for a in item:
-                for b in a:
-                    if self._has(b):
-                        break
-                    if b[0] == "!" and not self._has(b[1:]):
-                        break
-                else:
-                    return False
-            return True
-        return self._has(item)
-
-    def _split_up(self, item):
-        for s, f in [
-            ("==", lambda a, b: a == b),
-            (">=", lambda a, b: a >= b),
-            ("<=", lambda a, b: a <= b),
-            ("<", lambda a, b: a < b),
-            (">", lambda a, b: a > b),
-            ("=", lambda a, b: a == b)
-        ]:
-            if s in item:
-                return item.split(s, 1)[0], f, item.split(s, 1)[1]
-        return item, None, None
-
-    def _parse_number(self, num):
-        try:
-            return int(num)
-        except ValueError:
-            try:
-                return float(num)
-            except ValueError:
-                if "__R__" in num:
-                    import random
-                    if num == "__R__":
-                        return random.random()
-                    if re.match(r"__R__[0-9]", num):
-                        return random.random() * int(num.split("__R__", 1)[1])
-                else:
-                    return self.numbers[num][0]
-
-    def _has(self, item):
-        item_, f, against = self._split_up(item)
-        if "__R__" in item_ or self.is_number(item_):
-            if f is None:
-                return self._parse_number(item_) > 0
-            else:
-                return f(self._parse_number(item_),
-                         self._parse_number(against))
+        if item in self.numbers:
+            return numbers[inventory] > 0
         else:
-            if item == "__PYTHON__":
+            return item in self.inventory
+
+    def has_one(self, items):
+        for item in items:
+            if self.has(item):
                 return True
-            return item in self.inventory_ids()
-
-    def unhas(self, item):
-        if type(item) == list:
-            for a in item:
-                for b in a:
-                    if not self._has(b):
-                        break
-                    if b[0] == "!" and self._has(b):
-                        break
-                else:
-                    return False
-            return True
-        return not self._has(item)
-
-    def is_number(self, item):
-        if item in self.items:
-            return self.items[item][2]
-        for s in ["<", ">", "="]:
-            if item.split(s, 1)[0] in self.items:
-                return self.items[item.split(s, 1)[0]][2]
         return False
 
-    def get_inventory(self):
+    def is_number(self, item):
+        return isinstance(item, Number)
+
+    def get_inventory(self, items):
         inv = []
-        for n, item in self.numbers.values():
+        for i, m in self.numbers.values():
+            item = items[i]
             if not item.hidden:
-                inv.append(item.get_name() + ": " + str(n))
+                inv.append(item.get_name(self) + ": " + str(n))
         for i in self.inventory:
-            if not i.hidden:
-                inv.append(i.get_name())
-        return inv
+            if i in items:
+                item = items[i]
+                if not item.hidden:
+                    inv.append(item.get_name(self))
+        return [i for i in inv if i is not None and i != ""]
 
     def inventory_ids(self):
         return [item.id for item in self.inventory]
@@ -221,12 +147,22 @@ class Game:
 
     def begin(self):
         self.show_title()
-        room = self['start']
-        while True:
-            self.screen.clear()
-            self.screen.put_ave_logo()
-            next = room.show(self.character, self.screen)
-            room = self[next]
+        self.enter_room("start")
+
+    def enter_room(self, id):
+        room = self[id]
+
+        self.screen.clear()
+        self.screen.put_ave_logo()
+        self.screen.show_inventory(self.character.get_inventory(self.items))
+        self.screen.type_room_text(room.get_text(self.character))
+
+        opts = room.get_options(self.character)
+        next = opts[self.screen.menu([o.text for o in opts],
+                                     y=min(8, len(opts)))]
+
+        next.get_items(self.character)
+        self.enter_room(next.get_destination())
 
     def fail_room(self):
         options = [{'id': "__GAMEOVER__", 'option': "Continue",
@@ -248,58 +184,19 @@ class Room:
     def __str__(self):
         return "Room with id " + self.id
 
-    def show(self, character, screen):
-        from .screen import WIDTH
-        included_lines = []
+    def get_text(self, character):
+        ## TODO: <newline>
+        ## TODO: $variable$
+        ## TODO: AND, OR, NOT, NUMBERS EQUAL ETC
+        lines = []
         for line in self.text:
             if line.has_requirements(character):
                 line.get_items(character)
-                included_lines.append(line.text)
-        y = 0
-        x = 0
-        stuff = []
-        text = " ".join(included_lines)
-        com = False
-        text = re.sub(r"([^ ])<\|", r"\1 <|", text)
-        text = re.sub(r"\|>([^ ])", r"|> \1", text)
-        for word in text.split():
-            if word[:2] == "<|":
-                com = True
-                word = word[2:].strip()
-            if word[-2:] == "|>":
-                com = False
-                word = word[:-2].strip()
-            if not com and "$" in word:
-                for item, value in character.numbers.items():
-                    word = str(value[0]).join(word.split("$" + item + "$"))
-            if not com and word == "<newline>":
-                y += 1
-                x = 0
-            elif word != "":
-                if x + len(word) > WIDTH - 22:
-                    y += 1
-                    x = 0
-                for i, c in enumerate(word):
-                    stuff.append((y, x, c))
-                    x += 1
-                stuff.append((y, x, " "))
-                x += 1
-        screen.type(stuff)
+                lines.append(line.text)
+        return " ".join(lines)
 
-        opts = []
-        adds = []
-        rems = []
-        ids = []
-        for option in self.options:
-            if option.has_requirements(character):
-                opts.append(option.text)
-                adds.append(option.adds)
-                rems.append(option.rems)
-                ids.append(option.destination)
-        screen.show_inventory(character.get_inventory())
-        num = screen.menu(opts, add=adds, rem=rems, y=min(8, len(opts)),
-                          character=character)
-        return ids[num]
+    def get_options(self, character):
+        return [o for o in self.options if o.has_requirements(character)]
 
 
 class ThingWithRequirements:
@@ -311,10 +208,10 @@ class ThingWithRequirements:
 
     def has_requirements(self, character):
         for item in self.needs:
-            if not character.has(item):
+            if not character.has_one(item):
                 return False
         for item in self.unneeds:
-            if character.has(item):
+            if character.has_one(item):
                 return False
         return True
 
@@ -347,6 +244,17 @@ class OptionWithRequirements(ThingWithRequirements):
             return self.destination
         else:
             return [self.destination]
+
+    def get_destination(self):
+        if self.random:
+            n = randrange(sum(self.probabilities))
+            total = 0
+            for d, i in zip(self.destination, self.probabilities):
+                total += i
+                if total > n:
+                    return d
+        else:
+            return self.destination
 
 
 class NameWithRequirements(ThingWithRequirements):

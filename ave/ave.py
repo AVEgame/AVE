@@ -14,9 +14,7 @@ class AVE:
         self.screen = Screen()
         self.character = Character()
         self.games = None
-
-    def reset(self):
-        self.character.reset()
+        self.items = None
 
     def start(self):
         if config.debug:
@@ -26,7 +24,6 @@ class AVE:
 
     def _debug_start(self):
         try:
-            self.reset()
             self.show_title_screen()
         except AVEQuit:
             self.exit()
@@ -37,7 +34,6 @@ class AVE:
     def _actual_start(self):
         while True:
             try:
-                self.reset()
                 self.show_title_screen()
             except AVEQuit:
                 self.exit()
@@ -51,7 +47,7 @@ class AVE:
         self.screen.print_titles()
         game_to_load = self.screen.menu(
             self.games.titles() + ["- user contributed games -"], 8,
-            titles=True)
+            credits=True)
         if game_to_load == len(self.games.titles()):
             self.show_download_menu()
         else:
@@ -114,17 +110,16 @@ class AVE:
         while again:
             again = False
             try:
+                self.character.reset(the_game.items)
                 the_game.begin()
             except AVEGameOver:
                 next = self.screen.gameover()
-                self.character.reset()
                 if next == 0:
                     again = True
                 if next == 2:
                     raise AVEQuit
             except AVEWinner:
                 next = self.screen.winner()
-                self.character.reset()
                 if next == 0:
                     again = True
                 if next == 2:
