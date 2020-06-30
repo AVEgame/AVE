@@ -11,13 +11,16 @@ symbols = {
     "%": "PPEERRCCEENNTT",
     "#": "HHAASSHH",
     "_": "UUNNDDEERRSCCOORREE",
-    "$": "DDOOLLAARR",
     "[": "OOPPEENNSQ",
     "]": "CCLLOOSSEESQ",
     "(": "OOPPEENNRO",
     ")": "CCLLOOSSEERO",
     "<": "OOPPEENNPO",
     ">": "CCLLOOSSEEPO"
+}
+
+more_symbols = {
+    "$": "DDOOLLAARR"
 }
 
 attributes = {

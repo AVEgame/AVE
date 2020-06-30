@@ -1,5 +1,13 @@
 from random import randrange
 from .exceptions import AVEGameOver, AVEWinner
+from .escaping import more_unescape
+
+
+def finalise(txt, character):
+    # TODO: put this in options and var names
+    for i, n in character.numbers.items():
+        txt = txt.replace("$" + i + "$", str(n))
+    return more_unescape(txt)
 
 
 class BaseItem:
@@ -12,7 +20,7 @@ class BaseItem:
                 out.append(name.text)
         if len(out) == 0:
             return None
-        return " ".join(out)
+        return finalise(" ".join(out), character)
 
 
 class Number(BaseItem):
@@ -157,8 +165,9 @@ class Game:
         self.screen.type_room_text(room.get_text(self.character))
 
         opts = room.get_options(self.character)
-        next = opts[self.screen.menu([o.text for o in opts],
-                                     y=min(8, len(opts)))]
+        next = opts[self.screen.menu(
+            [finalise(o.text, self.character) for o in opts],
+            y=min(8, len(opts)))]
 
         next.get_items(self.character)
         self.enter_room(next.get_destination())
@@ -190,7 +199,7 @@ class Room:
             if line.has_requirements(character):
                 line.get_items(character)
                 lines.append(line.text)
-        return " ".join(lines)
+        return finalise(" ".join(lines), character)
 
     def get_options(self, character):
         return [o for o in self.options if o.has_requirements(character)]
