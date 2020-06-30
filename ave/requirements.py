@@ -19,43 +19,49 @@ class RequiredNumber(Requirement):
 
     def has(self, character):
         n = character.numbers[self.item]
+        v = self.value.get_value(character)
         if self.sign == ">":
-            return n > self.value
+            return n > v
         if self.sign == "<":
-            return n < self.value
+            return n < v
         if self.sign == ">=":
-            return n >= self.value
+            return n >= v
         if self.sign == "<=":
-            return n <= self.value
+            return n <= v
         if self.sign == "=" or self.sign == "==":
-            return n == self.value
+            return n == v
 
 
-class ReqOr(Requirement):
+class Or(Requirement):
     def __init__(self, *items):
         self.items = items
 
     def has(self, character):
         for i in self.items:
-            if character.has(i):
+            if i.has(character):
                 return True
         return False
 
 
-class ReqAnd(Requirement):
+class And(Requirement):
     def __init__(self, *items):
         self.items = items
 
     def has(self, character):
         for i in self.items:
-            if not character.has(i):
+            if not i.has(character):
                 return False
         return True
 
 
-class ReqNot(Requirement):
+class Not(Requirement):
     def __init__(self, item):
         self.item = item
 
     def has(self, character):
-        return not character.has(self.item)
+        return not self.item.has(character)
+
+
+class Satisfied(Requirement):
+    def has(self, character):
+        return True

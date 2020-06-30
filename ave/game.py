@@ -62,8 +62,8 @@ class Character:
     def remove(self, item, value=1):
         if item in self.numbers:
             self.numbers[item] -= value
-        else:
-            self.inventory.append(item)
+        elif item in self.inventory:
+            self.inventory.remove(item)
 
     def has(self, item):
         if item in self.numbers:
@@ -82,7 +82,7 @@ class Character:
 
     def get_inventory(self, items):
         inv = []
-        for i, n in self.numbers.values():
+        for i, n in self.numbers.items():
             item = items[i]
             if not item.hidden:
                 inv.append(item.get_name(self) + ": " + str(n))
@@ -161,8 +161,9 @@ class Game:
 
         self.screen.clear()
         self.screen.put_ave_logo()
+        text = room.get_text(self.character)
         self.screen.show_inventory(self.character.get_inventory(self.items))
-        self.screen.type_room_text(room.get_text(self.character))
+        self.screen.type_room_text(text)
 
         opts = room.get_options(self.character)
         next = opts[self.screen.menu(
@@ -206,26 +207,16 @@ class Room:
 
 
 class ThingWithRequirements:
-    def __init__(self, adds=[], needs=[], unneeds=[], rems=[]):
-        self.adds = adds
+    def __init__(self, items=[], needs=[]):
+        self.items = items
         self.needs = needs
-        self.unneeds = unneeds
-        self.rems = rems
 
     def has_requirements(self, character):
-        for item in self.needs:
-            if not character.has_one(item):
-                return False
-        for item in self.unneeds:
-            if character.has_one(item):
-                return False
-        return True
+        return self.needs.has(character)
 
     def get_items(self, character):
-        for item in self.adds:
-            character.add(item)
-        for item in self.rems:
-            character.remove(item)
+        for item in self.items:
+            item.give(character)
 
 
 class TextWithRequirements(ThingWithRequirements):

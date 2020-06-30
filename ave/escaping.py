@@ -1,6 +1,30 @@
 import os
 import re
-from .ave_format import symbols, more_symbols
+
+symbols = {
+    "!?": "IINNTTEERROOBBAANNGG",
+    "=>": "AARROOWW",
+    "?": "QQUUEESSTTIIOONN",
+    "+": "PPLLUUSS",
+    "~": "TTIILLDDEE",
+    "=": "EEQQUUAALL",
+    "-": "DDAASSHH",
+    "*": "AASSTTEERRIISSKK",
+    "@": "AATT",
+    "%": "PPEERRCCEENNTT",
+    "#": "HHAASSHH",
+    "_": "UUNNDDEERRSCCOORREE",
+    "[": "OOPPEENNSQ",
+    "]": "CCLLOOSSEESQ",
+    "(": "OOPPEENNRO",
+    ")": "CCLLOOSSEERO",
+    "<": "OOPPEENNPO",
+    ">": "CCLLOOSSEEPO"
+}
+
+more_symbols = {
+    "$": "DDOOLLAARR"
+}
 
 
 def between(text, pre, post):

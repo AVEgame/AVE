@@ -4,13 +4,79 @@ import urllib.request
 from .game import Game, Room, Item, Number
 from .game import (TextWithRequirements, OptionWithRequirements,
                    NameWithRequirements)
-from .ave_format import attributes
 from .escaping import escape, unescape, clean, between
+from . import requirements as rq
+from . import item_giver as ig
+from . import numbers as no
+
+library_json = None
+
+
+def load_library_json():
+    global library_json
+    if library_json is None:
+        with urllib.request.urlopen(
+                "http://avegame.co.uk/gamelist.json") as f:
+            library_json = json.load(f)
+    return library_json
+
+
+def parse_rq(condition):
+    if condition.startswith("(") and condition.endswith(")"):
+        return rq.Or(*[parse_rq(i) for i in condition[1:-1].split(",")])
+    if condition.startswith("!"):
+        return rq.Not(parse_rq(condition[1:]))
+    if ">" in condition or "<" in condition or "=" in condition:
+        for sign in [">=", "<=", "==", "<", ">", "="]:
+            if sign in condition:
+                n, val = condition.split(sign, 1)
+                return rq.RequiredNumber(n, sign, parse_value(val))
+    return rq.RequiredItem(condition)
+
+
+def parse_value(value):
+    if "-" in value:
+        value = value.replace("-", "+-")
+    if "+" in value:
+        if value.startswith("-"):
+            value = "0+" + value
+        v, w = value.split("+", 1)
+        return no.Sum(*[parse_value(v) for v in value.split("+")])
+    if value.startswith("-"):
+        return no.Negative(parse_value(value[1:]))
+
+    if re.match(r"^[0-9]+$", value):
+        return no.Constant(int(value))
+    if re.match(r"^[0-9\.]+$", value):
+        return no.Constant(float(value))
+
+    if "__R__" in value:
+        # TODO
+        raise NotImplementedError()
+
+    raise ValueError("Count not parse number: " + value)
+
+
+def parse_ig_add(item):
+    if "=" in item:
+        n, value = item.split("=", 1)
+        return ig.Set(n, parse_value(value))
+    if "+" in item:
+        n, value = item.split("+", 1)
+        return ig.Add(n, parse_value(value))
+    if "-" in item:
+        n, value = item.split("-", 1)
+        return ig.Remove(n, parse_value(value))
+    return ig.Add(item)
+
+
+def parse_ig_remove(item):
+    return ig.Remove(item)
 
 
 def parse_requirements(req, id_of_text="text"):
-    # TODO: AND, OR, NOT, NUMBERS EQUAL ETC
-    reqs = {a: [] for a in attributes.values()}
+    items = []
+    needs = rq.Satisfied()
     pattern = re.compile(r"(\([^\)]*) ([^\)]*\))")
     while pattern.search(req) is not None:
         req = pattern.sub(r"\1,\2", req)
@@ -19,22 +85,25 @@ def parse_requirements(req, id_of_text="text"):
         req = pattern2.sub(r"\1", req)
     lsp = req.split()
     for i, j in zip(lsp[:-1:2], lsp[1::2]):
-        b = attributes[i]
-        if i in ["?", "?!"]:
-            j = j.replace("(", "")
-            j = j.replace(")", "")
-            reqs[b].append(j.split(","))
+        if i == "?":
+            needs = rq.And(needs, parse_rq(j))
+        elif i == "?!":
+            needs = rq.And(needs, rq.Not(parse_rq(j)))
+        elif i == "+":
+            items.append(parse_ig_add(j))
+        elif i == "~":
+            items.append(parse_ig_remove(j))
         else:
-            reqs[b].append(j)
-    return reqs
+            raise ValueError("Unknown symbol")
+    return items, needs
 
 
 def parse_line(line):
     i = min([line.index(a) if a in line else len(line) for a in
-             [" " + b + " " for b in attributes]])
+             [" ? ", " ?! ", " + ", " ~ "]])
     text = unescape(clean(line[:i]))
-    reqs = parse_requirements(line[i:])
-    return text, reqs
+    items, needs = parse_requirements(line[i:])
+    return text, items, needs
 
 
 def parse_option(line):
@@ -42,7 +111,7 @@ def parse_option(line):
     text = unescape(clean(text))
     dest, req = (rest.strip() + " ").split(" ", 1)
     dest = dest.strip()
-    reqs = parse_requirements(req)
+    items, needs = parse_requirements(req)
     if dest.startswith("__R__"):
         dests = [unescape(clean(i)) for i in
                  between(dest, "(", ")").split(",")]
@@ -51,20 +120,21 @@ def parse_option(line):
         else:
             random = [1 for d in dests]
         return OptionWithRequirements(
-            text=text, destination=dests, random=random, **reqs)
+            text=text, destination=dests, random=random,
+            items=items, needs=needs)
     else:
         return OptionWithRequirements(
-            text=text, destination=dest, **reqs)
+            text=text, destination=dest, items=items, needs=needs)
 
 
 def parse_text_line(line):
-    text, reqs = parse_line(line)
-    return TextWithRequirements(text=text, **reqs)
+    text, items, needs = parse_line(line)
+    return TextWithRequirements(text=text, items=items, needs=needs)
 
 
 def parse_name_part(line):
-    text, reqs = parse_line(line)
-    return NameWithRequirements(text=text, **reqs)
+    text, items, needs = parse_line(line)
+    return NameWithRequirements(text=text, items=items, needs=needs)
 
 
 def parse_room(id, room):
@@ -84,7 +154,7 @@ def parse_item(id, item):
     item = escape(item)
     hidden = None
     number = False
-    default = None
+    default = 0
     names = []
     for line in item.split("\n"):
         line = clean(line)
@@ -160,18 +230,6 @@ def load_game_from_library(url):
                 title=info["title"], description=info["desc"],
                 author=info["author"], active=info["active"],
                 number=info["n"])
-
-
-library_json = None
-
-
-def load_library_json():
-    global library_json
-    if library_json is None:
-        with urllib.request.urlopen(
-                "http://avegame.co.uk/gamelist.json") as f:
-            library_json = json.load(f)
-    return library_json
 
 
 def load_full_game_from_file(file):
