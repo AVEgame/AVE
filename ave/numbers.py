@@ -25,3 +25,11 @@ class Negative(Number):
 
     def get_value(self, character):
         return -self.item.get_value(character)
+
+
+class Variable(Number):
+    def __init__(self, item):
+        self.item = item
+
+    def get_value(self, character):
+        return character.numbers[item]

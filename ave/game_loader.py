@@ -54,7 +54,7 @@ def parse_value(value):
         # TODO
         raise NotImplementedError()
 
-    raise ValueError("Count not parse number: " + value)
+    return no.Variable(value)
 
 
 def parse_ig_add(item):
