@@ -21,6 +21,9 @@ jobs:
           command: python3 -m flake8 .
           name: Flake8 checks
       - run:
+          command: echo "RRRRRRRRR"
+          name: Test
+      - run:
           command: python3 -m pytest test/
           name: Test
 
