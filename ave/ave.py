@@ -14,9 +14,7 @@ class AVE:
         self.screen = Screen()
         self.character = Character()
         self.games = None
-
-    def reset(self):
-        self.character.reset()
+        self.items = None
 
     def start(self):
         if config.debug:
@@ -26,7 +24,6 @@ class AVE:
 
     def _debug_start(self):
         try:
-            self.reset()
             self.show_title_screen()
         except AVEQuit:
             self.exit()
@@ -37,7 +34,6 @@ class AVE:
     def _actual_start(self):
         while True:
             try:
-                self.reset()
                 self.show_title_screen()
             except AVEQuit:
                 self.exit()
@@ -51,7 +47,7 @@ class AVE:
         self.screen.print_titles()
         game_to_load = self.screen.menu(
             self.games.titles() + ["- user contributed games -"], 8,
-            titles=True)
+            credits=True)
         if game_to_load == len(self.games.titles()):
             self.show_download_menu()
         else:
@@ -107,30 +103,47 @@ class AVE:
         self.screen.menu([], 1)
 
     def run_the_game(self, the_game):
-        the_game.character = self.character
-        the_game.screen = self.screen
         the_game.load()
         again = True
         while again:
             again = False
             try:
-                the_game.begin()
+                self.character.reset(the_game.items)
+                the_game.reset()
+                self.screen.show_titles(
+                    the_game.title,
+                    the_game.description,
+                    the_game.author)
+                self.game_loop(the_game)
             except AVEGameOver:
                 next = self.screen.gameover()
-                self.character.reset()
                 if next == 0:
                     again = True
                 if next == 2:
                     raise AVEQuit
             except AVEWinner:
                 next = self.screen.winner()
-                self.character.reset()
                 if next == 0:
                     again = True
                 if next == 2:
                     raise AVEQuit
             except AVEToMenu:
                 pass
+
+    def game_loop(self, the_game):
+        while True:
+            text, options = the_game.get_room_info(self.character)
+            self.screen.clear()
+            self.screen.put_ave_logo()
+            self.screen.show_inventory(
+                self.character.get_inventory(the_game.items))
+            self.screen.type_room_text(text)
+            next_id = self.screen.menu(
+                list(options.values()),
+                y=min(8, len(options)))
+            the_game.pick_option(
+                list(options.keys())[next_id],
+                self.character)
 
     def exit(self):
         self.screen.close()

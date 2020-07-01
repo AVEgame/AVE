@@ -1,47 +1,91 @@
 import re
-import os
 import json
 import urllib.request
-from .game import Game, Room, attrs
+from .game import Game, Room
+from .game import (TextWithRequirements, OptionWithRequirements,
+                   NameWithRequirements)
+from .escaping import escape, unescape, clean, between
+from .items import Item, Number
+from . import requirements as rq
+from . import item_giver as ig
+from . import numbers as no
+
+library_json = None
 
 
-def _replacements(string):
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                           "../VERSION")) as f:
-        v = f.read().strip()
-    string = v.join(string.split("%v%"))
-    return string
+def load_library_json():
+    global library_json
+    if library_json is None:
+        with urllib.request.urlopen(
+                "http://avegame.co.uk/gamelist.json") as f:
+            library_json = json.load(f)
+    return library_json
 
 
-def clean(string):
-    return _replacements(string.strip())
+def parse_rq(condition):
+    if condition.startswith("(") and condition.endswith(")"):
+        return rq.Or(*[parse_rq(i) for i in condition[1:-1].split(",")])
+    if condition.startswith("!"):
+        return rq.Not(parse_rq(condition[1:]))
+    if ">" in condition or "<" in condition or "=" in condition:
+        for sign in [">=", "<=", "==", "<", ">", "="]:
+            if sign in condition:
+                n, val = condition.split(sign, 1)
+                return rq.RequiredNumber(
+                    parse_value(n), sign, parse_value(val))
+    return rq.RequiredItem(condition)
 
 
-def unescaped(line):
-    pattern = re.compile(r"<\|.*\|>")
-    while pattern.search(line) is not None:
-        line = pattern.sub("", line)
-    return line
+def parse_value(value):
+    # TODO: Brackets in expression (use escaping)
+    if "+" in value:
+        if value[0] == "-":
+            value = "0+" + value
+        if "-" in value:
+            value = value.replace("-", "+-")
+        return no.Sum(*[parse_value(v) for v in value.split("+")])
+    if value.startswith("-"):
+        return no.Negative(parse_value(value[1:]))
+
+    if "*" in value:
+        return no.Product(*[parse_value(v) for v in value.split("*")])
+    if "/" in value:
+        return no.Division(*[parse_value(v) for v in value.split("/")])
+
+    if re.match(r"^[0-9]+$", value):
+        return no.Constant(int(value))
+    if re.match(r"^[0-9\.]+$", value):
+        return no.Constant(float(value))
+
+    if "__R__" == value:
+        return no.Random()
+    if value.startswith("__R__("):
+        return no.Random(*[parse_value(i)
+                           for i in between(value, "(", ")").split(",")])
+
+    return no.Variable(value)
 
 
-def parse_req(line, id_of_text="text"):
-    com = False
-    reqs = {a: [] for b, a in attrs.items()}
-    for i, c in enumerate(clean(line)):
-        if line[i: i + 2] == "<|":
-            com = True
-        if line[i: i + 2] == "|>":
-            com = False
-        if not com \
-                and line[i: i + 3] in [" + ", " ~ ", " ? "] \
-                or line[i: i + 4] == " ?! ":
-            reqs[id_of_text] = clean(line[:i])
-            req = line[i:]
-            break
-    else:
-        reqs[id_of_text] = clean(line)
-        req = ""
+def parse_ig_add(item):
+    if "=" in item:
+        n, value = item.split("=", 1)
+        return ig.Set(n, parse_value(value))
+    if "+" in item:
+        n, value = item.split("+", 1)
+        return ig.Add(n, parse_value(value))
+    if "-" in item:
+        n, value = item.split("-", 1)
+        return ig.Remove(n, parse_value(value))
+    return ig.Add(item)
 
+
+def parse_ig_remove(item):
+    return ig.Remove(item)
+
+
+def parse_requirements(req, id_of_text="text"):
+    items = []
+    needs = rq.Satisfied()
     pattern = re.compile(r"(\([^\)]*) ([^\)]*\))")
     while pattern.search(req) is not None:
         req = pattern.sub(r"\1,\2", req)
@@ -49,106 +93,114 @@ def parse_req(line, id_of_text="text"):
     while pattern2.search(req) is not None:
         req = pattern2.sub(r"\1", req)
     lsp = req.split()
-    for i in range(len(lsp) - 1):
-        for a, b in attrs.items():
-            if lsp[i] == a:
-                if a in ["?", "?!"]:
-                    lsp[i + 1] = lsp[i + 1].replace("(", "")
-                    lsp[i + 1] = lsp[i + 1].replace("(", "")
-                    lsp[i + 1] = lsp[i + 1].replace(")", "")
-                    reqs[b].append(lsp[i + 1].split(","))
-                else:
-                    reqs[b].append(lsp[i + 1])
-    return reqs
+    for i, j in zip(lsp[:-1:2], lsp[1::2]):
+        if i == "?":
+            needs = rq.And(needs, parse_rq(j))
+        elif i == "?!":
+            needs = rq.And(needs, rq.Not(parse_rq(j)))
+        elif i == "+":
+            items.append(parse_ig_add(j))
+        elif i == "~":
+            items.append(parse_ig_remove(j))
+        else:
+            raise ValueError("Unknown symbol")
+    return items, needs
 
 
-def _remove_links(txt):
-    pattern = re.compile(r"\[(.*)\]\((.*)\)")
-    while pattern.search(txt) is not None:
-        txt = pattern.sub(r"\2", txt)
-    return txt
+def parse_line(line):
+    i = min([line.index(a) if a in line else len(line) for a in
+             [" ? ", " ?! ", " + ", " ~ "]])
+    text = unescape(clean(line[:i]))
+    items, needs = parse_requirements(line[i:])
+    return text, items, needs
 
 
-def remove_links(txt):
-    out = ""
-    while "<|" in txt and "|>" in txt:
-        tsp = txt.split("<|", 1)
-        out += _remove_links(tsp[0])
-        if "|>" in tsp[1]:
-            ttsp = tsp[1].split("|>", 1)
-            out += "<|" + ttsp[0] + "|>"
-            txt = ttsp[1]
-    out += _remove_links(txt)
-    return out
+def parse_option(line):
+    text, rest = line.split("=>", 1)
+    text = unescape(clean(text))
+    dest, req = (rest.strip() + " ").split(" ", 1)
+    dest = dest.strip()
+    items, needs = parse_requirements(req)
+    if dest.startswith("__R__"):
+        dests = [unescape(clean(i)) for i in
+                 between(dest, "(", ")").split(",")]
+        if "[" in dest:
+            random = [int(i) for i in between(dest, "[", "]").split(",")]
+        else:
+            random = [1 for d in dests]
+        return OptionWithRequirements(
+            text=text, destination=dests, random=random,
+            items=items, needs=needs)
+    else:
+        return OptionWithRequirements(
+            text=text, destination=dest, items=items, needs=needs)
+
+
+def parse_text_line(line):
+    text, items, needs = parse_line(line)
+    return TextWithRequirements(text=text, items=items, needs=needs)
+
+
+def parse_name_part(line):
+    text, items, needs = parse_line(line)
+    return NameWithRequirements(text=text, items=items, needs=needs)
+
+
+def parse_room(id, room):
+    room = escape(room)
+    text = []
+    options = []
+    for line in room.split("\n"):
+        line = clean(line)
+        if "=>" in line:
+            options.append(parse_option(line))
+        elif clean(line) != "":
+            text.append(parse_text_line(line))
+    return Room(id=id, text=text, options=options)
+
+
+def parse_item(id, item):
+    item = escape(item)
+    hidden = None
+    number = False
+    default = 0
+    names = []
+    for line in item.split("\n"):
+        line = clean(line)
+        if line.startswith("__HIDDEN__"):
+            hidden = True
+        elif line.startswith("__NUMBER__"):
+            number = True
+            if "(" in line:
+                try:
+                    default = int(line.split("(", 1)[1].split(")")[0])
+                except ValueError:
+                    default = 0
+        elif line != "":
+            if hidden is None:
+                hidden = False
+            names.append(parse_name_part(line))
+    if number:
+        return Number(id=id, names=names, hidden=hidden, default=default)
+    else:
+        return Item(id=id, names=names, hidden=hidden)
 
 
 def load_full_game(text):
     rooms = {}
+    for room in re.split(r"(^|\n)#", text)[1:]:
+        room_id, room = re.split(r"(^|\n)%", room)[0].split("\n", 1)
+        room_id = clean(room_id)
+        if room_id != "":
+            rooms[room_id] = parse_room(room_id, room)
+
     items = {}
-    preamb = True
-    firstitem = True
-    mode = "PREA"
-    c_hidden = None
-    c_room = None
-    c_txt = None
-    c_options = None
-    c_default = None
-    c_number = None
-    c_item = None
-    c_texts = None
-    for line in text.split("\n"):
-        if line.startswith("#") or line.startswith("%"):
-            if not preamb and mode == "ROOM" and len(c_options) > 0:
-                rooms[c_room] = Room(c_room, c_txt, c_options)
-            if not firstitem and mode == "ITEM":
-                items[c_item] = [c_texts, c_hidden, c_number, c_default]
-            if line[0] == "#":
-                mode = "ROOM"
-                preamb = False
-                while len(line) > 0 and line[0] == "#":
-                    line = line[1:]
-                c_room = clean(line)
-                c_txt = []
-                c_options = []
-            elif line[0] == "%":
-                mode = "ITEM"
-                firstitem = False
-                while len(line) > 0 and line[0] == "%":
-                    line = line[1:]
-                c_item = clean(line)
-                c_hidden = True
-                c_number = False
-                c_default = None
-                c_texts = []
-        elif mode == "ITEM":
-            if clean(line) == "__HIDDEN__":
-                c_hidden = True
-            if clean(line.split(" ", 1)[0]) == "__NUMBER__":
-                c_number = True
-                try:
-                    c_default = int(line.split(" ", 1)[1])
-                except ValueError:
-                    c_default = 0
-                except IndexError:
-                    c_default = 0
-            elif clean(line) != "":
-                c_hidden = False
-                next_item = parse_req(line, 'name')
-                c_texts.append(next_item)
-        elif mode == "ROOM":
-            if "=>" in unescaped(line):
-                lsp = line.split("=>")
-                next_option = parse_req(line)
-                next_option['option'] = clean(lsp[0])
-                lsp = clean(lsp[1]).split()
-                next_option['id'] = clean(lsp[0])
-                c_options.append(next_option)
-            elif clean(line) != "":
-                c_txt.append(parse_req(line))
-    if not preamb and mode == "ROOM" and len(c_options) > 0:
-        rooms[c_room] = Room(c_room, c_txt, c_options)
-    if not firstitem and mode == "ITEM":
-        items[c_item] = [c_texts, c_hidden, c_number, c_default]
+    for item in re.split(r"(^|\n)%", text)[1:]:
+        item_id, item = re.split(r"(^|\n)#", item)[0].split("\n", 1)
+        item_id = clean(item_id)
+        if item_id != "":
+            items[item_id] = parse_item(item_id, item)
+
     return rooms, items
 
 
@@ -187,18 +239,6 @@ def load_game_from_library(url):
                 title=info["title"], description=info["desc"],
                 author=info["author"], active=info["active"],
                 number=info["n"])
-
-
-library_json = None
-
-
-def load_library_json():
-    global library_json
-    if library_json is None:
-        with urllib.request.urlopen(
-                "http://avegame.co.uk/gamelist.json") as f:
-            library_json = json.load(f)
-    return library_json
 
 
 def load_full_game_from_file(file):

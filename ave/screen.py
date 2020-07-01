@@ -1,7 +1,8 @@
 # dimensions: (height) 45
 #             (width)  80
-from .exceptions import AVEToMenu, AVEQuit
-from .utils import comment, clean_newlines
+from .exceptions import AVEToMenu, AVEQuit, ScreenIsDummy
+from . import config
+from .escaping import clean_newlines
 import curses
 import signal
 HEIGHT = 25
@@ -16,7 +17,12 @@ signal.signal(signal.SIGWINCH, catch_resize)
 
 
 class DummyScreen:
-    def clear(self):
+    def __getattribute__(self, attr):
+        if attr == "menu":
+            raise ScreenIsDummy()
+        return self
+
+    def __call__(self, *args, **kwargs):
         pass
 
 
@@ -101,8 +107,7 @@ class Screen:
         import os
         self.clear()
         stuff = []
-        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                               filename)) as f:
+        with open(os.path.join(config.screens_folder, filename)) as f:
             y = 0
             y_beg = None
             for line in f.readlines():
@@ -133,7 +138,7 @@ class Screen:
                     if y >= HEIGHT:
                         y -= 1
                         break
-                elif comment(line) == "type":
+                elif "# type" in line:
                     self.show(stuff, y=y + 1, x=WIDTH)
                     y_beg = y
                     stuff = []
@@ -162,7 +167,7 @@ class Screen:
         pad.addstr(6, 0, " " * (WIDTH - 20), curses.color_pair(10))
         pad.refresh(0, 0, 3, 10, 9, WIDTH - 10)
         return self.menu(["Play again", "Play another game", "Quit"],
-                         3, 6, wx=WIDTH - 30, controls=False, titles=True)
+                         3, 6, wx=WIDTH - 30, controls=False, credits=True)
 
     def show_inventory(self, inventory):
         pad = self.newpad(14, 20)
@@ -177,6 +182,25 @@ class Screen:
             else:
                 pad.addstr(i + 1, 0, " " * 20, curses.color_pair(9))
         pad.refresh(0, 0, 1, WIDTH - 20, 13, WIDTH)
+
+    def type_room_text(self, text):
+        y = 0
+        x = 0
+        stuff = []
+        for word in text.split():
+            if word == "\n":
+                y += 1
+                x = 0
+            elif word != "":
+                if x + len(word) > WIDTH - 22:
+                    y += 1
+                    x = 0
+                for i, c in enumerate(word):
+                    stuff.append((y, x, c))
+                    x += 1
+                stuff.append((y, x, " "))
+                x += 1
+        self.type(stuff)
 
     def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH - 21,
              title=False):
@@ -216,8 +240,7 @@ class Screen:
         self.print_titles()
 
     def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH,
-             controls=True, add=None, rem=None, character=None,
-             titles=False):
+             controls=True, credits=False):
         if py is None:
             py = HEIGHT - y - 1
         self.show_menu(ls, y, py, selected, wx, controls)
@@ -225,10 +248,6 @@ class Screen:
         while key is not None:
             key = self.stdscr.getch()
             if key in [curses.KEY_ENTER, ord("\n"), ord("\r")]:
-                if character is not None and add is not None:
-                    character.add_items(add[selected])
-                if character is not None and rem is not None:
-                    character.remove_items(rem[selected])
                 return selected
             if key == curses.KEY_UP:
                 selected -= 1
@@ -241,11 +260,11 @@ class Screen:
                     selected -= len(ls)
                 self.show_menu(ls, y, py, selected, wx, controls)
             if key == ord('q'):
-                if titles:
+                if credits:
                     raise AVEQuit
                 else:
                     raise AVEToMenu
-            if key == ord('c') and titles:
+            if key == ord('c') and credits:
                 self.print_credits()
                 self.credit_menu()
                 self.show_menu(ls, y, py, selected, wx, controls)

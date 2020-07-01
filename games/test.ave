@@ -13,7 +13,6 @@ Test for PHP injection attack => inject
 Test new lines => newline
 Test numbers => nums
 Test random => rand
-Test links => links
 Test or => or
 Test version => version
 Get up => up
@@ -23,10 +22,6 @@ You are using the Python version. ? __PYTHON__
 You are using the website version. ? __WEB__
 You are using the badge version. ? __BADGE__
 You are using the app. ? __APP__
-Continue => start
-
-# links
-The AVE website is [AVEgame.co.uk](http://avegame.co.uk).
 Continue => start
 
 # rand
@@ -43,7 +38,7 @@ Money
 __NUMBER__
 % two
 Two
-__NUMBER__ 2
+__NUMBER__(2)
 
 # nums
 You have $money$ pounds.

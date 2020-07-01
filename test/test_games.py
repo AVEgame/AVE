@@ -10,17 +10,15 @@ games = [os.path.join(path, filename) for filename in os.listdir(path)
          if filename[-4:] == ".ave"]
 
 
-def run_access_test(game):
-    ach = ["start"]
-    for id in game.rooms:
-        for key in game[id].options:
-            if key['id'].startswith("__R__"):
-                for d in key["id"][6:].split(")")[0].split(","):
-                    if d not in ach:
-                        ach.append(key)
-            elif key['id'] not in ach:
-                ach.append(key['id'])
-
+@pytest.mark.parametrize('filename', games)
+def test_all_rooms_acessible(filename):
+    game = load_game_from_file(filename)
+    game.load()
+    ach = {"start"}
+    for room in game.rooms.values():
+        for option in room.options:
+            for d in option.get_all_destinations():
+                ach.add(d)
     not_ach = [i for i in game.rooms if i not in ach]
 
     if len(not_ach) > 0:
@@ -30,21 +28,18 @@ def run_access_test(game):
         assert False
 
 
-def run_defined_test(game):
-    not_inc = []
-    for id in game.rooms:
-        for key in game[id].options:
-            if key['id'].startswith("__R__"):
-                dests = key["id"][6:].split(")")[0].split(",")
-            else:
-                dests = [key['id']]
-            for d in dests:
-                if d in game.rooms:
-                    continue
+@pytest.mark.parametrize('filename', games)
+def test_all_rooms_defined(filename):
+    game = load_game_from_file(filename)
+    game.load()
+    not_inc = set()
+    for room in game.rooms.values():
+        for option in room.options:
+            for d in option.get_all_destinations():
                 if d == "__GAMEOVER__" or d == "__WINNER__":
                     continue
-                if d not in not_inc:
-                    not_inc.append(d)
+                if d not in game.rooms:
+                    not_inc.add(d)
 
     if len(not_inc) > 0:
         print("Rooms not defined:")
@@ -53,29 +48,20 @@ def run_defined_test(game):
         assert False
 
 
-def run_start_test(game):
-    assert game["start"].id != "fail"
-
-
-@pytest.mark.parametrize('filename', games)
-def test_all_rooms_acessible(filename):
-    game = load_game_from_file(filename)
-    game.load()
-    run_access_test(game)
-
-
-@pytest.mark.parametrize('filename', games)
-def test_all_rooms_defined(filename):
-    game = load_game_from_file(filename)
-    game.load()
-    run_defined_test(game)
-
-
 @pytest.mark.parametrize('filename', games)
 def test_has_start(filename):
     game = load_game_from_file(filename)
     game.load()
-    run_start_test(game)
+    assert game["start"].id != "fail"
+
+
+@pytest.mark.parametrize('filename', games)
+def test_first_room(filename):
+    ave = AVE(dummy=True)
+    game = load_game_from_file(filename)
+    game.load()
+    game["start"].get_text(ave.character)
+    game["start"].get_options(ave.character)
 
 
 def test_game_library():
@@ -87,4 +73,4 @@ def test_load_game_from_library():
     ave = AVE(dummy=True)
     game = load_game_from_library(ave.get_download_menu()[0][2])
     game.load()
-    run_start_test(game)
+    assert game["start"].id != "fail"
