@@ -21,9 +21,6 @@ jobs:
           command: python3 -m flake8 .
           name: Flake8 checks
       - run:
-          commmand: python3 setup.py install
-          name: Install AVE
-      - run:
           command: python3 -m pytest test/
           name: Test
 
