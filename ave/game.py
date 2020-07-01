@@ -1,41 +1,13 @@
 from random import randrange
 from .exceptions import AVEGameOver, AVEWinner
 from .escaping import more_unescape
+from .items import Number
 
 
 def finalise(txt, character):
-    # TODO: put this in options and var names
     for i, n in character.numbers.items():
         txt = txt.replace("$" + i + "$", str(n))
     return more_unescape(txt)
-
-
-class BaseItem:
-    def get_name(self, character):
-        if self.hidden:
-            return None
-        out = []
-        for name in self.names:
-            if name.has_requirements(character):
-                out.append(name.text)
-        if len(out) == 0:
-            return None
-        return finalise(" ".join(out), character)
-
-
-class Number(BaseItem):
-    def __init__(self, id=id, names=[], hidden=True, default=0):
-        self.id = id
-        self.hidden = hidden
-        self.names = names
-        self.default = default
-
-
-class Item(BaseItem):
-    def __init__(self, id=None, names=[], hidden=True):
-        self.id = id
-        self.hidden = hidden
-        self.names = names
 
 
 class Character:
@@ -47,8 +19,14 @@ class Character:
         self.inventory = []
         self.numbers = {}
         for i in items.values():
-            if self.is_number(i):
+            if isinstance(i, Number):
                 self.numbers[i.id] = i.default
+
+    def has(self, item):
+        if item in self.numbers:
+            return self.numbers[item] > 0
+        else:
+            return item in self.inventory
 
     def add(self, item, value=1):
         if item in self.numbers:
@@ -65,18 +43,6 @@ class Character:
         elif item in self.inventory:
             self.inventory.remove(item)
 
-    def has(self, item):
-        if item in self.numbers:
-            return self.numbers[item] > 0
-        else:
-            return item in self.inventory
-
-    def has_one(self, items):
-        for item in items:
-            if self.has(item):
-                return True
-        return False
-
     def is_number(self, item):
         return isinstance(item, Number)
 
@@ -85,16 +51,13 @@ class Character:
         for i, n in self.numbers.items():
             item = items[i]
             if not item.hidden:
-                inv.append(item.get_name(self) + ": " + str(n))
+                inv.append(finalise(item.get_name(self), self) + ": " + str(n))
         for i in self.inventory:
             if i in items:
                 item = items[i]
                 if not item.hidden:
-                    inv.append(item.get_name(self))
+                    inv.append(finalise(item.get_name(self), self))
         return [i for i in inv if i is not None and i != ""]
-
-    def inventory_ids(self):
-        return [item.id for item in self.inventory]
 
 
 class Game:
@@ -133,25 +96,10 @@ class Game:
             raise AVEGameOver
         if id == "__WINNER__":
             raise AVEWinner
-        if "__R__" in id:
-            id = self._parse_random(id)
         if id in self.rooms:
             return self.rooms[id]
         else:
             return self.fail_room()
-
-    def _parse_random(self, id):
-        import random
-        rooms = id.split("(", 1)[1].split(")", 1)[0].split(",")
-        if "[" in id:
-            ls = []
-            nums = [int(i) for i
-                    in id.split("[", 1)[1].split("]", 1)[0].split(",")]
-            for r, n in zip(rooms, nums):
-                ls += [r] * n
-            return random.choice(ls)
-        else:
-            return random.choice(rooms)
 
     def reset(self):
         self.id = "start"
@@ -187,7 +135,6 @@ class Room:
         return "Room with id " + self.id
 
     def get_text(self, character):
-        # TODO: $variable$
         lines = []
         for line in self.text:
             if line.has_requirements(character):
@@ -230,7 +177,7 @@ class OptionWithRequirements(ThingWithRequirements):
             self.probabilities = random
         super().__init__(**kwargs)
 
-    def get_destinations(self):
+    def get_all_destinations(self):
         if self.random:
             return self.destination
         else:

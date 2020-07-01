@@ -17,7 +17,7 @@ def test_all_rooms_acessible(filename):
     ach = {"start"}
     for room in game.rooms.values():
         for option in room.options:
-            for d in option.get_destinations():
+            for d in option.get_all_destinations():
                 ach.add(d)
     not_ach = [i for i in game.rooms if i not in ach]
 
@@ -35,7 +35,7 @@ def test_all_rooms_defined(filename):
     not_inc = set()
     for room in game.rooms.values():
         for option in room.options:
-            for d in option.get_destinations():
+            for d in option.get_all_destinations():
                 if d == "__GAMEOVER__" or d == "__WINNER__":
                     continue
                 if d not in game.rooms:

@@ -27,4 +27,4 @@ class Set(ItemGiver):
         self.value = value
 
     def give(self, character):
-        character.numbers[self.item] = self.value.get_value(character)
+        character.set(self.item, self.value.get_value(character))
