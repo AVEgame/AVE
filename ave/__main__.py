@@ -1,5 +1,4 @@
 from ave import AVE, config
-import os
 
 
 def run():

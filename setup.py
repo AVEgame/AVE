@@ -1,7 +1,5 @@
 import os
 import sys
-import subprocess
-import string
 import setuptools
 
 if sys.version_info < (3, 5):
@@ -16,10 +14,11 @@ requirements = []
 
 entry_points = {'console_scripts': ['ave = ave.__main__:run']}
 
-data_files = [("_avegames", [os.path.join("games", i) for i in os.listdir("games")
-                             if i.endswith(".ave")]),
-              ("_avescreens", ["screens/credits", "screens/title", "screens/user"]),
-              ("", ["VERSION"])]
+data_files = [
+    ("_avegames", [os.path.join("games", i) for i in os.listdir("games")
+                   if i.endswith(".ave")]),
+    ("_avescreens", ["screens/credits", "screens/title", "screens/user"]),
+    ("", ["VERSION"])]
 
 if __name__ == "__main__":
     setuptools.setup(
