@@ -1,5 +1,6 @@
 import os
 import re
+from . import config
 
 symbols = {
     "!?": "IINNTTEERROOBBAANNGG",
@@ -35,10 +36,7 @@ def between(text, pre, post):
 
 
 def _replacements(string):
-    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                           "../VERSION")) as f:
-        v = f.read().strip()
-    string = v.join(string.split("%v%"))
+    string = config.version.join(string.split("%v%"))
     return string
 
 
@@ -49,6 +47,10 @@ def remove_links(txt):
 def clean(string):
     string = string.replace("<newline>", "\n")
     return _replacements(string.strip())
+
+
+def clean_newlines(string):
+    return _replacements(string.strip("\n"))
 
 
 def _escape(matches):

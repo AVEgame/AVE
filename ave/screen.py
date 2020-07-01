@@ -1,8 +1,8 @@
 # dimensions: (height) 45
 #             (width)  80
 from .exceptions import AVEToMenu, AVEQuit, ScreenIsDummy
-from .utils import comment, clean_newlines
 from . import config
+from .escaping import clean_newlines
 import curses
 import signal
 HEIGHT = 25
@@ -107,7 +107,7 @@ class Screen:
         import os
         self.clear()
         stuff = []
-        with open(os.path.join(config.screen_folder, filename)) as f:
+        with open(os.path.join(config.screens_folder, filename)) as f:
             y = 0
             y_beg = None
             for line in f.readlines():
@@ -138,7 +138,7 @@ class Screen:
                     if y >= HEIGHT:
                         y -= 1
                         break
-                elif comment(line) == "type":
+                elif "# type" in line:
                     self.show(stuff, y=y + 1, x=WIDTH)
                     y_beg = y
                     stuff = []
