@@ -35,27 +35,31 @@ def parse_rq(condition):
 
 
 def parse_value(value):
-    if "-" in value:
-        value = value.replace("-", "+-")
+    # TODO: Brackets in expression (use escaping)
     if "+" in value:
-        if value.startswith("-"):
+        if value[0] == "-":
             value = "0+" + value
-        v, w = value.split("+", 1)
+        if "-" in value:
+            value = value.replace("-", "+-")
         return no.Sum(*[parse_value(v) for v in value.split("+")])
     if value.startswith("-"):
         return no.Negative(parse_value(value[1:]))
+
+    if "*" in value:
+        return no.Product(*[parse_value(v) for v in value.split("*")])
+    if "/" in value:
+        return no.Division(*[parse_value(v) for v in value.split("/")])
 
     if re.match(r"^[0-9]+$", value):
         return no.Constant(int(value))
     if re.match(r"^[0-9\.]+$", value):
         return no.Constant(float(value))
 
-    if "__R__" in value:
-        if "(" in value:
-            return no.Random(*[parse_value(i)
-                               for i in between(value, "(", ")").split(",")])
-        else:
-            return no.Random()
+    if "__R__" == value:
+        return no.Random()
+    if value.startswith("__R__("):
+        return no.Random(*[parse_value(i)
+                           for i in between(value, "(", ")").split(",")])
 
     return no.Variable(value)
 

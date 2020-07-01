@@ -22,6 +22,29 @@ class Sum(Number):
         return sum(i.get_value(character) for i in self.items)
 
 
+class Product(Number):
+    def __init__(self, *items):
+        self.items = items
+
+    def get_value(self, character):
+        out = 1
+        for i in self.items:
+            out *= i.get_value(character)
+        return out
+
+
+class Division(Number):
+    def __init__(self, value, *items):
+        self.value = value
+        self.items = items
+
+    def get_value(self, character):
+        out = self.value.get_value(character)
+        for i in self.items:
+            out /= i.get_value(character)
+        return out
+
+
 class Negative(Number):
     def __init__(self, item):
         self.item = item
@@ -35,7 +58,7 @@ class Variable(Number):
         self.item = item
 
     def get_value(self, character):
-        return character.numbers[item]
+        return character.numbers[self.item]
 
 
 class Random(Number):
