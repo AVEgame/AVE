@@ -30,7 +30,8 @@ def parse_rq(condition):
         for sign in [">=", "<=", "==", "<", ">", "="]:
             if sign in condition:
                 n, val = condition.split(sign, 1)
-                return rq.RequiredNumber(n, sign, parse_value(val))
+                return rq.RequiredNumber(
+                    parse_value(n), sign, parse_value(val))
     return rq.RequiredItem(condition)
 
 

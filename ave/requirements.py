@@ -1,3 +1,6 @@
+from .numbers import Constant
+
+
 class Requirement:
     def has(self, character):
         raise NotImplementedError()
@@ -12,24 +15,24 @@ class RequiredItem(Requirement):
 
 
 class RequiredNumber(Requirement):
-    def __init__(self, item, sign=">", value=0):
-        self.item = item
+    def __init__(self, v1, sign=">", v2=Constant(0)):
+        self.v1 = v1
         self.sign = sign
-        self.value = value
+        self.v2 = v2
 
     def has(self, character):
-        n = character.numbers[self.item]
-        v = self.value.get_value(character)
+        v1 = self.v1.get_value(character)
+        v2 = self.v2.get_value(character)
         if self.sign == ">":
-            return n > v
+            return v1 > v2
         if self.sign == "<":
-            return n < v
+            return v1 < v2
         if self.sign == ">=":
-            return n >= v
+            return v1 >= v2
         if self.sign == "<=":
-            return n <= v
+            return v1 <= v2
         if self.sign == "=" or self.sign == "==":
-            return n == v
+            return v1 == v2
 
 
 class Or(Requirement):

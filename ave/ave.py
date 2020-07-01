@@ -103,15 +103,18 @@ class AVE:
         self.screen.menu([], 1)
 
     def run_the_game(self, the_game):
-        the_game.character = self.character
-        the_game.screen = self.screen
         the_game.load()
         again = True
         while again:
             again = False
             try:
                 self.character.reset(the_game.items)
-                the_game.begin()
+                the_game.reset()
+                self.screen.show_titles(
+                    the_game.title,
+                    the_game.description,
+                    the_game.author)
+                self.game_loop(the_game)
             except AVEGameOver:
                 next = self.screen.gameover()
                 if next == 0:
@@ -126,6 +129,21 @@ class AVE:
                     raise AVEQuit
             except AVEToMenu:
                 pass
+
+    def game_loop(self, the_game):
+        while True:
+            text, options = the_game.get_room_info(self.character)
+            self.screen.clear()
+            self.screen.put_ave_logo()
+            self.screen.show_inventory(
+                self.character.get_inventory(the_game.items))
+            self.screen.type_room_text(text)
+            next_id = self.screen.menu(
+                list(options.values()),
+                y=min(8, len(options)))
+            the_game.pick_option(
+                list(options.keys())[next_id],
+                self.character)
 
     def exit(self):
         self.screen.close()

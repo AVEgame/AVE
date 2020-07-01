@@ -39,9 +39,9 @@ class Item(BaseItem):
 
 
 class Character:
-    def __init__(self):
-        self.inventory = []
-        self.numbers = {}
+    def __init__(self, inventory=[], numbers={}):
+        self.inventory = inventory
+        self.numbers = numbers
 
     def reset(self, items):
         self.inventory = []
@@ -101,7 +101,7 @@ class Game:
     def __init__(self, file=None, url=None,
                  title="untitled", number=None,
                  description="", author="anonymous",
-                 active=True, character=None, screen=None):
+                 active=True):
         self.file = file
         self.url = url
         self.number = number
@@ -110,8 +110,9 @@ class Game:
         self.author = author
         self.active = active
         self.rooms = None
-        self.character = character
-        self.screen = screen
+
+        self.id = None
+        self.options = []
 
     def load(self):
         if self.file is not None:
@@ -152,26 +153,21 @@ class Game:
         else:
             return random.choice(rooms)
 
-    def begin(self):
-        self.show_title()
-        self.enter_room("start")
+    def reset(self):
+        self.id = "start"
 
-    def enter_room(self, id):
-        room = self[id]
+    def pick_option(self, key, character):
+        room = self[self.id]
+        o = room.options[key]
+        o.get_items(character)
+        self.id = o.get_destination()
 
-        self.screen.clear()
-        self.screen.put_ave_logo()
-        text = room.get_text(self.character)
-        self.screen.show_inventory(self.character.get_inventory(self.items))
-        self.screen.type_room_text(text)
-
-        opts = room.get_options(self.character)
-        next = opts[self.screen.menu(
-            [finalise(o.text, self.character) for o in opts],
-            y=min(8, len(opts)))]
-
-        next.get_items(self.character)
-        self.enter_room(next.get_destination())
+    def get_room_info(self, character):
+        room = self[self.id]
+        text = room.get_text(character)
+        options = room.get_options(character)
+        return text, {i: finalise(o.text, character)
+                      for i, o in options.items()}
 
     def fail_room(self):
         options = [{'id': "__GAMEOVER__", 'option': "Continue",
@@ -179,9 +175,6 @@ class Game:
         text = [{'text': "You fall off the edge of the game... (404 Error)",
                  'needs': [], 'unneeds': [], 'adds': [], 'rems': []}]
         return Room("fail", text, options)
-
-    def show_title(self):
-        self.screen.show_titles(self.title, self.description, self.author)
 
 
 class Room:
@@ -203,7 +196,8 @@ class Room:
         return finalise(" ".join(lines), character)
 
     def get_options(self, character):
-        return [o for o in self.options if o.has_requirements(character)]
+        return {i: o for i, o in enumerate(self.options)
+                if o.has_requirements(character)}
 
 
 class ThingWithRequirements:
