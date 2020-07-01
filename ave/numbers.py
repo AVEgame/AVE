@@ -1,3 +1,6 @@
+import random
+
+
 class Number:
     def get_value(self, character):
         raise NotImplementedError()
@@ -33,3 +36,20 @@ class Variable(Number):
 
     def get_value(self, character):
         return character.numbers[item]
+
+
+class Random(Number):
+    def __init__(self, *args):
+        if len(args) == 0:
+            self.start = Constant(0)
+            self.size = Constant(1)
+        elif len(args) == 1:
+            self.start = Constant(0)
+            self.size = args[0]
+        elif len(args) == 2:
+            self.start = args[0]
+            self.size = args[1]
+
+    def get_value(self, character):
+        return self.start.get_value(character) \
+             + self.size.get_value(character) * random.random()

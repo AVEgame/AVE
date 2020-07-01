@@ -51,8 +51,11 @@ def parse_value(value):
         return no.Constant(float(value))
 
     if "__R__" in value:
-        # TODO
-        raise NotImplementedError()
+        if "(" in value:
+            return no.Random(*[parse_value(i)
+                               for i in between(value, "(", ")").split(",")])
+        else:
+            return no.Random()
 
     return no.Variable(value)
 
