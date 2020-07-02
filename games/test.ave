@@ -49,6 +49,7 @@ Add a pound => nums + money
 Spend a pound => nums ~ money ? money
 Drop all your money => nums + money=0 ? money
 Spend five pounds => nums + money-5 ? money>=5
+Add a random amount => nums + money+__R__
 Spend two pounds => nums ~ money ~ money ? money >= 2
 Go back => start
 

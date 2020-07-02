@@ -71,6 +71,7 @@ def parse_ig_add(item):
         n, value = item.split("=", 1)
         return ig.Set(n, parse_value(value))
     if "+" in item:
+
         n, value = item.split("+", 1)
         return ig.Add(n, parse_value(value))
     if "-" in item:
