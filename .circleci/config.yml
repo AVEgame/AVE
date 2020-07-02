@@ -50,4 +50,3 @@ workflows:
     jobs:
       - build-and-test
       - build-windows
-      - build-mac
