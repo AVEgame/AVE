@@ -168,7 +168,8 @@ class Screen:
         y = 0
         x = 0
         stuff = []
-        for word in text.split():
+        text = text.replace("\n", " \n ")
+        for word in text.split(" "):
             if word == "\n":
                 y += 1
                 x = 0
