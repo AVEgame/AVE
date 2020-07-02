@@ -1,3 +1,5 @@
+"""The configuration of AVE."""
+
 import os
 
 debug = os.getenv("DEBUG")

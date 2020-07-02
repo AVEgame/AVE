@@ -1,21 +1,23 @@
+"""Exceptions used by AVE."""
+
 from urllib.error import HTTPError as AVENoInternet  # noqa: F401
 
 
 class AVEQuit(BaseException):
-    pass
+    """Quit AVE."""
 
 
 class AVEAgain(BaseException):
-    pass
+    """Play the same game again."""
 
 
 class AVEToMenu(BaseException):
-    pass
+    """Leave to the main menu."""
 
 
 class AVEGameOver(BaseException):
-    pass
+    """Game over."""
 
 
 class AVEWinner(BaseException):
-    pass
+    """You win."""
