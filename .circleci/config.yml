@@ -45,21 +45,6 @@ jobs:
             command: py -m pytest test
             name: Run tests
 
-  build-mac:
-    macos:
-      xcode: 11.3.0
-    steps:
-        - checkout
-        - run:
-            command: python3 setup.py install .
-            name: Install AVE
-        - run:
-            command: pip3 install pytest
-            name: Install pytest
-        - run:
-            command: python3 -m pytest test
-            name: Run tests
-
 workflows:
   main:
     jobs:
