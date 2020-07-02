@@ -1,22 +1,11 @@
-# dimensions: (height) 45
-#             (width)  80
-from .exceptions import AVEToMenu, AVEQuit, ScreenIsDummy
+from .exceptions import AVEToMenu, AVEQuit
 from . import config
 from .escaping import clean_newlines
 import curses
 import signal
+
 HEIGHT = 25
 WIDTH = 80
-
-
-class DummyScreen:
-    def __getattribute__(self, attr):
-        if attr == "menu":
-            raise ScreenIsDummy()
-        return self
-
-    def __call__(self, *args, **kwargs):
-        pass
 
 
 class Screen:
@@ -55,6 +44,7 @@ class Screen:
             curses.resizeterm(HEIGHT, WIDTH)
 
             def catch_resize(*args):
+                # TODO: This appears to do nothing
                 curses.resizeterm(HEIGHT, WIDTH)
 
             signal.signal(signal.SIGWINCH, catch_resize)

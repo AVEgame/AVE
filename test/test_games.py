@@ -57,7 +57,7 @@ def test_has_start(filename):
 
 @pytest.mark.parametrize('filename', games)
 def test_first_room(filename):
-    ave = AVE(dummy=True)
+    ave = AVE(start_screen=False)
     game = load_game_from_file(filename)
     game.load()
     game["start"].get_text(ave.character)
@@ -65,12 +65,12 @@ def test_first_room(filename):
 
 
 def test_game_library():
-    ave = AVE(dummy=True)
+    ave = AVE(start_screen=False)
     ave.get_download_menu()
 
 
 def test_load_game_from_library():
-    ave = AVE(dummy=True)
+    ave = AVE(start_screen=False)
     game = load_game_from_library(ave.get_download_menu()[0][2])
     game.load()
     assert game["start"].id != "fail"
