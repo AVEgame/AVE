@@ -53,7 +53,8 @@ class Screen:
         self.stdscr.keypad(1)
         try:
             curses.resizeterm(HEIGHT, WIDTH)
-            def catch_resize(dummy=None, dummy2=None):
+
+            def catch_resize(*args):
                 curses.resizeterm(HEIGHT, WIDTH)
 
             signal.signal(signal.SIGWINCH, catch_resize)
