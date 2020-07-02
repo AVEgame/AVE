@@ -48,7 +48,6 @@ jobs:
   build-mac:
     macos:
       xcode: 11.3.0
-    executor: win/default
     steps:
         - checkout
         - run:
