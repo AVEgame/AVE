@@ -32,7 +32,11 @@ jobs:
 
   build-windows:
     executor: win/default
-    run: py setup.py install
+    steps:
+        - checkout
+        - run:
+            command: py setup.py install
+            name: Install AVE
 
 workflows:
   main:
