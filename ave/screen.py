@@ -2,7 +2,6 @@ from .exceptions import AVEToMenu, AVEQuit
 from . import config
 from .escaping import clean_newlines
 import curses
-import signal
 
 HEIGHT = 25
 WIDTH = 80
@@ -12,6 +11,13 @@ class Screen:
     def __init__(self):
         print("\x1b[8;" + str(HEIGHT) + ";" + str(WIDTH) + "t")
         self.stdscr = curses.initscr()
+
+        try:
+            curses.resizeterm(HEIGHT, WIDTH)
+        except AttributeError:
+            # Windows
+            pass
+
         curses.start_color()
         curses.use_default_colors()
 
@@ -40,17 +46,6 @@ class Screen:
         curses.cbreak()
         curses.curs_set(0)
         self.stdscr.keypad(1)
-        try:
-            curses.resizeterm(HEIGHT, WIDTH)
-
-            def catch_resize(*args):
-                # TODO: This appears to do nothing
-                curses.resizeterm(HEIGHT, WIDTH)
-
-            signal.signal(signal.SIGWINCH, catch_resize)
-        except AttributeError:
-            # Windows
-            pass
         self.stdscr.refresh()
 
     def no_internet(self):
@@ -70,12 +65,6 @@ class Screen:
         self.stdscr.keypad(0)
         curses.echo()
         curses.endwin()
-
-    def print_room_desc(self, desc):
-        print(desc)
-
-    def print_options(self, options, n):
-        print(options)
 
     def newpad(self, y=HEIGHT, x=WIDTH):
         return curses.newpad(y, x)
