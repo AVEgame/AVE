@@ -108,4 +108,4 @@ class Random(Number):
     def get_value(self, character):
         """Get the value of the Number."""
         return self.start.get_value(character) \
-             + self.size.get_value(character) * random.random()
+            + self.size.get_value(character) * random.random()

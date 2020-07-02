@@ -41,7 +41,8 @@ class Number(BaseItem):
         id : string
             The name of the variable
         names : list
-            The names of the item (with requirements for possible alternative names)
+            The names of the item (with requirements for possible
+            alternative names)
         hidden : bool
             Should this item be hidden from the inventory list
         default : ave.numbers.Number
@@ -64,7 +65,8 @@ class Item(BaseItem):
         id : string
             The name of the variable
         names : list
-            The names of the item (with requirements for possible alternative names)
+            The names of the item (with requirements for possible
+            alternative names)
         hidden : bool
             Should this item be hidden from the inventory list
         """

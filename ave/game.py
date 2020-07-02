@@ -271,7 +271,7 @@ class ThingWithRequirements:
         return self.needs.has(character)
 
     def get_items(self, character):
-        """Give the character the items for this thing and/or take items away."""
+        """Give the character the items for and/or take items away."""
         for item in self.items:
             item.give(character)
 
@@ -323,7 +323,7 @@ class OptionWithRequirements(ThingWithRequirements):
 
 
 class NameWithRequirements(ThingWithRequirements):
-    """The name of an item that needs requirements to be satisfied to be shown."""
+    """The name of an item that needs requirements to be satisfied."""
 
     def __init__(self, text, **kwargs):
         """Make the thing."""

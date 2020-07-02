@@ -190,7 +190,7 @@ def parse_item(id, item):
                 try:
                     default = parse_value(line.split("(", 1)[1].split(")")[0])
                 except ValueError:
-                    default = Constant(0)
+                    default = no.Constant(0)
         elif line != "":
             if hidden is None:
                 hidden = False
