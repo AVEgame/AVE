@@ -108,7 +108,6 @@ class AVE:
             again = False
             try:
                 self.character.reset(the_game.items)
-                the_game.reset()
                 self.screen.show_titles(
                     the_game.title,
                     the_game.description,
