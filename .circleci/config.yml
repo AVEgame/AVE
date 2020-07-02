@@ -38,9 +38,9 @@ jobs:
         - run:
             command: py -m pip install .
             name: Install AVE
-      - run:
-          command: py -m pytest test/
-          name: Run tests
+        - run:
+            command: py -m pytest test
+            name: Run tests
 
 workflows:
   main:
