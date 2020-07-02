@@ -3,15 +3,14 @@ from .exceptions import (AVEGameOver, AVEWinner, AVEToMenu, AVEQuit,
                          AVENoInternet)
 from .game import Character
 from . import config
+from .screen import Screen
 
 
 class AVE:
-    def __init__(self, dummy=False):
-        if dummy:
-            from .screen import DummyScreen as Screen
-        else:
-            from .screen import Screen
-        self.screen = Screen()
+    def __init__(self, start_screen=True):
+        self.screen = None
+        if start_screen:
+            self.screen = Screen()
         self.character = Character()
         self.games = None
         self.items = None
@@ -109,7 +108,6 @@ class AVE:
             again = False
             try:
                 self.character.reset(the_game.items)
-                the_game.reset()
                 self.screen.show_titles(
                     the_game.title,
                     the_game.description,

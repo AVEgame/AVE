@@ -11,9 +11,10 @@ def finalise(txt, character):
 
 
 class Character:
-    def __init__(self, inventory=[], numbers={}):
+    def __init__(self, inventory=[], numbers={}, location=None):
         self.inventory = inventory
         self.numbers = numbers
+        self.location = location
 
     def reset(self, items):
         self.inventory = []
@@ -21,6 +22,7 @@ class Character:
         for i in items.values():
             if isinstance(i, Number):
                 self.numbers[i.id] = i.default
+        self.location = "start"
 
     def has(self, item):
         if item in self.numbers:
@@ -74,7 +76,6 @@ class Game:
         self.active = active
         self.rooms = None
 
-        self.id = None
         self.options = []
 
     def load(self):
@@ -101,17 +102,14 @@ class Game:
         else:
             return self.fail_room()
 
-    def reset(self):
-        self.id = "start"
-
     def pick_option(self, key, character):
-        room = self[self.id]
+        room = self[character.location]
         o = room.options[key]
         o.get_items(character)
-        self.id = o.get_destination()
+        character.location = o.get_destination()
 
     def get_room_info(self, character):
-        room = self[self.id]
+        room = self[character.location]
         text = room.get_text(character)
         options = room.get_options(character)
         return text, {i: finalise(o.text, character)
