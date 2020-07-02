@@ -277,7 +277,7 @@ class Screen:
         pad.refresh(0, 0, py, (WIDTH - wx) // 2, py + y - 1,
                     wx + (WIDTH - wx) // 2)
 
-    def show_titles(self, title, description, author):
+    def show_titles(self, title, description, author, version):
         stuff = []
         y = 0
         for y in range(HEIGHT):
@@ -295,6 +295,9 @@ class Screen:
         pad, y, x = self.pad_with_coloured_dashes(
             title, 0, 0, HEIGHT - 2, WIDTH - 11)
         stuff += pad
+        txt = "v" + str(version)
+        for x, c in enumerate(txt):
+            stuff.append((y - 1, WIDTH - 9 - len(txt) + x, c))
         y += 1
         txt = "Written by: " + author
         for st in range(0, len(txt), WIDTH - 9):

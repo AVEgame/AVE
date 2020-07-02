@@ -66,7 +66,7 @@ class Game:
     def __init__(self, file=None, url=None,
                  title="untitled", number=None,
                  description="", author="anonymous",
-                 active=True):
+                 version=0, active=True):
         self.file = file
         self.url = url
         self.number = number
@@ -74,6 +74,7 @@ class Game:
         self.description = description
         self.author = author
         self.active = active
+        self.version = version
         self.rooms = None
 
         self.options = []
