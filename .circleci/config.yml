@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   python: circleci/python@0.2.1
+  win: circleci/windows@2.2.0
 
 jobs:
   build-and-test:
@@ -24,13 +25,28 @@ jobs:
           command: python3 -m pydocstyle numpy ave/
           name: pydocstyle checks
       - run:
-          command: sudo python3 setup.py install
+          command: pip3 install .
           name: Install AVE
       - run:
           command: python3 -m pytest test/
-          name: Test
+          name: Run tests
+
+  build-windows:
+    executor: win/default
+    steps:
+        - checkout
+        - run:
+            command: py -m pip install .
+            name: Install AVE
+        - run:
+            command: py -m pip install pytest
+            name: Install pytest
+        - run:
+            command: py -m pytest test
+            name: Run tests
 
 workflows:
   main:
     jobs:
       - build-and-test
+      - build-windows
