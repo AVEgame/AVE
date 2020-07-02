@@ -25,7 +25,7 @@ jobs:
           command: python3 -m pydocstyle numpy ave/
           name: pydocstyle checks
       - run:
-          command: sudo python3 setup.py install
+          command: pip3 install .
           name: Install AVE
       - run:
           command: python3 -m pytest test/
@@ -39,7 +39,26 @@ jobs:
             command: py -m pip install .
             name: Install AVE
         - run:
+            command: py -m pip install pytest
+            name: Install pytest
+        - run:
             command: py -m pytest test
+            name: Run tests
+
+  build-mac:
+    macos:
+      xcode: 11.3.0
+    executor: win/default
+    steps:
+        - checkout
+        - run:
+            command: python3 setup.py install .
+            name: Install AVE
+        - run:
+            command: pip3 install pytest
+            name: Install pytest
+        - run:
+            command: python3 -m pytest test
             name: Run tests
 
 workflows:
@@ -47,3 +66,4 @@ workflows:
     jobs:
       - build-and-test
       - build-windows
+      - build-mac
