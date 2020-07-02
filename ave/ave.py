@@ -111,7 +111,8 @@ class AVE:
                 self.screen.show_titles(
                     the_game.title,
                     the_game.description,
-                    the_game.author)
+                    the_game.author,
+                    the_game.version)
                 self.game_loop(the_game)
             except AVEGameOver:
                 next = self.screen.gameover()
