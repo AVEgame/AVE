@@ -178,7 +178,7 @@ def parse_item(id, item):
     item = escape(item)
     hidden = None
     number = False
-    default = 0
+    default = no.Constant(0)
     names = []
     for line in item.split("\n"):
         line = clean(line)
@@ -188,9 +188,9 @@ def parse_item(id, item):
             number = True
             if "(" in line:
                 try:
-                    default = int(line.split("(", 1)[1].split(")")[0])
+                    default = parse_value(line.split("(", 1)[1].split(")")[0])
                 except ValueError:
-                    default = 0
+                    default = Constant(0)
         elif line != "":
             if hidden is None:
                 hidden = False

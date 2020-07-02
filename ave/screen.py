@@ -1,3 +1,5 @@
+"""Use curses to display information in terminal."""
+
 from .exceptions import AVEToMenu, AVEQuit
 from . import config
 from .escaping import clean_newlines
@@ -8,7 +10,10 @@ WIDTH = 80
 
 
 class Screen:
+    """The Screen class that looks after curses."""
+
     def __init__(self):
+        """Make the screen."""
         print("\x1b[8;" + str(HEIGHT) + ";" + str(WIDTH) + "t")
         self.stdscr = curses.initscr()
 
@@ -49,6 +54,7 @@ class Screen:
         self.stdscr.refresh()
 
     def no_internet(self):
+        """Display a "You have no internet" message."""
         stuff = []
         for i, c in enumerate("Unable to load from the internet. "
                               "Press <q> to go back."):
@@ -56,10 +62,12 @@ class Screen:
         self.show(stuff, 15, 5, 1, 56)
 
     def clear(self):
+        """Clear the screen."""
         pad = self.newpad()
         pad.refresh(0, 0, 0, 0, HEIGHT, WIDTH)
 
     def close(self):
+        """Close the curses screen."""
         curses.nocbreak()
         curses.curs_set(1)
         self.stdscr.keypad(0)
@@ -67,24 +75,30 @@ class Screen:
         curses.endwin()
 
     def newpad(self, y=HEIGHT, x=WIDTH):
+        """Make a new pad to write to the screen."""
         return curses.newpad(y, x)
 
     def print_titles(self):
+        """Print the AVE title page."""
         self.print_file("title")
 
     def print_download(self):
+        """Print the game library page."""
         self.print_file("user")
 
     def print_credits(self):
+        """Print the credits page."""
         self.print_file("credits")
 
     def put_ave_logo(self):
+        """Print the AVE logo at the top of the screen."""
         stuff = [(0, 0, "A", curses.color_pair(6)),
                  (0, 1, "V", curses.color_pair(7)),
                  (0, 2, "E", curses.color_pair(8))]
         self.show(stuff, 0, WIDTH - 3, 2, 3)
 
     def print_file(self, filename):
+        """Print the contents of a text file."""
         import os
         self.clear()
         stuff = []
@@ -130,12 +144,15 @@ class Screen:
             self.type(stuff, py=y_beg, y=y, x=WIDTH, title=True)
 
     def gameover(self):
+        """Show the game over screen."""
         return self.gameend("GAME OVER")
 
     def winner(self):
+        """Show the "you win" screen."""
         return self.gameend("YOU WIN!")
 
     def gameend(self, text):
+        """Allow the user to play again or go back to the menu."""
         pad = self.newpad(8, WIDTH - 20)
         gst = " " * ((WIDTH - 29) // 2) + text
         gst += " " * (WIDTH - len(gst))
@@ -151,6 +168,7 @@ class Screen:
                          3, 6, wx=WIDTH - 30, controls=False, credits=True)
 
     def show_inventory(self, inventory):
+        """Display the inventory."""
         pad = self.newpad(14, 20)
         pad.addstr(0, 0, "INVENTORY" + " " * 10, curses.color_pair(9))
         for i in range(12):
@@ -165,6 +183,7 @@ class Screen:
         pad.refresh(0, 0, 1, WIDTH - 20, 13, WIDTH)
 
     def type_room_text(self, text):
+        """Type the room text."""
         y = 0
         x = 0
         stuff = []
@@ -186,6 +205,7 @@ class Screen:
 
     def type(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH - 21,
              title=False):
+        """Type some text."""
         from time import sleep
         pad = self.newpad(y, x)
         delay = True
@@ -204,6 +224,7 @@ class Screen:
         self.stdscr.nodelay(0)
 
     def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH - 21):
+        """Add a pad to the screen."""
         pad = self.newpad(y, x)
         for char in stuff:
             if char[0] < y and char[1] < x:
@@ -214,6 +235,7 @@ class Screen:
         pad.refresh(0, 0, py, px, y + py, x + px)
 
     def credit_menu(self):
+        """Process input on the credits screen."""
         key = ""
         while key is not None:
             key = self.stdscr.getch()
@@ -223,6 +245,7 @@ class Screen:
 
     def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH,
              controls=True, credits=False):
+        """Give the user some options, and return the selected option."""
         if py is None:
             py = HEIGHT - y - 1
         self.show_menu(ls, y, py, selected, wx, controls)
@@ -252,6 +275,7 @@ class Screen:
                 self.show_menu(ls, y, py, selected, wx, controls)
 
     def show_menu(self, ls, y, py, selected, wx, controls):
+        """Display the menu."""
         if controls:
             wide = wx - 4
         else:
@@ -278,6 +302,7 @@ class Screen:
                     wx + (WIDTH - wx) // 2)
 
     def show_titles(self, title, description, author, version):
+        """Show the title screen for a game."""
         stuff = []
         y = 0
         for y in range(HEIGHT):
@@ -329,6 +354,7 @@ class Screen:
                 raise AVEToMenu
 
     def pad_with_coloured_dashes(self, text, y=0, x=0, yw=HEIGHT, xw=WIDTH):
+        """Pad text with coloured dashed to fill a row."""
         temp_stuff = []
         text = [" " + text[st: st + WIDTH - 11] + " "
                 for st in range(0, len(text), xw)]
