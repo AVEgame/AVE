@@ -9,13 +9,6 @@ HEIGHT = 25
 WIDTH = 80
 
 
-def catch_resize(dummy=None, dummy2=None):
-    curses.resizeterm(HEIGHT, WIDTH)
-
-
-signal.signal(signal.SIGWINCH, catch_resize)
-
-
 class DummyScreen:
     def __getattribute__(self, attr):
         if attr == "menu":
@@ -58,7 +51,15 @@ class Screen:
         curses.cbreak()
         curses.curs_set(0)
         self.stdscr.keypad(1)
-        curses.resizeterm(HEIGHT, WIDTH)
+        try:
+            curses.resizeterm(HEIGHT, WIDTH)
+            def catch_resize(dummy=None, dummy2=None):
+                curses.resizeterm(HEIGHT, WIDTH)
+
+            signal.signal(signal.SIGWINCH, catch_resize)
+        except AttributeError:
+            # Windows
+            pass
         self.stdscr.refresh()
 
     def no_internet(self):

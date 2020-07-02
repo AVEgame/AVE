@@ -12,7 +12,7 @@ with open("VERSION") as f:
 requirements = []
 if os.name == 'nt':
     # TODO: test this!
-    requirements.append("curses-windows")
+    requirements.append("windows-curses")
 
 entry_points = {'console_scripts': ['ave = ave.__main__:run']}
 
