@@ -29,15 +29,18 @@ jobs:
           name: Install AVE
       - run:
           command: python3 -m pytest test/
-          name: Test
+          name: Run tests
 
   build-windows:
     executor: win/default
     steps:
         - checkout
         - run:
-            command: py setup.py install
+            command: py -m pip install .
             name: Install AVE
+      - run:
+          command: py -m pytest test/
+          name: Run tests
 
 workflows:
   main:
