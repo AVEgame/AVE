@@ -14,12 +14,15 @@ jobs:
           command: pip3 install -r requirements.txt
           name: Install dependencies
       - run:
-          command: pip3 install flake8 pytest
+          command: pip3 install flake8 pytest pydocstyle
           name: Install flake8 and pytest
       - python/save-cache
       - run:
           command: python3 -m flake8 .
-          name: Flake8 checks
+          name: flake8 checks
+      - run:
+          command: python3 -m pydocstyle numpy ave/
+          name: pydocstyle checks
       - run:
           command: sudo python3 setup.py install
           name: Install AVE

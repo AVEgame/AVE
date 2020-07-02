@@ -1,3 +1,5 @@
+"""Parsing a .ave file."""
+
 import re
 import json
 import urllib.request
@@ -14,6 +16,7 @@ library_json = None
 
 
 def load_library_json():
+    """Load the list of games in the online library."""
     global library_json
     if library_json is None:
         with urllib.request.urlopen(
@@ -23,6 +26,7 @@ def load_library_json():
 
 
 def parse_rq(condition):
+    """Parse a requirement."""
     if condition.startswith("(") and condition.endswith(")"):
         return rq.Or(*[parse_rq(i) for i in condition[1:-1].split(",")])
     if condition.startswith("!"):
@@ -37,6 +41,7 @@ def parse_rq(condition):
 
 
 def parse_value(value):
+    """Parse a number or expression."""
     # TODO: Brackets in expression (use escaping)
     if "+" in value:
         if value[0] == "-":
@@ -67,6 +72,7 @@ def parse_value(value):
 
 
 def parse_ig_add(item):
+    """Parse an addition of an item, or addition to a number."""
     if "=" in item:
         n, value = item.split("=", 1)
         return ig.Set(n, parse_value(value))
@@ -81,10 +87,12 @@ def parse_ig_add(item):
 
 
 def parse_ig_remove(item):
+    """Parse the removal of an item."""
     return ig.Remove(item)
 
 
 def parse_requirements(req, id_of_text="text"):
+    """Parse the requirements of a line."""
     items = []
     needs = rq.Satisfied()
     pattern = re.compile(r"(\([^\)]*) ([^\)]*\))")
@@ -109,6 +117,7 @@ def parse_requirements(req, id_of_text="text"):
 
 
 def parse_line(line):
+    """Parse a line in a .ave file."""
     i = min([line.index(a) if a in line else len(line) for a in
              [" ? ", " ?! ", " + ", " ~ "]])
     text = unescape(clean(line[:i]))
@@ -117,6 +126,7 @@ def parse_line(line):
 
 
 def parse_option(line):
+    """Parse an destination option."""
     text, rest = line.split("=>", 1)
     text = unescape(clean(text))
     dest, req = (rest.strip() + " ").split(" ", 1)
@@ -138,16 +148,19 @@ def parse_option(line):
 
 
 def parse_text_line(line):
+    """Parse a line of text."""
     text, items, needs = parse_line(line)
     return TextWithRequirements(text=text, items=items, needs=needs)
 
 
 def parse_name_part(line):
+    """Parse the name of an item."""
     text, items, needs = parse_line(line)
     return NameWithRequirements(text=text, items=items, needs=needs)
 
 
 def parse_room(id, room):
+    """Parse a room."""
     room = escape(room)
     text = []
     options = []
@@ -161,10 +174,11 @@ def parse_room(id, room):
 
 
 def parse_item(id, item):
+    """Parse an item."""
     item = escape(item)
     hidden = None
     number = False
-    default = 0
+    default = no.Constant(0)
     names = []
     for line in item.split("\n"):
         line = clean(line)
@@ -174,9 +188,9 @@ def parse_item(id, item):
             number = True
             if "(" in line:
                 try:
-                    default = int(line.split("(", 1)[1].split(")")[0])
+                    default = parse_value(line.split("(", 1)[1].split(")")[0])
                 except ValueError:
-                    default = 0
+                    default = no.Constant(0)
         elif line != "":
             if hidden is None:
                 hidden = False
@@ -188,6 +202,7 @@ def parse_item(id, item):
 
 
 def load_full_game(text):
+    """Parse the full game text."""
     rooms = {}
     for room in re.split(r"(^|\n)#", text)[1:]:
         room_id, room = re.split(r"(^|\n)%", room)[0].split("\n", 1)
@@ -206,6 +221,7 @@ def load_full_game(text):
 
 
 def load_game_from_file(file):
+    """Load the metadata of a game from a file."""
     title = "untitled"
     number = None
     description = ""
@@ -239,6 +255,7 @@ def load_game_from_file(file):
 
 
 def load_game_from_library(url):
+    """Load the metadata of a game from the online library."""
     info = load_library_json()[url]
     return Game(url="http://avegame.co.uk/download/" + url,
                 title=info["title"], description=info["desc"],
@@ -247,10 +264,12 @@ def load_game_from_library(url):
 
 
 def load_full_game_from_file(file):
+    """Load the full game from a file."""
     with open(file) as f:
         return load_full_game(f.read())
 
 
 def load_full_game_from_url(url):
+    """Load the full game from the online library."""
     with urllib.request.urlopen(url) as f:
         return load_full_game(f.read().decode('utf-8'))

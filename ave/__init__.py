@@ -1,3 +1,5 @@
+"""The AVE game engine."""
+
 from .ave import AVE  # noqa: F401
 from .game_loader import load_game_from_library  # noqa: F401
 from .game_loader import load_game_from_file  # noqa: F401
