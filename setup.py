@@ -9,8 +9,10 @@ if sys.version_info < (3, 5):
 with open("VERSION") as f:
     VERSION = f.read()
 
-# TODO: is windows-curses needed on windows?
 requirements = []
+if os.name == 'nt':
+    # TODO: test this!
+    requirements.append("windows-curses")
 
 entry_points = {'console_scripts': ['ave = ave.__main__:run']}
 
