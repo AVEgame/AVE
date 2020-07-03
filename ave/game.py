@@ -151,6 +151,7 @@ class Game:
             If False, this game will only be shown in debug mode
         """
         self.file = file
+        self.filename = filename
         self.url = url
         self.number = number
         self.title = title
@@ -158,7 +159,7 @@ class Game:
         self.author = author
         self.active = active
         self.version = version
-        self.ave_version = ave_version
+        self.ave_version = tuple(ave_version)
         self.rooms = None
 
         self.options = []

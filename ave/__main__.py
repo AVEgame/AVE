@@ -9,7 +9,7 @@ def run():
     """Run AVE in terminal."""
     from .screen import Screen
     ave = AVE(screen=Screen())
-    ave.load_games(config.games_folder)
+    ave.load_games_from_json(os.path.join(config.root_folder, "gamelist.json"))
     ave.start()
 
 
@@ -20,11 +20,13 @@ def make_json():
     ave.load_games(config.games_folder)
     gamelist = [{
         "title": game.title,
+        "author": game.author,
         "desc": game.description,
         "active": game.active,
         "version": game.version,
         "ave_version": game.ave_version,
-        "filename": game.filename
+        "filename": game.filename,
+        "number": game.number
     } for game in ave.games]
 
     with open(os.path.join(config.root_folder, "gamelist.json"), "w") as f:
