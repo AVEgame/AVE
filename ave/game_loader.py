@@ -228,6 +228,7 @@ def load_game_from_file(file):
     author = "anonymous"
     active = True
     version = 0
+    ave_version = (0,0)
     with open(file) as f:
         for line in f:
             line = line.strip()
@@ -244,6 +245,8 @@ def load_game_from_file(file):
                 author = clean(line[2:-2])
             if line[:2] == "vv" == line[-2:]:
                 version = int(line[2:-2])
+            if line[:2] == "::" == line[-2:]:
+                ave_version = tuple(int(i) for i in line[2:-2].split("."))
             if line[:2] == "~~" == line[-2:]:
                 if clean(line[2:-2]) == "off":
                     active = False
@@ -251,7 +254,7 @@ def load_game_from_file(file):
     return Game(file=file, title=title, number=number,
                 description=description,
                 author=author, active=active,
-                version=version)
+                version=version, ave_version=ave_version)
 
 
 def load_game_from_library(url):

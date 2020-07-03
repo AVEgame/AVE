@@ -5,6 +5,7 @@ from .exceptions import AVEGameOver, AVEWinner
 from .escaping import more_unescape
 from .items import Number
 from .numbers import Constant
+from . import config
 
 
 def finalise(txt, character):
@@ -122,8 +123,31 @@ class Game:
     def __init__(self, file=None, url=None,
                  title="untitled", number=None,
                  description="", author="anonymous",
-                 version=0, active=True):
-        """Make the class."""
+                 version=0, ave_version=(0, 0),
+                 active=True):
+        """Make the class.
+
+        Parameters
+        ----------
+        file : string
+            The filename of the .ave file of this game
+        url : string
+            The url of the .ave file of this game
+        title : string
+            The title of the game
+        number : int
+            The position in the game list where this game should appear
+        description : string
+            A short description of the game
+        author : string
+            The author(s) of the game
+        version : int
+            The version of the game
+        ave_version : tuple
+            The minimum AVE version required to run this game
+        active : bool
+            If False, this game will only be shown in debug mode
+        """
         self.file = file
         self.url = url
         self.number = number
@@ -132,12 +156,15 @@ class Game:
         self.author = author
         self.active = active
         self.version = version
+        self.ave_version = ave_version
         self.rooms = None
 
         self.options = []
 
     def load(self):
         """Load the full game from the file or url."""
+        if config.version_tuple < self.ave_version:
+            raise ValueError("Your AVE version is not high enough to play this game.")
         if self.file is not None:
             from .game_loader import load_full_game_from_file as lfg
             arg = self.file
