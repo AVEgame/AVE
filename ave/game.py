@@ -18,7 +18,7 @@ def finalise(txt, character):
 class Character:
     """The character playing the game."""
 
-    def __init__(self, inventory=[], numbers={}, location=None):
+    def __init__(self, inventory=None, numbers=None, location=None):
         """Create the character.
 
         Parameters
@@ -30,11 +30,15 @@ class Character:
         location : string
             The location of the character
         """
+        if inventory is None:
+            inventory = []
+        if numbers is None:
+            numbers = {}
         self.inventory = inventory
         self.numbers = numbers
         self.location = location
 
-    def reset(self, items):
+    def reset(self, items={}):
         """Reset the character."""
         self.inventory = []
         self.numbers = {}
