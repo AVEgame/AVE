@@ -99,7 +99,8 @@ class AVE:
         games = []
         for game in os.listdir(folder):
             if game[-4:] == ".ave":
-                games.append(load_game_from_file(os.path.join(folder, game), game))
+                games.append(load_game_from_file(
+                    os.path.join(folder, game), game))
         self.sort_games(games)
 
     def load_games_from_json(self, json_file):
