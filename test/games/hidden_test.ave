@@ -7,3 +7,8 @@ vv 1 vv
 # start
 If you can see this game anywhere, please let me know!
 Continue => __GAMEOVER__
+
+# test2
+First options => op0
+Second options => op1
+Third options => op2
