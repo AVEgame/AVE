@@ -164,7 +164,8 @@ class Game:
     def load(self):
         """Load the full game from the file or url."""
         if config.version_tuple < self.ave_version:
-            raise ValueError("Your AVE version is not high enough to play this game.")
+            raise ValueError("Your AVE version is not high enough "
+                             "to play this game.")
         if self.file is not None:
             from .game_loader import load_full_game_from_file as lfg
             arg = self.file

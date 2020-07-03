@@ -228,7 +228,7 @@ def load_game_from_file(file):
     author = "anonymous"
     active = True
     version = 0
-    ave_version = (0,0)
+    ave_version = (0, )
     with open(file) as f:
         for line in f:
             line = line.strip()
