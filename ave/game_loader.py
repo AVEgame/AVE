@@ -6,7 +6,7 @@ import urllib.request
 from .game import Game, Room
 from .game import (TextWithRequirements, OptionWithRequirements,
                    NameWithRequirements)
-from .escaping import escape, unescape, clean, between
+from .string_functions import escape, unescape, clean, between
 from .items import Item, Number
 from . import requirements as rq
 from . import item_giver as ig
