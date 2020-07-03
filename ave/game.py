@@ -112,12 +112,16 @@ class Character:
         for i, n in self.numbers.items():
             item = items[i]
             if not item.hidden:
-                inv.append(finalise(item.get_name(self), self) + ": " + str(n))
+                name = item.get_name(self)
+                if name is not None:
+                    inv.append(finalise(name, self) + ": " + str(n))
         for i in self.inventory:
             if i in items:
                 item = items[i]
                 if not item.hidden:
-                    inv.append(finalise(item.get_name(self), self))
+                    name = item.get_name(self)
+                    if name is not None:
+                        inv.append(finalise(item.get_name(self), self))
         return [i for i in inv if i is not None and i != ""]
 
 
