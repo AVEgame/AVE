@@ -31,7 +31,7 @@ jobs:
           command: python3 -m pytest test/
           name: Run tests
 
-  build-windows:
+  windows-build-and-test:
     executor: win/default
     steps:
         - checkout
@@ -49,4 +49,4 @@ workflows:
   main:
     jobs:
       - build-and-test
-      - build-windows
+      - windows-build-and-test

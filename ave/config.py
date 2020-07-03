@@ -13,3 +13,5 @@ games_folder = os.path.join(ave_folder, "../" + folder_prefix + "games")
 
 with open(os.path.join(ave_folder, "../VERSION")) as f:
     version = f.read()
+
+version_tuple = tuple(int(i) for i in version.split("."))

@@ -85,6 +85,8 @@ class AVE:
         for game in os.listdir(folder):
             if game[-4:] == ".ave":
                 g = load_game_from_file(os.path.join(folder, game))
+                if config.version_tuple < g.ave_version:
+                    continue
                 if g.active or config.debug:
                     if g.number is None:
                         other_games.append(g)
