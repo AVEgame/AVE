@@ -17,6 +17,7 @@ Test random => rand
 Test or => or
 Test version => version
 Get up => up
+Test missing room => fakeroom
 
 # version
 You are using the Python version. ? __PYTHON__
