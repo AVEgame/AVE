@@ -121,7 +121,7 @@ class Game:
     """The Game classes that stores all the data to run the game."""
 
     def __init__(self, file=None, url=None,
-                 title="untitled", number=None,
+                 filename=None, title="untitled", number=None,
                  description="", author="anonymous",
                  version=0, ave_version=(0, 0),
                  active=True):
@@ -130,9 +130,11 @@ class Game:
         Parameters
         ----------
         file : string
-            The filename of the .ave file of this game
+            The full path and filename filename of the .ave file of this game
         url : string
             The url of the .ave file of this game
+        filename : string
+            The filename of the .ave file of this game
         title : string
             The title of the game
         number : int
@@ -149,6 +151,7 @@ class Game:
             If False, this game will only be shown in debug mode
         """
         self.file = file
+        self.filename = filename
         self.url = url
         self.number = number
         self.title = title
@@ -156,7 +159,7 @@ class Game:
         self.author = author
         self.active = active
         self.version = version
-        self.ave_version = ave_version
+        self.ave_version = tuple(ave_version)
         self.rooms = None
 
         self.options = []

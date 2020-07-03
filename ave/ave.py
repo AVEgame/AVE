@@ -1,17 +1,19 @@
 """The AVE and GameLibrary classes that run AVE in a terminal."""
 
 import os
+import json
 from .exceptions import (AVEGameOver, AVEWinner, AVEToMenu, AVEQuit,
                          AVENoInternet)
-from .game import Character
+from .game import Game, Character
+from .game_loader import (load_game_from_file, load_library_json,
+                          load_game_from_library)
 from . import config
-from .screen import Screen
 
 
 class AVE:
     """The AVE class that runs the Character, Screen and Game."""
 
-    def __init__(self, start_screen=True):
+    def __init__(self, screen=None):
         """Create an AVE class.
 
         Parameters
@@ -19,9 +21,7 @@ class AVE:
         start_screen : bool
             Should the Screen be started?
         """
-        self.screen = None
-        if start_screen:
-            self.screen = Screen()
+        self.screen = screen
         self.character = Character()
         self.games = None
         self.items = None
@@ -71,6 +71,23 @@ class AVE:
             the_game = self.games[game_to_load]
             self.run_the_game(the_game)
 
+    def sort_games(self, games):
+        """Remove disabled games and sort the games by number."""
+        ordered_games = {}
+        other_games = []
+        for g in games:
+            if config.version_tuple < g.ave_version:
+                continue
+            if g.active or config.debug:
+                if g.number is None:
+                    other_games.append(g)
+                else:
+                    assert g.number not in ordered_games
+                    ordered_games[g.number] = g
+        self.games = GameLibrary([
+            ordered_games[i]
+            for i in sorted(ordered_games.keys())] + other_games)
+
     def load_games(self, folder):
         """Load the metadata of games from a folder.
 
@@ -79,23 +96,33 @@ class AVE:
         folder: str
             The folder
         """
-        from .game_loader import load_game_from_file
-        ordered_games = {}
-        other_games = []
+        games = []
         for game in os.listdir(folder):
             if game[-4:] == ".ave":
-                g = load_game_from_file(os.path.join(folder, game))
-                if config.version_tuple < g.ave_version:
-                    continue
-                if g.active or config.debug:
-                    if g.number is None:
-                        other_games.append(g)
-                    else:
-                        assert g.number not in ordered_games
-                        ordered_games[g.number] = g
-        self.games = GameLibrary([
-            ordered_games[i]
-            for i in sorted(ordered_games.keys())] + other_games)
+                games.append(load_game_from_file(
+                    os.path.join(folder, game), game))
+        self.sort_games(games)
+
+    def load_games_from_json(self, json_file):
+        """Load the metadata of games from a json.
+
+        Parameters
+        ----------
+        json_file: str
+            The location of the json file
+        """
+        with open(json_file) as f:
+            gamelist = json.load(f)
+        games = []
+        for game in gamelist:
+            games.append(Game(
+                file=os.path.join(config.games_folder, game["filename"]),
+                title=game["title"], number=game["number"],
+                description=game["desc"],
+                author=game["author"], active=game["active"],
+                version=game["version"], filename=game["filename"],
+                ave_version=game["ave_version"]))
+        self.sort_games(games)
 
     def get_download_menu(self):
         """Get the list of games from the online library.
@@ -105,7 +132,6 @@ class AVE:
         list
             A list of the title, author and local url for each game.
         """
-        from .game_loader import load_library_json
         try:
             the_json = load_library_json()
         except AVENoInternet:
@@ -120,8 +146,6 @@ class AVE:
 
     def show_download_menu(self):
         """Show a menu of games from the online library."""
-        from .game_loader import load_game_from_library
-
         try:
             self.screen.print_download()
             menu_items = self.get_download_menu()

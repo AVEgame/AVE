@@ -220,7 +220,7 @@ def load_full_game(text):
     return rooms, items
 
 
-def load_game_from_file(file):
+def load_game_from_file(file, filename=None):
     """Load the metadata of a game from a file."""
     title = "untitled"
     number = None
@@ -251,9 +251,8 @@ def load_game_from_file(file):
                 if clean(line[2:-2]) == "off":
                     active = False
 
-    return Game(file=file, title=title, number=number,
-                description=description,
-                author=author, active=active,
+    return Game(file=file, filename=filename, title=title, number=number,
+                description=description, author=author, active=active,
                 version=version, ave_version=ave_version)
 
 
