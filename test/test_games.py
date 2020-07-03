@@ -64,7 +64,8 @@ def test_all_rooms_defined(filename):
         print("Rooms not defined:")
         for key in not_inc:
             print(" ", key)
-        assert False
+        assert "test.ave" in filename
+        assert len(not_inc) == 1 and "fakeroom" in not_inc
 
 
 @pytest.mark.parametrize('filename', games)

@@ -5,6 +5,7 @@ from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
 from .escaping import more_unescape
 from .items import Number
 from .numbers import Constant
+from .requirements import Satisfied
 from . import config
 
 
@@ -231,11 +232,11 @@ class Game:
 
     def fail_room(self):
         """Return a 404 error room."""
-        options = [{'id': "__GAMEOVER__", 'option': "Continue",
-                    'needs': [], 'unneeds': [], 'adds': [], 'rems': []}]
-        text = [{'text': "You fall off the edge of the game... (404 Error)",
-                 'needs': [], 'unneeds': [], 'adds': [], 'rems': []}]
-        return Room("fail", text, options)
+        return Room(
+            "fail",
+            [TextWithRequirements("You fall off the edge of the game... "
+                                  "(404 Error)")],
+            [OptionWithRequirements("Continue", "__GAMEOVER__")])
 
 
 class Room:
@@ -291,7 +292,7 @@ class Room:
 class ThingWithRequirements:
     """A thing that needs requirements to be satisfied to be shown."""
 
-    def __init__(self, items=[], needs=[]):
+    def __init__(self, items=[], needs=Satisfied()):
         """Make the thing."""
         self.items = items
         self.needs = needs
