@@ -121,7 +121,7 @@ class Game:
     """The Game classes that stores all the data to run the game."""
 
     def __init__(self, file=None, url=None,
-                 title="untitled", number=None,
+                 filename=None, title="untitled", number=None,
                  description="", author="anonymous",
                  version=0, ave_version=(0, 0),
                  active=True):
@@ -130,9 +130,11 @@ class Game:
         Parameters
         ----------
         file : string
-            The filename of the .ave file of this game
+            The full path and filename filename of the .ave file of this game
         url : string
             The url of the .ave file of this game
+        filename : string
+            The filename of the .ave file of this game
         title : string
             The title of the game
         number : int

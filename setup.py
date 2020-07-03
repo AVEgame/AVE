@@ -1,6 +1,7 @@
 import os
 import sys
 import setuptools
+from ave.__main__ import make_json
 
 if sys.version_info < (3, 5):
     print("Python 3.5 or higher required, please upgrade.")
@@ -9,18 +10,20 @@ if sys.version_info < (3, 5):
 with open("VERSION") as f:
     VERSION = f.read()
 
+make_json()
+
 requirements = []
 if os.name == 'nt':
-    # TODO: test this!
     requirements.append("windows-curses")
 
-entry_points = {'console_scripts': ['ave = ave.__main__:run']}
+entry_points = {'console_scripts': ['ave = ave.__main__:run',
+                                    'ave-make-json = ave.__main__:make_json']}
 
 data_files = [
     ("_avegames", [os.path.join("games", i) for i in os.listdir("games")
                    if i.endswith(".ave")]),
     ("_avescreens", ["screens/credits", "screens/title", "screens/user"]),
-    ("", ["VERSION"])]
+    ("", ["VERSION", "gamelist.json"])]
 
 if __name__ == "__main__":
     setuptools.setup(
