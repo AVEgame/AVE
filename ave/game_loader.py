@@ -6,7 +6,7 @@ import urllib.request
 from .game import Game, Room
 from .game import (TextWithRequirements, OptionWithRequirements,
                    NameWithRequirements)
-from .escaping import escape, unescape, clean, between
+from .string_functions import escape, unescape, clean, between
 from .items import Item, Number
 from . import requirements as rq
 from . import item_giver as ig
@@ -25,22 +25,22 @@ def load_library_json():
     return library_json
 
 
-def parse_rq(condition):
+def _parse_rq(condition):
     """Parse a requirement."""
     if condition.startswith("(") and condition.endswith(")"):
-        return rq.Or(*[parse_rq(i) for i in condition[1:-1].split(",")])
+        return rq.Or(*[_parse_rq(i) for i in condition[1:-1].split(",")])
     if condition.startswith("!"):
-        return rq.Not(parse_rq(condition[1:]))
+        return rq.Not(_parse_rq(condition[1:]))
     if ">" in condition or "<" in condition or "=" in condition:
         for sign in [">=", "<=", "==", "<", ">", "="]:
             if sign in condition:
                 n, val = condition.split(sign, 1)
                 return rq.RequiredNumber(
-                    parse_value(n), sign, parse_value(val))
+                    _parse_value(n), sign, _parse_value(val))
     return rq.RequiredItem(condition)
 
 
-def parse_value(value):
+def _parse_value(value):
     """Parse a number or expression."""
     # TODO: Brackets in expression (use escaping)
     if "+" in value:
@@ -48,14 +48,14 @@ def parse_value(value):
             value = "0+" + value
         if "-" in value:
             value = value.replace("-", "+-")
-        return no.Sum(*[parse_value(v) for v in value.split("+")])
+        return no.Sum(*[_parse_value(v) for v in value.split("+")])
     if value.startswith("-"):
-        return no.Negative(parse_value(value[1:]))
+        return no.Negative(_parse_value(value[1:]))
 
     if "*" in value:
-        return no.Product(*[parse_value(v) for v in value.split("*")])
+        return no.Product(*[_parse_value(v) for v in value.split("*")])
     if "/" in value:
-        return no.Division(*[parse_value(v) for v in value.split("/")])
+        return no.Division(*[_parse_value(v) for v in value.split("/")])
 
     if re.match(r"^[0-9]+$", value):
         return no.Constant(int(value))
@@ -65,28 +65,27 @@ def parse_value(value):
     if "__R__" == value:
         return no.Random()
     if value.startswith("__R__("):
-        return no.Random(*[parse_value(i)
+        return no.Random(*[_parse_value(i)
                            for i in between(value, "(", ")").split(",")])
 
     return no.Variable(value)
 
 
-def parse_ig_add(item):
+def _parse_ig_add(item):
     """Parse an addition of an item, or addition to a number."""
     if "=" in item:
         n, value = item.split("=", 1)
-        return ig.Set(n, parse_value(value))
+        return ig.Set(n, _parse_value(value))
     if "+" in item:
-
         n, value = item.split("+", 1)
-        return ig.Add(n, parse_value(value))
+        return ig.Add(n, _parse_value(value))
     if "-" in item:
         n, value = item.split("-", 1)
-        return ig.Remove(n, parse_value(value))
+        return ig.Remove(n, _parse_value(value))
     return ig.Add(item)
 
 
-def parse_ig_remove(item):
+def _parse_ig_remove(item):
     """Parse the removal of an item."""
     return ig.Remove(item)
 
@@ -104,13 +103,13 @@ def parse_requirements(req, id_of_text="text"):
     lsp = req.split()
     for i, j in zip(lsp[:-1:2], lsp[1::2]):
         if i == "?":
-            needs = rq.And(needs, parse_rq(j))
+            needs = rq.And(needs, _parse_rq(j))
         elif i == "?!":
-            needs = rq.And(needs, rq.Not(parse_rq(j)))
+            needs = rq.And(needs, rq.Not(_parse_rq(j)))
         elif i == "+":
-            items.append(parse_ig_add(j))
+            items.append(_parse_ig_add(j))
         elif i == "~":
-            items.append(parse_ig_remove(j))
+            items.append(_parse_ig_remove(j))
         else:
             raise ValueError("Unknown symbol")
     return items, needs
@@ -126,7 +125,7 @@ def parse_line(line):
 
 
 def parse_option(line):
-    """Parse an destination option."""
+    """Parse a line with a destination option."""
     text, rest = line.split("=>", 1)
     text = unescape(clean(text))
     dest, req = (rest.strip() + " ").split(" ", 1)
@@ -188,7 +187,7 @@ def parse_item(id, item):
             number = True
             if "(" in line:
                 try:
-                    default = parse_value(line.split("(", 1)[1].split(")")[0])
+                    default = _parse_value(line.split("(", 1)[1].split(")")[0])
                 except ValueError:
                     default = no.Constant(0)
         elif line != "":

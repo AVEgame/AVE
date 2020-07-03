@@ -1,0 +1,18 @@
+== Game ==
+
+# test2
+First options => op0
+Second options => op1
+Third options => op2
+
+# op0
+0 lead here
+Continue => __GAMEOVER__
+
+# op1
+1 lead here
+Continue => __GAMEOVER__
+
+# op2
+2 lead here
+Continue => __GAMEOVER__

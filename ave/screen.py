@@ -2,7 +2,7 @@
 
 from .exceptions import AVEToMenu, AVEQuit
 from . import config
-from .escaping import clean_newlines
+from .string_functions import clean_newlines
 import curses
 
 HEIGHT = 25
