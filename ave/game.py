@@ -2,9 +2,8 @@
 
 from random import randrange
 from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
-from .escaping import more_unescape
+from .string_functions import more_unescape
 from .items import Number
-from .numbers import Constant
 from .requirements import Satisfied
 from . import config
 
@@ -19,7 +18,7 @@ def finalise(txt, character):
 class Character:
     """The character playing the game."""
 
-    def __init__(self, inventory=[], numbers={}, location=None):
+    def __init__(self, inventory=None, numbers=None, location=None):
         """Create the character.
 
         Parameters
@@ -31,11 +30,15 @@ class Character:
         location : string
             The location of the character
         """
+        if inventory is None:
+            inventory = []
+        if numbers is None:
+            numbers = {}
         self.inventory = inventory
         self.numbers = numbers
         self.location = location
 
-    def reset(self, items):
+    def reset(self, items={}):
         """Reset the character."""
         self.inventory = []
         self.numbers = {}
@@ -51,7 +54,7 @@ class Character:
         else:
             return item in self.inventory
 
-    def add(self, item, value=Constant(1)):
+    def add(self, item, value=1):
         """Add an item or add to a number.
 
         Parameters
@@ -62,7 +65,7 @@ class Character:
             The value to add
         """
         if item in self.numbers:
-            self.numbers[item] += value.get_value(self)
+            self.numbers[item] += value
         elif item not in self.inventory:
             self.inventory.append(item)
 
@@ -76,7 +79,7 @@ class Character:
         value : ave.numbers.Number
             The value to set it to
         """
-        self.numbers[item] = value.get_value(self)
+        self.numbers[item] = value
 
     def remove(self, item, value=1):
         """Remove an item or take from a number.

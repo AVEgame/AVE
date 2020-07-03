@@ -97,15 +97,17 @@ class Random(Number):
         """Make the number."""
         if len(args) == 0:
             self.start = Constant(0)
-            self.size = Constant(1)
+            self.end = Constant(1)
         elif len(args) == 1:
             self.start = Constant(0)
-            self.size = args[0]
+            self.end = args[0]
         elif len(args) == 2:
             self.start = args[0]
-            self.size = args[1]
+            self.end = args[1]
 
     def get_value(self, character):
         """Get the value of the Number."""
-        return self.start.get_value(character) \
-            + self.size.get_value(character) * random.random()
+        start = self.start.get_value(character)
+        end = self.end.get_value(character)
+        size = end - start
+        return start + random.random() * size
