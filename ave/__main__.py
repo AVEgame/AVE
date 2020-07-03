@@ -7,7 +7,8 @@ from ave import AVE, config
 
 def run():
     """Run AVE in terminal."""
-    ave = AVE()
+    from .screen import Screen
+    ave = AVE(screen=Screen())
     ave.load_games(config.games_folder)
     ave.start()
 
@@ -15,7 +16,7 @@ def run():
 def make_json():
     """Make a json containing metadata for every game."""
     config.debug = True
-    ave = AVE(start_screen=False)
+    ave = AVE()
     ave.load_games(config.games_folder)
     gamelist = [{
         "title": game.title,

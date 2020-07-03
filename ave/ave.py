@@ -5,13 +5,12 @@ from .exceptions import (AVEGameOver, AVEWinner, AVEToMenu, AVEQuit,
                          AVENoInternet)
 from .game import Character
 from . import config
-from .screen import Screen
 
 
 class AVE:
     """The AVE class that runs the Character, Screen and Game."""
 
-    def __init__(self, start_screen=True):
+    def __init__(self, screen=None):
         """Create an AVE class.
 
         Parameters
@@ -19,9 +18,7 @@ class AVE:
         start_screen : bool
             Should the Screen be started?
         """
-        self.screen = None
-        if start_screen:
-            self.screen = Screen()
+        self.screen = screen
         self.character = Character()
         self.games = None
         self.items = None
