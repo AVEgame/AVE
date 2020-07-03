@@ -1,13 +1,36 @@
 import pytest
 import os
-from ave import config, AVE
+from ave import config, AVE, exceptions
 from ave import load_game_from_file, load_game_from_library
 
 config.debug = True
 path = os.path.join(
     os.path.dirname(os.path.realpath(__file__)), "../games")
-games = [os.path.join(path, filename) for filename in os.listdir(path)
-         if filename[-4:] == ".ave"]
+
+games = []
+high_version = []
+for filename in os.listdir(path):
+    if filename[-4:] == ".ave":
+        game = os.path.join(path, filename)
+        if filename == "hidden_test.ave":
+            high_version.append(game)
+        else:
+            games.append(game)
+
+
+@pytest.mark.parametrize('filename', high_version)
+def test_version_checking(filename):
+    try:
+        game = load_game_from_file(filename)
+        game.load()
+        assert False
+    except exceptions.AVEVersionError:
+        pass
+
+    ave = AVE(start_screen=False)
+    ave.load_games("games")
+    for game in ave.games:
+        assert game.file != filename
 
 
 @pytest.mark.parametrize('filename', games)

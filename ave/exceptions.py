@@ -21,3 +21,7 @@ class AVEGameOver(BaseException):
 
 class AVEWinner(BaseException):
     """You win."""
+
+
+class AVEVersionError(BaseException):
+    """Your version of AVE cannot play this game."""
