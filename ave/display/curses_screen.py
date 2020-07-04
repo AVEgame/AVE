@@ -13,7 +13,7 @@ WIDTH = 80
 class CursesScreen(Screen):
     """The Screen class that looks after curses."""
 
-    def __init__(self):
+    def __init__(self, cbreak=True):
         """Make the screen."""
         self.stdscr = curses.initscr()
 
@@ -52,7 +52,8 @@ class CursesScreen(Screen):
         curses.init_pair(10, -1, curses.COLOR_BLUE)
 
         curses.noecho()
-        curses.cbreak()
+        if cbreak:
+            curses.cbreak()
         curses.curs_set(0)
         self.stdscr.keypad(1)
         self.stdscr.refresh()
