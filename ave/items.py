@@ -1,6 +1,6 @@
 """Items that can be held in the character's inventory."""
 
-from .numbers import Constant
+from .components.numbers import Constant
 
 
 class BaseItem:

@@ -2,13 +2,13 @@
 
 import re
 from .game import Room
-from .game import (TextWithRequirements, OptionWithRequirements,
-                   NameWithRequirements)
+from .components import (TextWithRequirements, OptionWithRequirements,
+                         NameWithRequirements)
 from .string_functions import escape, unescape, clean, between
 from .items import Item, Number
-from . import requirements as rq
-from . import item_giver as ig
-from . import numbers as no
+from .components import requirements as rq
+from .components import item_giver as ig
+from .components import numbers as no
 
 
 def _parse_rq(condition):
