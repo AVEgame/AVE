@@ -35,7 +35,7 @@ if __name__ == "__main__":
         author_email="ave@mscroggs.co.uk",
         maintainer_email="ave@mscroggs.co.uk",
         url="https://github.com/AVEgame/AVE",
-        packages=["ave", "ave.components", "ave.parsing"],
+        packages=["ave", "ave.components", "ave.parsing", "ave.display"],
         data_files=data_files,
         include_package_data=True,
         entry_points=entry_points,

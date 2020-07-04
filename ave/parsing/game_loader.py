@@ -4,6 +4,7 @@ import re
 import json
 import urllib.request
 from ..game import Game
+from ..exceptions import AVENoInternet
 from .string_functions import clean
 from .file_parsing import parse_room, parse_item
 
@@ -13,10 +14,13 @@ library_json = None
 def load_library_json():
     """Load the list of games in the online library."""
     global library_json
-    if library_json is None:
-        with urllib.request.urlopen(
-                "http://avegame.co.uk/gamelist.json") as f:
-            library_json = json.load(f)
+    try:
+        if library_json is None:
+            with urllib.request.urlopen(
+                    "http://avegame.co.uk/gamelist.json") as f:
+                library_json = json.load(f)
+    except:
+        raise AVENoInternet
     return library_json
 
 

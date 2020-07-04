@@ -14,16 +14,18 @@ from .parsing.game_loader import (
 class AVE:
     """The AVE class that runs the Character, Screen and Game."""
 
-    def __init__(self, screen=None):
+    def __init__(self, screen=None, character=None):
         """Create an AVE class.
 
         Parameters
         ----------
-        start_screen : bool
-            Should the Screen be started?
+        screen : ave.display.base.Screen
+            The screen that will display the game
+        character : ave.game.Character
+            The character playing the game
         """
         self.screen = screen
-        self.character = Character()
+        self.character = character
         self.games = None
         self.items = None
 
@@ -63,9 +65,8 @@ class AVE:
     def show_title_screen(self):
         """Display the AVE title screen."""
         self.screen.print_titles()
-        game_to_load = self.screen.menu(
-            self.games.titles() + ["- user contributed games -"], 8,
-            credits=True)
+        game_to_load = self.screen.title_menu(
+            self.games.titles() + ["- user contributed games -"])
         if game_to_load == len(self.games.titles()):
             self.show_download_menu()
         else:
@@ -150,8 +151,8 @@ class AVE:
         try:
             self.screen.print_download()
             menu_items = self.get_download_menu()
-            game_n = self.screen.menu(
-                [a[0] + ' by ' + a[1] for a in menu_items], 12)
+            game_n = self.screen.download_menu(
+                [a[0] + ' by ' + a[1] for a in menu_items])
             the_game = load_game_from_library(menu_items[game_n][2])
             self.run_the_game(the_game)
         except AVEToMenu:
@@ -160,7 +161,7 @@ class AVE:
     def no_internet(self):
         """Show a "you have no internet" notification."""
         self.screen.no_internet()
-        self.screen.menu([], 1)
+        self.screen.wait_for_input()
 
     def run_the_game(self, the_game):
         """Run a game.
@@ -212,9 +213,7 @@ class AVE:
             self.screen.show_inventory(
                 self.character.get_inventory(the_game.items))
             self.screen.type_room_text(text)
-            next_id = self.screen.menu(
-                list(options.values()),
-                y=min(8, len(options)))
+            next_id = self.screen.menu(list(options.values()))
             the_game.pick_option(
                 list(options.keys())[next_id],
                 self.character)

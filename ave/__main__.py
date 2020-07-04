@@ -2,13 +2,13 @@
 
 import os
 import json
-from ave import AVE, config
+from ave import AVE, Character, config
 
 
 def run():
     """Run AVE in terminal."""
-    from .screen import Screen
-    ave = AVE(screen=Screen())
+    from .display.curses_screen import CursesScreen
+    ave = AVE(screen=CursesScreen(), character=Character())
     ave.load_games_from_json(os.path.join(config.root_folder, "gamelist.json"))
     ave.start()
 
