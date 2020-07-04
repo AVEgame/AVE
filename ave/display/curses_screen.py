@@ -78,7 +78,8 @@ class CursesScreen(Screen):
         curses.curs_set(1)
         self.stdscr.keypad(0)
         curses.echo()
-        curses.endwin()
+        if cbreak:
+            curses.endwin()
 
     def newpad(self, y=HEIGHT, x=WIDTH):
         """Make a new pad to write to the screen."""
