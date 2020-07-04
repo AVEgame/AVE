@@ -4,20 +4,20 @@ from ave.display.curses_screen import CursesScreen
 
 def test_start_and_close():
     s = CursesScreen(False)
-    s.close()
+    s.close(False)
 
 
 def test_clear():
     s = CursesScreen(False)
     s.clear()
-    s.close()
+    s.close(False)
 
 
 @pytest.mark.parametrize('file', ["credits", "title", "user"])
 def test_print_file(file):
     s = CursesScreen(False)
     s.print_file(file)
-    s.close()
+    s.close(False)
 
 
 @pytest.mark.parametrize('inventory', [
@@ -27,4 +27,4 @@ def test_show_inventory(inventory):
     s.show_inventory([])
     s.show_inventory(["hat", "shoes"])
     s.show_inventory(["hat"] * 100)
-    s.close()
+    s.close(False)

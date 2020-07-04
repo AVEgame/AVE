@@ -71,9 +71,10 @@ class CursesScreen(Screen):
         pad = self.newpad()
         pad.refresh(0, 0, 0, 0, HEIGHT, WIDTH)
 
-    def close(self):
+    def close(self, cbreak=True):
         """Close the curses screen."""
-        curses.nocbreak()
+        if cbreak:
+            curses.nocbreak()
         curses.curs_set(1)
         self.stdscr.keypad(0)
         curses.echo()
