@@ -1,1 +1,1 @@
-from .curses_screen import Screen  # noqa: F401
+"""Functionality for displaying the game in terminal."""
