@@ -13,7 +13,7 @@ WIDTH = 80
 class CursesScreen(Screen):
     """The Screen class that looks after curses."""
 
-    def __init__(self):
+    def __init__(self, cbreak=True):
         """Make the screen."""
         self.stdscr = curses.initscr()
 
@@ -52,7 +52,8 @@ class CursesScreen(Screen):
         curses.init_pair(10, -1, curses.COLOR_BLUE)
 
         curses.noecho()
-        curses.cbreak()
+        if cbreak:
+            curses.cbreak()
         curses.curs_set(0)
         self.stdscr.keypad(1)
         self.stdscr.refresh()
@@ -70,13 +71,15 @@ class CursesScreen(Screen):
         pad = self.newpad()
         pad.refresh(0, 0, 0, 0, HEIGHT, WIDTH)
 
-    def close(self):
+    def close(self, cbreak=True):
         """Close the curses screen."""
-        curses.nocbreak()
+        if cbreak:
+            curses.nocbreak()
         curses.curs_set(1)
         self.stdscr.keypad(0)
         curses.echo()
-        curses.endwin()
+        if cbreak:
+            curses.endwin()
 
     def newpad(self, y=HEIGHT, x=WIDTH):
         """Make a new pad to write to the screen."""

@@ -28,7 +28,7 @@ jobs:
           command: pip3 install .
           name: Install AVE
       - run:
-          command: python3 -m pytest test/
+          command: export TERM=xterm && python3 -m pytest test/
           name: Run tests
 
   windows-build-and-test:
