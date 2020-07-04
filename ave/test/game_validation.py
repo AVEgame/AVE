@@ -27,11 +27,11 @@ def check_first_room(game):
     c.reset(game.items)
     try:
         game["start"].get_text(c)
-    except:  # noqa: F722
+    except:  # noqa: E722
         errors.append(AVEFatalError("Could not load text for first room."))
     try:
         game["start"].get_options(c)
-    except:  # noqa: F722
+    except:  # noqa: E722
         errors.append(AVEFatalError("Could not load options for first room."))
     return errors
 
