@@ -1,7 +1,8 @@
 import pytest
 import os
-from ave import config, AVE, Character, exceptions
+from ave import config, AVE, exceptions
 from ave import load_game_from_file, load_game_from_library
+from ave.test import check_game
 
 config.debug = True
 games_path = os.path.join(
@@ -30,58 +31,31 @@ def test_version_checking(filename):
 
 
 @pytest.mark.parametrize('filename', games)
-def test_all_rooms_acessible(filename):
+def test_games_for_errors(filename):
     game = load_game_from_file(filename)
     game.load()
-    ach = {"start"}
-    for room in game.rooms.values():
-        for option in room.options:
-            for d in option.get_all_destinations():
-                ach.add(d)
-    not_ach = [i for i in game.rooms if i not in ach]
 
-    if len(not_ach) > 0:
-        print("Rooms not accessible:")
-        for key in not_ach:
-            print(" ", key)
-        assert False
+    issues = check_game(game)
+    errors = [i for i in issues if i.error_value > 3]
+    info = [i for i in issues if i.error_value <= 3]
+    errors.sort(key=lambda e: -e.error_value)
+    info.sort(key=lambda e: -e.error_value)
 
+    if len(errors) > 0:
+        print("\n  " + str(len(errors)) + " errors(s) in " + filename)
+        for e in errors:
+            print(e)
+    if len(info) > 0:
+        print("\n  " + str(len(info)) + " info(s) in " + filename)
+        for e in info:
+            print(e)
 
-@pytest.mark.parametrize('filename', games)
-def test_all_rooms_defined(filename):
-    game = load_game_from_file(filename)
-    game.load()
-    not_inc = set()
-    for room in game.rooms.values():
-        for option in room.options:
-            for d in option.get_all_destinations():
-                if d == "__GAMEOVER__" or d == "__WINNER__":
-                    continue
-                if d not in game.rooms:
-                    not_inc.add(d)
-
-    if len(not_inc) > 0:
-        print("Rooms not defined:")
-        for key in not_inc:
-            print(" ", key)
-        assert "test.ave" in filename
-        assert len(not_inc) == 1 and "fakeroom" in not_inc
-
-
-@pytest.mark.parametrize('filename', games)
-def test_has_start(filename):
-    game = load_game_from_file(filename)
-    game.load()
-    assert game["start"].id != "fail"
-
-
-@pytest.mark.parametrize('filename', games)
-def test_first_room(filename):
-    ave = AVE(character=Character())
-    game = load_game_from_file(filename)
-    game.load()
-    game["start"].get_text(ave.character)
-    game["start"].get_options(ave.character)
+    if filename.endswith("test.ave"):
+        assert len(errors) == 1
+        assert "fakeroom" in errors[0].description
+    else:
+        # Assert that the worst error is a Warning or lower
+        assert len(errors) == 0
 
 
 def test_game_library():

@@ -10,6 +10,10 @@ class Requirement:
         """Check if the character satisifies this."""
         raise NotImplementedError()
 
+    def get_all(self):
+        """Get all items involved in this requirement."""
+        raise NotImplementedError()
+
 
 class RequiredItem(Requirement):
     """The character must have an item."""
@@ -21,6 +25,10 @@ class RequiredItem(Requirement):
     def has(self, character):
         """Check if the character satisifies this."""
         return character.has(self.item)
+
+    def get_all(self):
+        """Get all items involved in this requirement."""
+        return [self.item]
 
 
 class RequiredNumber(Requirement):
@@ -47,6 +55,10 @@ class RequiredNumber(Requirement):
         if self.sign == "=" or self.sign == "==":
             return v1 == v2
 
+    def get_all(self):
+        """Get all items involved in this requirement."""
+        return self.v1.get_all_variables() + self.v1.get_all_variables()
+
 
 class Or(Requirement):
     """One of a set of Requirements must be satisfied."""
@@ -61,6 +73,13 @@ class Or(Requirement):
             if i.has(character):
                 return True
         return False
+
+    def get_all(self):
+        """Get all items involved in this requirement."""
+        out = []
+        for i in self.items:
+            out += i.get_all()
+        return out
 
 
 class And(Requirement):
@@ -77,6 +96,13 @@ class And(Requirement):
                 return False
         return True
 
+    def get_all(self):
+        """Get all items involved in this requirement."""
+        out = []
+        for i in self.items:
+            out += i.get_all()
+        return out
+
 
 class Not(Requirement):
     """The negation of another Requirement."""
@@ -89,6 +115,10 @@ class Not(Requirement):
         """Check if the character satisifies this."""
         return not self.item.has(character)
 
+    def get_all(self):
+        """Get all items involved in this requirement."""
+        return self.item.get_all()
+
 
 class Satisfied(Requirement):
     """This requirement is always satisfied."""
@@ -96,3 +126,7 @@ class Satisfied(Requirement):
     def has(self, character):
         """Check if the character satisifies this."""
         return True
+
+    def get_all(self):
+        """Get all items involved in this requirement."""
+        return []

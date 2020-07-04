@@ -10,6 +10,10 @@ class Number:
         """Get the value of the Number."""
         raise NotImplementedError()
 
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        raise NotImplementedError()
+
 
 class Constant(Number):
     """A constant."""
@@ -22,6 +26,10 @@ class Constant(Number):
         """Get the value of the Number."""
         return self.value
 
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        return []
+
 
 class Sum(Number):
     """The sum of multiple Numbers."""
@@ -33,6 +41,13 @@ class Sum(Number):
     def get_value(self, character):
         """Get the value of the Number."""
         return sum(i.get_value(character) for i in self.items)
+
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        out = []
+        for i in self.items:
+            out += i.get_all_variables()
+        return out
 
 
 class Product(Number):
@@ -47,6 +62,13 @@ class Product(Number):
         out = 1
         for i in self.items:
             out *= i.get_value(character)
+        return out
+
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        out = []
+        for i in self.items:
+            out += i.get_all_variables()
         return out
 
 
@@ -65,6 +87,13 @@ class Division(Number):
             out /= i.get_value(character)
         return out
 
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        out = []
+        for i in self.items:
+            out += i.get_all_variables()
+        return out
+
 
 class Negative(Number):
     """The negative of another Number."""
@@ -77,6 +106,10 @@ class Negative(Number):
         """Get the value of the Number."""
         return -self.item.get_value(character)
 
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        return self.item.get_all_variables()
+
 
 class Variable(Number):
     """The value of a variable."""
@@ -88,6 +121,10 @@ class Variable(Number):
     def get_value(self, character):
         """Get the value of the Number."""
         return character.numbers[self.item]
+
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        return [self.item]
 
 
 class Random(Number):
@@ -111,3 +148,7 @@ class Random(Number):
         end = self.end.get_value(character)
         size = end - start
         return start + random.random() * size
+
+    def get_all_variables(self):
+        """Get a list of all variables used in this expression."""
+        return self.start.get_all_variables() + self.end.get_all_variables()
