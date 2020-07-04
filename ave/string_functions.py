@@ -4,28 +4,29 @@ import re
 from . import config
 
 symbols = {
-    "!?": "IINNTTEERROOBBAANNGG",
-    "=>": "AARROOWW",
-    "?": "QQUUEESSTTIIOONN",
-    "+": "PPLLUUSS",
-    "~": "TTIILLDDEE",
-    "=": "EEQQUUAALL",
-    "-": "DDAASSHH",
-    "*": "AASSTTEERRIISSKK",
-    "@": "AATT",
-    "%": "PPEERRCCEENNTT",
-    "#": "HHAASSHH",
-    "_": "UUNNDDEERRSCCOORREE",
-    "[": "OOPPEENNSQ",
-    "]": "CCLLOOSSEESQ",
-    "(": "OOPPEENNRO",
-    ")": "CCLLOOSSEERO",
-    "<": "OOPPEENNPO",
-    ">": "CCLLOOSSEEPO"
+    "!?": "SYMBOLIINNTTEERROOBBAANNGG",
+    "=>": "SYMBOLAARROOWW",
+    "?": "SYMBOLQQUUEESSTTIIOONN",
+    "+": "SYMBOLPPLLUUSS",
+    "~": "SYMBOLTTIILLDDEE",
+    "=": "SYMBOLEEQQUUAALL",
+    "-": "SYMBOLDDAASSHH",
+    "*": "SYMBOLAASSTTEERRIISSKK",
+    "/": "SYMBOLFFWWDDSSLLAASSHH",
+    "@": "SYMBOLAATT",
+    "%": "SYMBOLPPEERRCCEENNTT",
+    "#": "SYMBOLHHAASSHH",
+    "_": "SYMBOLUUNNDDEERRSCCOORREE",
+    "[": "SYMBOLOOPPEENNSQ",
+    "]": "SYMBOLCCLLOOSSEESQ",
+    "(": "SYMBOLOOPPEENNRO",
+    ")": "SYMBOLCCLLOOSSEERO",
+    "<": "SYMBOLOOPPEENNPO",
+    ">": "SYMBOLCCLLOOSSEEPO"
 }
 
 more_symbols = {
-    "$": "DDOOLLAARR"
+    "$": "SYMBOLDDOOLLAARR"
 }
 
 
