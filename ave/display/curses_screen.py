@@ -15,12 +15,16 @@ class CursesScreen(Screen):
 
     def __init__(self):
         """Make the screen."""
-        print("\x1b[8;" + str(HEIGHT) + ";" + str(WIDTH) + "t")
+
         self.stdscr = curses.initscr()
 
         try:
-            curses.resizeterm(HEIGHT, WIDTH)
-        except AttributeError:
+            # Resize terminal iff it is too small
+            y, x = self.stdscr.getmaxyx()
+            if y < HEIGHT or x < WIDTH:
+                print("\x1b[8;" + str(HEIGHT) + ";" + str(WIDTH) + "t")
+                curses.resizeterm(HEIGHT, WIDTH)
+        except KeyboardInterrupt:#AttributeError:
             # Windows
             pass
 
