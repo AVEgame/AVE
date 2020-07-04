@@ -24,7 +24,7 @@ class CursesScreen(Screen):
             if y < HEIGHT or x < WIDTH:
                 print("\x1b[8;" + str(HEIGHT) + ";" + str(WIDTH) + "t")
                 curses.resizeterm(HEIGHT, WIDTH)
-        except KeyboardInterrupt:#AttributeError:
+        except AttributeError:
             # Windows
             pass
 
