@@ -4,14 +4,7 @@ from . import config
 from .components import TextWithRequirements, OptionWithRequirements
 from .components.items import NumberItem
 from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
-from .parsing.string_functions import more_unescape
-
-
-def finalise(txt, character):
-    """Insert variables into text, then unescape final characters."""
-    for i, n in character.numbers.items():
-        txt = txt.replace("$" + i + "$", str(n))
-    return more_unescape(txt)
+from .parsing.string_functions import finalise
 
 
 class Character:
@@ -113,14 +106,14 @@ class Character:
             if not item.hidden:
                 name = item.get_name(self)
                 if name is not None:
-                    inv.append(finalise(name, self) + ": " + str(n))
+                    inv.append(finalise(name, self.numbers) + ": " + str(n))
         for i in self.inventory:
             if i in items:
                 item = items[i]
                 if not item.hidden:
                     name = item.get_name(self)
                     if name is not None:
-                        inv.append(finalise(item.get_name(self), self))
+                        inv.append(finalise(item.get_name(self), self.numbers))
         return [i for i in inv if i is not None and i != ""]
 
 
@@ -232,7 +225,7 @@ class Game:
         room = self[character.location]
         text = room.get_text(character)
         options = room.get_options(character)
-        return text, {i: finalise(o.text, character)
+        return text, {i: finalise(o.text, character.numbers)
                       for i, o in options.items()}
 
     def fail_room(self):
@@ -275,7 +268,7 @@ class Room:
             if line.has_requirements(character):
                 line.get_items(character)
                 lines.append(line.text)
-        return finalise(" ".join(lines), character)
+        return finalise(" ".join(lines), character.numbers)
 
     def get_options(self, character):
         """Get the character's current destination options.

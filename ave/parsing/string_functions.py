@@ -101,3 +101,10 @@ def more_unescape(text):
     for i, j in more_symbols.items():
         text = text.replace(j, i)
     return text
+
+
+def finalise(txt, numbers):
+    """Insert variables into text, then unescape final characters."""
+    for i, n in numbers.items():
+        txt = txt.replace("$" + i + "$", str(n))
+    return more_unescape(txt)
