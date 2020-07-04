@@ -15,7 +15,6 @@ class CursesScreen(Screen):
 
     def __init__(self):
         """Make the screen."""
-
         self.stdscr = curses.initscr()
 
         try:
