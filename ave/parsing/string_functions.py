@@ -130,7 +130,8 @@ def escape_expression(txt):
     pre = ""
     while pre != txt:
         pre = txt
-        txt = re.sub(r"\(([^\(\)\|](?:[^\(\)]*[^\(\)\|])?)\)", _escape_expr, txt)
+        txt = re.sub(r"\(([^\(\)\|](?:[^\(\)]*[^\(\)\|])?)\)",
+                     _escape_expr, txt)
     return txt
 
 
