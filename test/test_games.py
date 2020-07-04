@@ -1,6 +1,6 @@
 import pytest
 import os
-from ave import config, AVE, exceptions
+from ave import config, AVE, Character, exceptions
 from ave import load_game_from_file, load_game_from_library
 
 config.debug = True
@@ -77,7 +77,7 @@ def test_has_start(filename):
 
 @pytest.mark.parametrize('filename', games)
 def test_first_room(filename):
-    ave = AVE()
+    ave = AVE(character=Character())
     game = load_game_from_file(filename)
     game.load()
     game["start"].get_text(ave.character)

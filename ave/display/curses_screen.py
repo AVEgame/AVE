@@ -1,15 +1,16 @@
-"""Use curses to display information in terminal."""
+"""Use curses to display the game in terminal."""
 
-from .exceptions import AVEToMenu, AVEQuit
-from . import config
-from .string_functions import clean_newlines
+from ..exceptions import AVEToMenu, AVEQuit
+from .. import config
+from ..parsing.string_functions import clean_newlines
+from .base import Screen
 import curses
 
 HEIGHT = 25
 WIDTH = 80
 
 
-class Screen:
+class CursesScreen(Screen):
     """The Screen class that looks after curses."""
 
     def __init__(self):
@@ -77,18 +78,6 @@ class Screen:
     def newpad(self, y=HEIGHT, x=WIDTH):
         """Make a new pad to write to the screen."""
         return curses.newpad(y, x)
-
-    def print_titles(self):
-        """Print the AVE title page."""
-        self.print_file("title")
-
-    def print_download(self):
-        """Print the game library page."""
-        self.print_file("user")
-
-    def print_credits(self):
-        """Print the credits page."""
-        self.print_file("credits")
 
     def put_ave_logo(self):
         """Print the AVE logo at the top of the screen."""
@@ -164,8 +153,7 @@ class Screen:
         pad.addstr(5, 0, " " * (WIDTH - 20), curses.color_pair(10))
         pad.addstr(6, 0, " " * (WIDTH - 20), curses.color_pair(10))
         pad.refresh(0, 0, 3, 10, 9, WIDTH - 10)
-        return self.menu(["Play again", "Play another game", "Quit"],
-                         3, 6, wx=WIDTH - 30, controls=False, credits=True)
+        return self.gameover_menu(["Play again", "Play another game", "Quit"])
 
     def show_inventory(self, inventory):
         """Display the inventory."""
@@ -234,17 +222,35 @@ class Screen:
                     pad.addch(char[0], char[1], char[2], char[3])
         pad.refresh(0, 0, py, px, y + py, x + px)
 
-    def credit_menu(self):
-        """Process input on the credits screen."""
+    def title_menu(self, ls, selected=0):
+        """Let the user pick a built in game or go to download menu."""
+        return self._internal_menu(ls, 8, selected=selected, credits=True)
+
+    def download_menu(self, ls, selected=0):
+        """Let the user pick a game from the online library."""
+        return self._internal_menu(ls, 12, selected=selected)
+
+    def gameover_menu(self, ls, selected=0):
+        """Give the user some options for what to do after game ends."""
+        return self._internal_menu(
+            ls, 3, 6, wx=WIDTH - 30, selected=selected, controls=False,
+            credits=True)
+
+    def menu(self, ls, selected=0):
+        """Give the user some options for what to do next."""
+        return self._internal_menu(ls, min(8, len(ls)), selected=selected)
+
+    def wait_for_input(self, keys=['q']):
+        """Wait for the user to press a key."""
         key = ""
+        keys = [ord(i) for i in keys]
         while key is not None:
             key = self.stdscr.getch()
-            if key == ord('q') or key == ord('c'):
-                break
-        self.print_titles()
+            if key in keys:
+                return
 
-    def menu(self, ls, y=4, py=None, selected=0, wx=WIDTH,
-             controls=True, credits=False):
+    def _internal_menu(self, ls, y=4, py=None, selected=0, wx=WIDTH,
+                       controls=True, credits=False):
         """Give the user some options, and return the selected option."""
         if py is None:
             py = HEIGHT - y - 1
@@ -271,7 +277,8 @@ class Screen:
                     raise AVEToMenu
             if key == ord('c') and credits:
                 self.print_credits()
-                self.credit_menu()
+                self.wait_for_input(["q", "c"])
+                self.print_titles()
                 self.show_menu(ls, y, py, selected, wx, controls)
 
     def show_menu(self, ls, y, py, selected, wx, controls):

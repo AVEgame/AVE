@@ -1,7 +1,5 @@
 """Exceptions used by AVE."""
 
-from urllib.error import HTTPError as AVENoInternet  # noqa: F401
-
 
 class AVEQuit(BaseException):
     """Quit AVE."""
@@ -25,3 +23,7 @@ class AVEWinner(BaseException):
 
 class AVEVersionError(BaseException):
     """Your version of AVE cannot play this game."""
+
+
+class AVENoInternet(BaseException):
+    """AVE could not load an online resource."""

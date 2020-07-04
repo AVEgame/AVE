@@ -1,7 +1,7 @@
 from math import isclose
-from ave import numbers as no
-from ave import item_giver as ig
-from ave import requirements as rq
+from ave.components import numbers as no
+from ave.components import item_giver as ig
+from ave.components import requirements as rq
 from ave import Character
 
 

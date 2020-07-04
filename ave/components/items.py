@@ -30,7 +30,7 @@ class BaseItem:
         return " ".join(out)
 
 
-class Number(BaseItem):
+class NumberItem(BaseItem):
     """A numerical variable."""
 
     def __init__(self, id=id, names=[], hidden=True, default=Constant(0)):

@@ -15,15 +15,14 @@ Test new lines => newline
 Test numbers => nums
 Test random => rand
 Test or => or
-Test version => version
+Test escaping => escaping
 Get up => up
 Test missing room => fakeroom
 
-# version
-You are using the Python version. ? __PYTHON__
-You are using the website version. ? __WEB__
-You are using the badge version. ? __BADGE__
-You are using the app. ? __APP__
+# escaping
+"You have $money$ pounds" is not escaped.
+<|"You have $money$ pounds"|> is  escaped.
+<|Continue => start|>
 Continue => start
 
 # rand
@@ -91,6 +90,17 @@ Go back => start
 
 # newline
 There <newline> should <newline> be <newline> newlines!
+There
+should
+              not
+be
+newlines
+
+
+in 
+this     
+         
+sentence.
 Go back => start
 
 # hammer

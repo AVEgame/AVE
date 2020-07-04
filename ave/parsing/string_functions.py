@@ -1,31 +1,40 @@
 """Functions to manipulate strings."""
 
 import re
-from . import config
+from .. import config
 
 symbols = {
-    "!?": "IINNTTEERROOBBAANNGG",
-    "=>": "AARROOWW",
-    "?": "QQUUEESSTTIIOONN",
-    "+": "PPLLUUSS",
-    "~": "TTIILLDDEE",
-    "=": "EEQQUUAALL",
-    "-": "DDAASSHH",
-    "*": "AASSTTEERRIISSKK",
-    "@": "AATT",
-    "%": "PPEERRCCEENNTT",
-    "#": "HHAASSHH",
-    "_": "UUNNDDEERRSCCOORREE",
-    "[": "OOPPEENNSQ",
-    "]": "CCLLOOSSEESQ",
-    "(": "OOPPEENNRO",
-    ")": "CCLLOOSSEERO",
-    "<": "OOPPEENNPO",
-    ">": "CCLLOOSSEEPO"
+    "!?": "SYMBOLIINNTTEERROOBBAANNGG",
+    "=>": "SYMBOLAARROOWW",
+    "?": "SYMBOLQQUUEESSTTIIOONN",
+    "+": "SYMBOLPPLLUUSS",
+    "~": "SYMBOLTTIILLDDEE",
+    "=": "SYMBOLEEQQUUAALL",
+    "-": "SYMBOLDDAASSHH",
+    "*": "SYMBOLAASSTTEERRIISSKK",
+    "/": "SYMBOLFFWWDDSSLLAASSHH",
+    "@": "SYMBOLAATT",
+    "%": "SYMBOLPPEERRCCEENNTT",
+    "#": "SYMBOLHHAASSHH",
+    "_": "SYMBOLUUNNDDEERRSCCOORREE",
+    "[": "SYMBOLOOPPEENNSQ",
+    "]": "SYMBOLCCLLOOSSEESQ",
+    "(": "SYMBOLOOPPEENNRO",
+    ")": "SYMBOLCCLLOOSSEERO",
+    "<": "SYMBOLOOPPEENNPO",
+    ">": "SYMBOLCCLLOOSSEEPO"
 }
 
 more_symbols = {
-    "$": "DDOOLLAARR"
+    "$": "SYMBOLDDOOLLAARR"
+}
+
+expression_symbols = {
+    "+": "EXPRESSIONPPLLUUSS",
+    "-": "EXPRESSIONMMIINNUUSS",
+    "*": "EXPRESSIONTTIIMMEESS",
+    "/": "EXPRESSIONDDIIVVIIDDEE",
+    ",": "EXPRESSIONCCOOMMMMAA"
 }
 
 
@@ -99,4 +108,37 @@ def more_unescape(text):
     """
     for i, j in more_symbols.items():
         text = text.replace(j, i)
+    return text
+
+
+def finalise(txt, numbers):
+    """Insert variables into text, then unescape final characters."""
+    for i, n in numbers.items():
+        txt = txt.replace("$" + i + "$", str(n))
+    return more_unescape(txt)
+
+
+def _escape_expr(matches):
+    text = matches[1]
+    for i, j in expression_symbols.items():
+        text = text.replace(i, j)
+    return "{|" + text + "|}"
+
+
+def escape_expression(txt):
+    """Escape text between ( and )."""
+    pre = ""
+    while pre != txt:
+        pre = txt
+        txt = re.sub(r"\(([^\(\)\|](?:[^\(\)]*[^\(\)\|])?)\)",
+                     _escape_expr, txt)
+    return txt
+
+
+def unescape_expression(text):
+    """Restore text between ( and ) that was escaped."""
+    for i, j in expression_symbols.items():
+        text = text.replace(j, i)
+    text = text.replace("{|", "(")
+    text = text.replace("|}", ")")
     return text

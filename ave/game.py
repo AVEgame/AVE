@@ -1,18 +1,10 @@
 """Classes for running games."""
 
-from random import randrange
-from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
-from .string_functions import more_unescape
-from .items import Number
-from .requirements import Satisfied
 from . import config
-
-
-def finalise(txt, character):
-    """Insert variables into text, then unescape final characters."""
-    for i, n in character.numbers.items():
-        txt = txt.replace("$" + i + "$", str(n))
-    return more_unescape(txt)
+from .components import TextWithRequirements, OptionWithRequirements
+from .components.items import NumberItem
+from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
+from .parsing.string_functions import finalise
 
 
 class Character:
@@ -43,7 +35,7 @@ class Character:
         self.inventory = []
         self.numbers = {}
         for i in items.values():
-            if isinstance(i, Number):
+            if self.is_number(i):
                 self.numbers[i.id] = i.default.get_value(self)
         self.location = "start"
 
@@ -61,7 +53,7 @@ class Character:
         ----------
         item : string
             The item or variable
-        value : ave.numbers.Number
+        value : ave.numbers.NumberItem
             The value to add
         """
         if item in self.numbers:
@@ -76,7 +68,7 @@ class Character:
         ----------
         item : string
             The variable
-        value : ave.numbers.Number
+        value : ave.numbers.NumberItem
             The value to set it to
         """
         self.numbers[item] = value
@@ -88,7 +80,7 @@ class Character:
         ----------
         item : string
             The item or variable
-        value : ave.numbers.Number
+        value : ave.numbers.NumberItem
             The value to take
         """
         if item in self.numbers:
@@ -97,8 +89,8 @@ class Character:
             self.inventory.remove(item)
 
     def is_number(self, item):
-        """Check if item is a Number."""
-        return isinstance(item, Number)
+        """Check if item is a NumberItem."""
+        return isinstance(item, NumberItem)
 
     def get_inventory(self, items):
         """Get the names of the character's inventory.
@@ -114,14 +106,14 @@ class Character:
             if not item.hidden:
                 name = item.get_name(self)
                 if name is not None:
-                    inv.append(finalise(name, self) + ": " + str(n))
+                    inv.append(finalise(name, self.numbers) + ": " + str(n))
         for i in self.inventory:
             if i in items:
                 item = items[i]
                 if not item.hidden:
                     name = item.get_name(self)
                     if name is not None:
-                        inv.append(finalise(item.get_name(self), self))
+                        inv.append(finalise(item.get_name(self), self.numbers))
         return [i for i in inv if i is not None and i != ""]
 
 
@@ -177,14 +169,13 @@ class Game:
         if config.version_tuple < self.ave_version:
             raise AVEVersionError()
         if self.file is not None:
-            from .game_loader import load_full_game_from_file as lfg
-            arg = self.file
+            from .parsing.game_loader import load_full_game_from_file
+            self.rooms, self.items = load_full_game_from_file(self.file)
         elif self.url is not None:
-            from .game_loader import load_full_game_from_url as lfg
-            arg = self.url
+            from .parsing.game_loader import load_full_game_from_url
+            self.rooms, self.items = load_full_game_from_url(self.url)
         else:
             raise ValueError("One of url and file must be set to load a game.")
-        self.rooms, self.items = lfg(arg)
 
     def __getitem__(self, id):
         """Get a room with given id."""
@@ -234,7 +225,7 @@ class Game:
         room = self[character.location]
         text = room.get_text(character)
         options = room.get_options(character)
-        return text, {i: finalise(o.text, character)
+        return text, {i: finalise(o.text, character.numbers)
                       for i, o in options.items()}
 
     def fail_room(self):
@@ -277,7 +268,7 @@ class Room:
             if line.has_requirements(character):
                 line.get_items(character)
                 lines.append(line.text)
-        return finalise(" ".join(lines), character)
+        return finalise(" ".join(lines), character.numbers)
 
     def get_options(self, character):
         """Get the character's current destination options.
@@ -294,76 +285,3 @@ class Room:
         """
         return {i: o for i, o in enumerate(self.options)
                 if o.has_requirements(character)}
-
-
-class ThingWithRequirements:
-    """A thing that needs requirements to be satisfied to be shown."""
-
-    def __init__(self, items=[], needs=Satisfied()):
-        """Make the thing."""
-        self.items = items
-        self.needs = needs
-
-    def has_requirements(self, character):
-        """Check is requirements are satisfied."""
-        return self.needs.has(character)
-
-    def get_items(self, character):
-        """Give the character the items for and/or take items away."""
-        for item in self.items:
-            item.give(character)
-
-
-class TextWithRequirements(ThingWithRequirements):
-    """A line of test that needs requirements to be satisfied to be shown."""
-
-    def __init__(self, text, **kwargs):
-        """Make the thing."""
-        self.text = text
-        super().__init__(**kwargs)
-
-
-class OptionWithRequirements(ThingWithRequirements):
-    """An option that needs requirements to be satisfied to be shown."""
-
-    def __init__(self, text, destination, random=None, **kwargs):
-        """Make the thing."""
-        self.text = text
-        self.destination = destination
-        if random is None:
-            self.random = False
-        else:
-            self.random = True
-            self.probabilities = random
-        super().__init__(**kwargs)
-
-    def get_all_destinations(self):
-        """Get a list of all destinations that this options could lead to.
-
-        Randomness will lead to multiple destinations from a single option.
-        """
-        if self.random:
-            return self.destination
-        else:
-            return [self.destination]
-
-    def get_destination(self):
-        """Get the destination when this option is chosen."""
-        if self.random:
-            n = randrange(sum(self.probabilities))
-            total = 0
-            for d, i in zip(self.destination, self.probabilities):
-                total += i
-                if total > n:
-                    return d
-        else:
-            return self.destination
-
-
-class NameWithRequirements(ThingWithRequirements):
-    """The name of an item that needs requirements to be satisfied."""
-
-    def __init__(self, text, **kwargs):
-        """Make the thing."""
-        self.text = text
-        super().__init__(**kwargs)
