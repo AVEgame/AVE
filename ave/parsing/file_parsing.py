@@ -5,6 +5,7 @@ from ..game import Room
 from ..components import (TextWithRequirements, OptionWithRequirements,
                           NameWithRequirements)
 from .string_functions import escape, unescape, clean, between
+from .string_functions import escape_expression, unescape_expression
 from ..components.items import Item, NumberItem
 from ..components import requirements as rq
 from ..components import item_giver as ig
@@ -28,25 +29,33 @@ def _parse_rq(condition):
 
 def _parse_value(value):
     """Parse a number or expression."""
-    # TODO: Brackets in expression (use escaping)
+    value = escape_expression(value)
     if "+" in value:
         if value[0] == "-":
             value = "0+" + value
         if "-" in value:
             value = value.replace("-", "+-")
-        return no.Sum(*[_parse_value(v) for v in value.split("+")])
+        return no.Sum(*[_parse_value(unescape_expression(v))
+                        for v in value.split("+")])
     if value.startswith("-"):
-        return no.Negative(_parse_value(value[1:]))
+        return no.Negative(unescape_expression(
+            _parse_value(value[1:])))
 
     if "*" in value:
-        return no.Product(*[_parse_value(v) for v in value.split("*")])
+        return no.Product(*[_parse_value(unescape_expression(v))
+                            for v in value.split("*")])
     if "/" in value:
-        return no.Division(*[_parse_value(v) for v in value.split("/")])
+        return no.Division(*[_parse_value(unescape_expression(v))
+                             for v in value.split("/")])
 
     if re.match(r"^[0-9]+$", value):
         return no.Constant(int(value))
     if re.match(r"^[0-9\.]+$", value):
         return no.Constant(float(value))
+
+    value = unescape_expression(value)
+    if value.startswith("(") and value.endswith(")"):
+        return _parse_value(value[1:-1])
 
     if "__R__" == value:
         return no.Random()

@@ -29,6 +29,14 @@ more_symbols = {
     "$": "SYMBOLDDOOLLAARR"
 }
 
+expression_symbols = {
+    "+": "EXPRESSIONPPLLUUSS",
+    "-": "EXPRESSIONMMIINNUUSS",
+    "*": "EXPRESSIONTTIIMMEESS",
+    "/": "EXPRESSIONDDIIVVIIDDEE",
+    ",": "EXPRESSIONCCOOMMMMAA"
+}
+
 
 def between(text, pre, post):
     """Get the part of a string between two substrings.
@@ -108,3 +116,28 @@ def finalise(txt, numbers):
     for i, n in numbers.items():
         txt = txt.replace("$" + i + "$", str(n))
     return more_unescape(txt)
+
+
+def _escape_expr(matches):
+    text = matches[1]
+    for i, j in expression_symbols.items():
+        text = text.replace(i, j)
+    return "{|" + text + "|}"
+
+
+def escape_expression(txt):
+    """Escape text between ( and )."""
+    pre = ""
+    while pre != txt:
+        pre = txt
+        txt = re.sub(r"\(([^\(\)\|](?:[^\(\)]*[^\(\)\|])?)\)", _escape_expr, txt)
+    return txt
+
+
+def unescape_expression(text):
+    """Restore text between ( and ) that was escaped."""
+    for i, j in expression_symbols.items():
+        text = text.replace(j, i)
+    text = text.replace("{|", "(")
+    text = text.replace("|}", ")")
+    return text

@@ -1,3 +1,4 @@
+import pytest
 from ave.parsing import file_parsing as fp
 from ave import Character
 
@@ -41,14 +42,24 @@ def test_requirement_parsing():
     assert not r.has(c3)
 
 
-def test_number_parsing():
+@pytest.mark.parametrize(
+    'txt,value', [
+        ("0+1", 1),
+        ("n+1", 5),
+        ("n*p", 20),
+        ("n*p+2*p+6", 36),
+        ("n+1*p", 9),
+        ("n+(1*p)", 9),
+        ("n+(1)*(p)", 9),
+        ("(n+1)*p", 25),
+        ("(((n)+1)*p)", 25)])
+def test_number_parsing(txt, value):
     c = Character(numbers={"n": 4, "p": 5})
+    assert fp._parse_value(txt).get_value(c) == value
 
-    assert fp._parse_value("0+1").get_value(c) == 1
-    assert fp._parse_value("0+1").get_value(c) == 1
-    assert fp._parse_value("n+1").get_value(c) == 5
-    assert fp._parse_value("n*p").get_value(c) == 20
-    assert fp._parse_value("n*p+2*p+6").get_value(c) == 36
+
+def test_random_number_parsing():
+    c = Character(numbers={"n": 4, "p": 5})
 
     r = fp._parse_value("__R__+6")
     value = [r.get_value(c) for i in range(10)]
@@ -57,16 +68,6 @@ def test_number_parsing():
     r = fp._parse_value("__R__(4,6)+6")
     value = [r.get_value(c) for i in range(10)]
     assert 10 <= min(value) < max(value) <= 12
-
-
-def test_number_parsing_with_brackets():
-    c = Character(numbers={"n": 4, "p": 5})
-
-    assert fp._parse_value("n+1*p").get_value(c) == 9
-    assert fp._parse_value("n+(1*p)").get_value(c) == 9
-    assert fp._parse_value("n+(1)*(p)").get_value(c) == 9
-    assert fp._parse_value("(n+1)*p").get_value(c) == 25
-    assert fp._parse_value("(((n)+1)*p)").get_value(c) == 25
 
 
 def test_item_giver_parsing():
