@@ -2,7 +2,7 @@
 
 from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
 from .string_functions import more_unescape
-from .items import Number
+from .components.items import NumberItem
 from .components import TextWithRequirements, OptionWithRequirements
 from . import config
 
@@ -60,7 +60,7 @@ class Character:
         ----------
         item : string
             The item or variable
-        value : ave.numbers.Number
+        value : ave.numbers.NumberItem
             The value to add
         """
         if item in self.numbers:
@@ -75,7 +75,7 @@ class Character:
         ----------
         item : string
             The variable
-        value : ave.numbers.Number
+        value : ave.numbers.NumberItem
             The value to set it to
         """
         self.numbers[item] = value
@@ -87,7 +87,7 @@ class Character:
         ----------
         item : string
             The item or variable
-        value : ave.numbers.Number
+        value : ave.numbers.NumberItem
             The value to take
         """
         if item in self.numbers:
@@ -96,8 +96,8 @@ class Character:
             self.inventory.remove(item)
 
     def is_number(self, item):
-        """Check if item is a Number."""
-        return isinstance(item, Number)
+        """Check if item is a NumberItem."""
+        return isinstance(item, NumberItem)
 
     def get_inventory(self, items):
         """Get the names of the character's inventory.

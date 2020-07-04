@@ -1,6 +1,6 @@
 """Items that can be held in the character's inventory."""
 
-from .components.numbers import Constant
+from .numbers import Constant
 
 
 class BaseItem:
@@ -30,7 +30,7 @@ class BaseItem:
         return " ".join(out)
 
 
-class Number(BaseItem):
+class NumberItem(BaseItem):
     """A numerical variable."""
 
     def __init__(self, id=id, names=[], hidden=True, default=Constant(0)):

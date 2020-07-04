@@ -5,7 +5,7 @@ from .game import Room
 from .components import (TextWithRequirements, OptionWithRequirements,
                          NameWithRequirements)
 from .string_functions import escape, unescape, clean, between
-from .items import Item, Number
+from .components.items import Item, NumberItem
 from .components import requirements as rq
 from .components import item_giver as ig
 from .components import numbers as no
@@ -181,6 +181,6 @@ def parse_item(id, item):
                 hidden = False
             names.append(parse_name_part(line))
     if number:
-        return Number(id=id, names=names, hidden=hidden, default=default)
+        return NumberItem(id=id, names=names, hidden=hidden, default=default)
     else:
         return Item(id=id, names=names, hidden=hidden)
