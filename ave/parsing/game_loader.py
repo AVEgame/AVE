@@ -3,7 +3,7 @@
 import re
 import json
 import urllib.request
-from .game import Game
+from ..game import Game
 from .string_functions import clean
 from .file_parsing import parse_room, parse_item
 

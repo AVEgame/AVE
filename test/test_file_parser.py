@@ -1,4 +1,4 @@
-from ave import file_parsing as fp
+from ave.parsing import file_parsing as fp
 from ave import Character
 
 

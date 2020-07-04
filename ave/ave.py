@@ -2,12 +2,13 @@
 
 import os
 import json
+
+from . import config
 from .exceptions import (AVEGameOver, AVEWinner, AVEToMenu, AVEQuit,
                          AVENoInternet)
 from .game import Game, Character
-from .game_loader import (load_game_from_file, load_library_json,
-                          load_game_from_library)
-from . import config
+from .parsing.game_loader import (
+    load_game_from_file, load_library_json, load_game_from_library)
 
 
 class AVE:

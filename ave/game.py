@@ -1,10 +1,10 @@
 """Classes for running games."""
 
-from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
-from .string_functions import more_unescape
-from .components.items import NumberItem
-from .components import TextWithRequirements, OptionWithRequirements
 from . import config
+from .components import TextWithRequirements, OptionWithRequirements
+from .components.items import NumberItem
+from .exceptions import AVEGameOver, AVEWinner, AVEVersionError
+from .parsing.string_functions import more_unescape
 
 
 def finalise(txt, character):
@@ -176,14 +176,13 @@ class Game:
         if config.version_tuple < self.ave_version:
             raise AVEVersionError()
         if self.file is not None:
-            from .game_loader import load_full_game_from_file as lfg
-            arg = self.file
+            from .parsing.game_loader import load_full_game_from_file
+            self.rooms, self.items = load_full_game_from_file(self.file)
         elif self.url is not None:
-            from .game_loader import load_full_game_from_url as lfg
-            arg = self.url
+            from .parsing.game_loader import load_full_game_from_url
+            self.rooms, self.items = load_full_game_from_url(self.url)
         else:
             raise ValueError("One of url and file must be set to load a game.")
-        self.rooms, self.items = lfg(arg)
 
     def __getitem__(self, id):
         """Get a room with given id."""

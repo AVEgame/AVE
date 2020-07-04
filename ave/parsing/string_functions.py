@@ -1,7 +1,7 @@
 """Functions to manipulate strings."""
 
 import re
-from . import config
+from .. import config
 
 symbols = {
     "!?": "SYMBOLIINNTTEERROOBBAANNGG",

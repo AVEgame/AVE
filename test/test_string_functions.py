@@ -1,7 +1,7 @@
 import pytest
 import re
 import ave
-from ave import string_functions as sf
+from ave.parsing import string_functions as sf
 
 
 @pytest.mark.parametrize('txt', [
