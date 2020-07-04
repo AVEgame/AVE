@@ -1,5 +1,6 @@
 """Exceptions used by AVE."""
 
+
 class AVEQuit(BaseException):
     """Quit AVE."""
 

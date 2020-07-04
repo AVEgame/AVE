@@ -6,7 +6,7 @@ import json
 from . import config
 from .exceptions import (AVEGameOver, AVEWinner, AVEToMenu, AVEQuit,
                          AVENoInternet)
-from .game import Game, Character
+from .game import Game
 from .parsing.game_loader import (
     load_game_from_file, load_library_json, load_game_from_library)
 

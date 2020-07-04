@@ -19,7 +19,7 @@ def load_library_json():
             with urllib.request.urlopen(
                     "http://avegame.co.uk/gamelist.json") as f:
                 library_json = json.load(f)
-    except:
+    except:  # noqa: E722
         raise AVENoInternet
     return library_json
 

@@ -1,8 +1,5 @@
 """Base class for displaying the game."""
 
-from ..exceptions import AVEToMenu, AVEQuit
-from .. import config
-
 
 class Screen:
     """The base Screen class."""

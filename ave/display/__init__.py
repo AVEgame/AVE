@@ -1,1 +1,1 @@
-from .curses_screen import Screen
+from .curses_screen import Screen  # noqa: F401
