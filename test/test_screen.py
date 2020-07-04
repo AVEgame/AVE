@@ -2,20 +2,34 @@ import pytest
 from ave.display.curses_screen import CursesScreen
 
 
+def make_screen():
+    try:
+        return CursesScreen()
+    except:  # noqa: E722
+        return CursesScreen(False)
+
+
+def close_screen(s):
+    try:
+        s.close()
+    except:  # noqa: E722
+        s.close(False)
+
+
 def test_start_and_close():
-    s = CursesScreen(False)
-    s.close(False)
+    s = make_screen()
+    close_screen(s)
 
 
 def test_clear():
-    s = CursesScreen(False)
+    s = make_screen()
     s.clear()
-    s.close(False)
+    close_screen(s)
 
 
 @pytest.mark.parametrize('file', ["credits", "title", "user"])
 def test_print_file(file):
-    s = CursesScreen(False)
+    s = make_screen()
     s.print_file(file)
     s.close(False)
 
@@ -23,8 +37,8 @@ def test_print_file(file):
 @pytest.mark.parametrize('inventory', [
     [], ["hat", "shoes"], ["a" * 100], ["a"] * 100])
 def test_show_inventory(inventory):
-    s = CursesScreen(False)
+    s = make_screen()
     s.show_inventory([])
     s.show_inventory(["hat", "shoes"])
     s.show_inventory(["hat"] * 100)
-    s.close(False)
+    close_screen(s)
