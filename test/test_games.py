@@ -1,7 +1,7 @@
 import pytest
 import os
 from ave import config, AVE, exceptions
-from ave import load_game_from_file, load_game_from_library
+from ave import load_game_from_file
 from ave.test import check_game
 
 config.debug = True
@@ -54,15 +54,3 @@ def test_games_for_errors(filename):
     else:
         # Assert that the worst error is a Warning or lower
         assert len(errors) == 0
-
-
-def test_game_library():
-    ave = AVE()
-    ave.get_download_menu()
-
-
-def test_load_game_from_library():
-    ave = AVE()
-    game = load_game_from_library(ave.get_download_menu()[0][2])
-    game.load()
-    assert game["start"].id != "fail"
