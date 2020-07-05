@@ -4,6 +4,7 @@ import re
 import json
 import urllib.request
 from ..game import Game
+from .. import config
 from ..exceptions import AVENoInternet
 from .string_functions import clean
 from .file_parsing import parse_room, parse_item
@@ -16,9 +17,14 @@ def load_library_json():
     global library_json
     try:
         if library_json is None:
+            library_json = []
             with urllib.request.urlopen(
-                    "http://avegame.co.uk/gamelist.json") as f:
-                library_json = json.load(f)
+                    "https://avegame.co.uk/gamelist.json") as f:
+                for game in json.load(f):
+                    game["ave_version"] = tuple(game["ave_version"])
+                    if game["user"]:
+                        if game["ave_version"] <= config.version_tuple:
+                            library_json.append(game)
     except:  # noqa: E722
         raise AVENoInternet
     return library_json
@@ -79,13 +85,14 @@ def load_game_from_file(file, filename=None):
                 version=version, ave_version=ave_version)
 
 
-def load_game_from_library(url):
+def load_game_from_library(n):
     """Load the metadata of a game from the online library."""
-    info = load_library_json()[url]
-    return Game(url="http://avegame.co.uk/download/" + url,
+    info = load_library_json()[n]
+    print(info)
+    return Game(url="https://avegame.co.uk/download/user/" + info["filename"],
                 title=info["title"], description=info["desc"],
                 author=info["author"], active=info["active"],
-                number=info["n"])
+                number=info["number"])
 
 
 def load_full_game_from_file(file):
