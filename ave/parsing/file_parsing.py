@@ -159,9 +159,7 @@ def parse_room(id, room):
     text = []
     options = []
     for line in room.split("\n"):
-        print(1, line)
         line = clean(line)
-        print(2, line)
         if "=>" in line:
             options.append(parse_option(line))
         elif line != "":
