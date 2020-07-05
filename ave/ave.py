@@ -87,6 +87,7 @@ class AVE:
                 else:
                     assert g.number not in ordered_games
                     ordered_games[g.number] = g
+        other_games.sort(key=lambda x: x.id)
         self.games = GameLibrary([
             ordered_games[i]
             for i in sorted(ordered_games.keys())] + other_games)
@@ -136,7 +137,7 @@ class AVE:
                 description=game["desc"],
                 author=game["author"], active=game["active"],
                 version=game["version"], filename=game["filename"],
-                ave_version=game["ave_version"]))
+                ave_version=tuple(game["ave_version"])))
         self.sort_games()
 
     def get_download_menu(self):
