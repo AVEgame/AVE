@@ -11,7 +11,7 @@ def run():
 
     parser = argparse.ArgumentParser(description='Run the AVE game engine.')
     parser.add_argument('folder', metavar='folder', nargs='?', default=None,
-                       help='A folder to load AVE games from.')
+                        help='A folder to load AVE games from.')
 
     args = parser.parse_args()
 
