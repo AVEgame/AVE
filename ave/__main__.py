@@ -9,7 +9,7 @@ def run():
     """Run AVE in terminal."""
     from .display.curses_screen import CursesScreen
     ave = AVE(screen=CursesScreen(), character=Character())
-    ave.load_games_from_json(os.path.join(config.root_folder, "gamelist.json"))
+    ave.load_games_from_json(os.path.join(config.ave_folder, "gamelist.json"))
     ave.start()
 
 
@@ -29,5 +29,5 @@ def make_json():
         "number": game.number
     } for game in ave.games]
 
-    with open(os.path.join(config.root_folder, "gamelist.json"), "w") as f:
+    with open(os.path.join(config.ave_folder, "gamelist.json"), "w") as f:
         json.dump(gamelist, f)
