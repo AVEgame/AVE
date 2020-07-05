@@ -4,7 +4,11 @@ import os
 
 debug = os.getenv("DEBUG")
 ave_folder = os.path.dirname(os.path.realpath(__file__))
-root_folder = os.path.join(ave_folder, "..")
+
+if os.path.isfile(os.path.join(ave_folder, "VERSION")):
+    root_folder = ave_folder
+else:
+    root_folder = os.path.join(ave_folder, "..")
 
 folder_prefix = ""
 if not os.path.isdir(os.path.join(root_folder, "games")):
