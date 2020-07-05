@@ -38,10 +38,13 @@ def test_games_for_errors(filename):
     errors = check_game(game)
     errors.sort(key=lambda e: -e.error_value)
 
-    for e in errors:
-        print(e)
+    if len(errors) > 0:
+        print("Info about", filename)
+        for e in errors:
+            print(e)
 
     # remove Info and Note errors
+
     errors = [i for i in errors if i.error_value > 2]
 
     if filename.endswith("test.ave"):

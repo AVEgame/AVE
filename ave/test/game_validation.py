@@ -2,6 +2,7 @@
 from .error_handlers import (
     AVEFatalError, AVEError, AVEWarning, AVEInfo, AVENote)
 from ..game import Character
+from ..components.items import NumberItem
 
 
 def check_game(game):
@@ -75,6 +76,7 @@ def get_undefined_numbers(game):
     for room in game.rooms.values():
         for thing in room.options + room.text:
             for item in thing.items:
+                print(item.item, c.is_number(item.item))
                 if not c.is_number(item.item) and item.value.get_value(c) != 1:
                     not_def.add(item.item)
     return [AVEWarning("The game wants to add a number to '" + i + "',"
@@ -98,7 +100,7 @@ def explore_items(game):
     numbers = set()
     named_items = set()
     for i in game.items:
-        if c.is_number(i):
+        if isinstance(i, NumberItem):
             numbers.add(i)
             if i.default.get_value(c) != 0:
                 used_num.add(i)

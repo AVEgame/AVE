@@ -217,7 +217,7 @@ Walk down the stairs => trollbridge_in
 You are at one end of a bridge guarded by a troll. On the other end of the bridge is a grand golden doorway.
 The troll says:
 "You look horrible, clean yourself up, you cannot pass." ?! face_washed
-"You look nice. I like your face." ? face_washed ?! real_tea
+"You look nice. I like your face." ? face_washed ?! realtea
 "Why have you given me a note from your mother?" ? troll_note ?! troll_crossed
 The troll takes pity on you and allows you to cross. ? troll_note ?! troll_crossed
 Give the troll your note => trollbridge_in ? face_washed ? mystery_note ~ mystery_note + troll_note
@@ -230,7 +230,7 @@ You are at one end of a bridge guarded by a troll. On the other end of the bridg
 The troll says:
 "You look nice. I like your face." ? face_washed
 "You have a receipt. I want it. Please give it to me" ? receipt
-"You didn't bring me back a present. I don't like you anymore" ? real_tea ?! receipt ?! troll_receipt
+"You didn't bring me back a present. I don't like you anymore" ? realtea ?! receipt ?! troll_receipt
 Give the troll your receipt => trollbridge_mug + mug ? receipt ~ receipt + troll_receipt
 Cross the bridge => troll_kill ?! troll_receipt
 Cross the bridge => ornate_doorway ? troll_receipt
@@ -276,14 +276,14 @@ Conveniently, there is some milk here as well. You grab it.
 Continue => tea_aisle
 
 # checkout_choice
-You need to have an item before you can check out. ?! yorkshire ?! pg_tips ?! real_tea
-You have two choices. You can either go to self-checkout or regular checkout. ? yorkshire ?! real_tea
-You have two choices. You can either go to self-checkout or regular checkout. ? pg_tips ?! real_tea
-You already paid. What are you doing? ? real_tea
-Go to the regular checkout => checkout ? pg_tips ?! real_tea
-Go to self-checkout => self_check ? pg_tips ?! real_tea
-Go to the regular checkout => checkout ? yorkshire ?! real_tea
-Go to self-checkout => self_check ? yorkshire ?! real_tea
+You need to have an item before you can check out. ?! yorkshire ?! pg_tips ?! realtea
+You have two choices. You can either go to self-checkout or regular checkout. ? yorkshire ?! realtea
+You have two choices. You can either go to self-checkout or regular checkout. ? pg_tips ?! realtea
+You already paid. What are you doing? ? realtea
+Go to the regular checkout => checkout ? pg_tips ?! realtea
+Go to self-checkout => self_check ? pg_tips ?! realtea
+Go to the regular checkout => checkout ? yorkshire ?! realtea
+Go to self-checkout => self_check ? yorkshire ?! realtea
 Go back to the tea aisle => tea_aisle
 
 # self_check

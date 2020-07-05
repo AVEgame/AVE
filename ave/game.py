@@ -35,7 +35,7 @@ class Character:
         self.inventory = []
         self.numbers = {}
         for i in items.values():
-            if self.is_number(i):
+            if isinstance(i, NumberItem):
                 self.numbers[i.id] = i.default.get_value(self)
         self.location = "start"
 
@@ -90,7 +90,9 @@ class Character:
 
     def is_number(self, item):
         """Check if item is a NumberItem."""
-        return isinstance(item, NumberItem)
+        if not isinstance(item, str):
+            raise ValueError("item must be a string")
+        return item in self.numbers
 
     def get_inventory(self, items):
         """Get the names of the character's inventory.
