@@ -10,4 +10,7 @@ def test_gamelist():
         gamelist = json.load(f)
 
     games = generate_json(config.games_folder)
+
+    games.sort(key=lambda x: x.filename)
+    gamelist.sort(key=lambda x: x.filename)
     assert gamelist == games
