@@ -14,6 +14,7 @@ jobs:
         python-version: 3.7
     - name: Build a binary wheel and a source tarball
       run: |
+        pip install wheel
         python setup.py bdist_wheel
         python setup.py sdist --formats=gztar,zip
     - name: Publish distribution 📦 to Test PyPI
