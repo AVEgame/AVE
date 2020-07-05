@@ -5,6 +5,7 @@ from ave.__main__ import generate_json
 
 
 def test_gamelist():
+    config.debug = True
     with open(os.path.join(config.ave_folder, "gamelist.json")) as f:
         gamelist_json = f.read()
 

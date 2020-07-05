@@ -68,14 +68,16 @@ def _replacements(txt):
 
 def clean(txt):
     """Strip spaces and newlines and insert data."""
+    txt = txt.strip()
     txt = txt.replace("<newline>", "\n")
-    return _replacements(txt.strip())
+    return _replacements(txt)
 
 
 def clean_newlines(txt):
     """Strip newlines and insert data such as the AVE version number."""
+    txt = txt.strip("\n")
     txt = txt.replace("<newline>", "\n")
-    return _replacements(txt.strip("\n"))
+    return _replacements(txt)
 
 
 def _escape(matches):

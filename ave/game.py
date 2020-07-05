@@ -152,6 +152,11 @@ class Game:
         active : bool
             If False, this game will only be shown in debug mode
         """
+        self.id = None
+        if file is not None:
+            self.id = file
+        if url is not None:
+            self.id = url
         self.file = file
         self.filename = filename
         self.url = url
