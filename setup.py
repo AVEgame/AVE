@@ -3,8 +3,8 @@ import sys
 import setuptools
 from ave.__main__ import make_json
 
-if sys.version_info < (3, 5):
-    print("Python 3.5 or higher required, please upgrade.")
+if sys.version_info < (3, 4):
+    print("Python 3.4 or higher required, please upgrade.")
     sys.exit(1)
 
 with open("VERSION") as f:
@@ -20,10 +20,10 @@ entry_points = {'console_scripts': ['ave = ave.__main__:run',
                                     'ave-make-json = ave.__main__:make_json']}
 
 data_files = [
-    ("_avegames", [os.path.join("games", i) for i in os.listdir("games")
+    ("ave/_avegames", [os.path.join("games", i) for i in os.listdir("games")
                    if i.endswith(".ave")]),
-    ("_avescreens", ["screens/credits", "screens/title", "screens/user"]),
-    ("", ["VERSION", "gamelist.json"])]
+    ("ave/_avescreens", ["screens/credits", "screens/title", "screens/user"]),
+    ("ave", ["VERSION", "gamelist.json"])]
 
 if __name__ == "__main__":
     setuptools.setup(
