@@ -114,7 +114,7 @@ def parse_line(line):
     """Parse a line in a .ave file."""
     i = min([line.index(a) if a in line else len(line) for a in
              [" ? ", " ?! ", " + ", " ~ "]])
-    text = unescape(clean(line[:i]))
+    text = unescape(line[:i])
     items, needs = parse_requirements(line[i:])
     return text, items, needs
 
@@ -123,8 +123,8 @@ def parse_option(line):
     """Parse a line with a destination option."""
     text, rest = line.split("=>", 1)
     text = unescape(clean(text))
-    dest, req = (rest.strip() + " ").split(" ", 1)
-    dest = dest.strip()
+    dest, req = (rest.strip(" ") + " ").split(" ", 1)
+    dest = dest.strip(" ")
     items, needs = parse_requirements(req)
     if dest.startswith("__R__"):
         dests = [unescape(clean(i)) for i in
@@ -159,10 +159,12 @@ def parse_room(id, room):
     text = []
     options = []
     for line in room.split("\n"):
+        print(1, line)
         line = clean(line)
+        print(2, line)
         if "=>" in line:
             options.append(parse_option(line))
-        elif clean(line) != "":
+        elif line != "":
             text.append(parse_text_line(line))
     return Room(id=id, text=text, options=options)
 
