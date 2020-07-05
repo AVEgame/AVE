@@ -137,7 +137,7 @@ class AVE:
                 description=game["desc"],
                 author=game["author"], active=game["active"],
                 version=game["version"], filename=game["filename"],
-                ave_version=game["ave_version"]))
+                ave_version=tuple(game["ave_version"])))
         self.sort_games()
 
     def get_download_menu(self):
