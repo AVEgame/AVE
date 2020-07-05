@@ -35,20 +35,18 @@ def test_games_for_errors(filename):
     game = load_game_from_file(filename)
     game.load()
 
-    issues = check_game(game)
-    errors = [i for i in issues if i.error_value > 3]
-    info = [i for i in issues if i.error_value <= 3]
-    errors.sort(key=lambda e: -e.error_value)
-    info.sort(key=lambda e: -e.error_value)
+    errors = check_game(game)
 
-    if len(errors) > 0:
-        print("\n  " + str(len(errors)) + " errors(s) in " + filename)
-        for e in errors:
-            print(e)
-    if len(info) > 0:
-        print("\n  " + str(len(info)) + " info(s) in " + filename)
-        for e in info:
-            print(e)
+    for i in range(5, 0, -1):
+        ls = [e for e in errors if e.error_value == i]
+        if len(ls) > 0:
+            print("")
+            for e in ls:
+                print(e)
+
+    # remove Info and Note errors
+
+    errors = [i for i in errors if i.error_value > 2]
 
     if filename.endswith("test.ave"):
         assert len(errors) == 1
@@ -58,12 +56,12 @@ def test_games_for_errors(filename):
         assert len(errors) == 0
 
 
-def test_game_library():
+def xtest_game_library():
     ave = AVE()
     ave.get_download_menu()
 
 
-def test_load_game_from_library():
+def xtest_load_game_from_library():
     ave = AVE()
     game = load_game_from_library(ave.get_download_menu()[0][2])
     game.load()
