@@ -108,7 +108,7 @@ class AVE:
         self.sort_games()
 
     def add_game(self, game):
-        """Adds a game to the (unsorted) game list."""
+        """Add a game to the (unsorted) game list."""
         if game.file is not None:
             for g in self._unsorted_games:
                 if g.file == game.file:
