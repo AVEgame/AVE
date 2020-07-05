@@ -87,6 +87,7 @@ class AVE:
                 else:
                     assert g.number not in ordered_games
                     ordered_games[g.number] = g
+        other_games.sort(key=lambda x: x.id)
         self.games = GameLibrary([
             ordered_games[i]
             for i in sorted(ordered_games.keys())] + other_games)
