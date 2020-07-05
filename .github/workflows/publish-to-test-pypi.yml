@@ -1,10 +1,14 @@
-name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+name: Publish 🐍 📦 to PyPI and TestPyPI
 
-on: push
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' 
 
 jobs:
   build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: Build and publish 🐍 📦 to PyPI and TestPyPI
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@master
@@ -17,7 +21,7 @@ jobs:
         pip install wheel
         python setup.py bdist_wheel
         python setup.py sdist --formats=gztar
-    - name: Publish distribution 📦 to Test PyPI
+    - name: Publish 📦 to Test PyPI
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.test_pypi_password }}
