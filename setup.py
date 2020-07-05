@@ -1,20 +1,18 @@
-import os
 import sys
-import setuptools
-from ave.__main__ import make_json
+import os
+
+os.system("cp VERSION ave/")
+os.system("cp -r games ave/_games")
 
 if sys.version_info < (3, 4):
     print("Python 3.4 or higher required, please upgrade.")
     sys.exit(1)
 
+import setuptools
+
 with open("VERSION") as f:
     VERSION = f.read()
 
-
-make_json()
-
-os.system("cp VERSION ave/")
-os.system("cp -r games ave/_games")
 
 entry_points = {'console_scripts': ['ave = ave.__main__:run',
                                     'ave-make-json = ave.__main__:make_json']}

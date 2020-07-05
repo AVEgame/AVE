@@ -6,7 +6,6 @@
 build
 dist
 
-ave/gamelist.json
 ave/VERSION
 ave/_games
 ave/_games/*
