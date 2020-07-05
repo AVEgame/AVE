@@ -28,6 +28,7 @@ class AVE:
         self.character = character
         self.games = None
         self.items = None
+        self._unsorted_games = []
 
     def start(self):
         """Start running the main AVE loop."""
@@ -73,11 +74,11 @@ class AVE:
             the_game = self.games[game_to_load]
             self.run_the_game(the_game)
 
-    def sort_games(self, games):
+    def sort_games(self):
         """Remove disabled games and sort the games by number."""
         ordered_games = {}
         other_games = []
-        for g in games:
+        for g in self._unsorted_games:
             if config.version_tuple < g.ave_version:
                 continue
             if g.active or config.debug:
@@ -90,7 +91,7 @@ class AVE:
             ordered_games[i]
             for i in sorted(ordered_games.keys())] + other_games)
 
-    def load_games(self, folder):
+    def load_games(self, folder, prefix=""):
         """Load the metadata of games from a folder.
 
         Parameters
@@ -98,12 +99,25 @@ class AVE:
         folder: str
             The folder
         """
-        games = []
         for game in os.listdir(folder):
             if game[-4:] == ".ave":
-                games.append(load_game_from_file(
-                    os.path.join(folder, game), game))
-        self.sort_games(games)
+                g = load_game_from_file(os.path.join(folder, game),
+                                        game)
+                g.title = prefix + g.title
+                self.add_game(g)
+        self.sort_games()
+
+    def add_game(self, game):
+        """Adds a game to the (unsorted) game list."""
+        if game.file is not None:
+            for g in self._unsorted_games:
+                if g.file == game.file:
+                    return
+        if game.url is not None:
+            for g in self._unsorted_games:
+                if g.url == game.url:
+                    return
+        self._unsorted_games.append(game)
 
     def load_games_from_json(self, json_file):
         """Load the metadata of games from a json.
@@ -115,16 +129,15 @@ class AVE:
         """
         with open(json_file) as f:
             gamelist = json.load(f)
-        games = []
         for game in gamelist:
-            games.append(Game(
+            self.add_game(Game(
                 file=os.path.join(config.games_folder, game["filename"]),
                 title=game["title"], number=game["number"],
                 description=game["desc"],
                 author=game["author"], active=game["active"],
                 version=game["version"], filename=game["filename"],
                 ave_version=game["ave_version"]))
-        self.sort_games(games)
+        self.sort_games()
 
     def get_download_menu(self):
         """Get the list of games from the online library.
