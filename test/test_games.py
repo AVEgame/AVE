@@ -35,20 +35,14 @@ def test_games_for_errors(filename):
     game = load_game_from_file(filename)
     game.load()
 
-    issues = check_game(game)
-    errors = [i for i in issues if i.error_value > 3]
-    info = [i for i in issues if i.error_value <= 3]
+    errors = check_game(game)
     errors.sort(key=lambda e: -e.error_value)
-    info.sort(key=lambda e: -e.error_value)
 
-    if len(errors) > 0:
-        print("\n  " + str(len(errors)) + " errors(s) in " + filename)
-        for e in errors:
-            print(e)
-    if len(info) > 0:
-        print("\n  " + str(len(info)) + " info(s) in " + filename)
-        for e in info:
-            print(e)
+    for e in errors:
+        print(e)
+
+    # remove Info and Note errors
+    errors = [i for i in errors if i.error_value > 2]
 
     if filename.endswith("test.ave"):
         assert len(errors) == 1
