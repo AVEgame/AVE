@@ -135,16 +135,12 @@ class AVE:
             A list of the title, author and local url for each game.
         """
         try:
-            the_json = load_library_json()
+            library = load_library_json()
         except AVENoInternet:
             self.no_internet()
             raise AVEToMenu
-        menu_items = []
-        for key, value in the_json.items():
-            if 'user/' in key:
-                menu_items.append([value['title'], value['author'],
-                                   key])
-        return menu_items
+        return [(game["title"], game["author"], i)
+                for i, game in enumerate(library)]
 
     def show_download_menu(self):
         """Show a menu of games from the online library."""
