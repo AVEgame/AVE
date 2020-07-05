@@ -17,7 +17,7 @@ def load_library_json():
     try:
         if library_json is None:
             with urllib.request.urlopen(
-                    "http://avegame.co.uk/gamelist.json") as f:
+                    "https://avegame.co.uk/gamelist.json") as f:
                 library_json = json.load(f)
     except:  # noqa: E722
         raise AVENoInternet
@@ -82,7 +82,7 @@ def load_game_from_file(file, filename=None):
 def load_game_from_library(url):
     """Load the metadata of a game from the online library."""
     info = load_library_json()[url]
-    return Game(url="http://avegame.co.uk/download/" + url,
+    return Game(url="https://avegame.co.uk/download/" + url,
                 title=info["title"], description=info["desc"],
                 author=info["author"], active=info["active"],
                 number=info["n"])
