@@ -18,6 +18,6 @@ screens_folder = os.path.join(ave_folder, "screens")
 
 
 with open(os.path.join(root_folder, "VERSION")) as f:
-    version = f.read()
+    version = f.read().strip()
 
 version_tuple = tuple(int(i) for i in version.split("."))
