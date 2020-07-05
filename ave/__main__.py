@@ -14,11 +14,21 @@ def run():
 
 
 def make_json(game_folder=config.games_folder, json_folder=config.ave_folder):
+    """Make a json containing metadata for every game and write it to file."""
+    config.debug = True
+    ave = AVE()
+    ave.load_games(game_folder)
+    gamelist = generate_json(game_folder)
+    with open(os.path.join(json_folder, "gamelist.json"), "w") as f:
+        json.dump(gamelist, f)
+
+
+def generate_json(game_folder=config.games_folder):
     """Make a json containing metadata for every game."""
     config.debug = True
     ave = AVE()
     ave.load_games(game_folder)
-    gamelist = [{
+    return [{
         "title": game.title,
         "author": game.author,
         "desc": game.description,
@@ -28,6 +38,3 @@ def make_json(game_folder=config.games_folder, json_folder=config.ave_folder):
         "filename": game.filename,
         "number": game.number
     } for game in ave.games]
-
-    with open(os.path.join(json_folder, "gamelist.json"), "w") as f:
-        json.dump(gamelist, f)
