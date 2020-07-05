@@ -13,11 +13,11 @@ def run():
     ave.start()
 
 
-def make_json():
+def make_json(folder=config.games_folder):
     """Make a json containing metadata for every game."""
     config.debug = True
     ave = AVE()
-    ave.load_games(config.games_folder)
+    ave.load_games(folder)
     gamelist = [{
         "title": game.title,
         "author": game.author,
