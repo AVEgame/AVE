@@ -38,4 +38,3 @@ def generate_json(game_folder=config.games_folder):
         "filename": game.filename,
         "number": game.number
     } for game in ave.games]
-
