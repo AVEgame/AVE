@@ -16,7 +16,7 @@ jobs:
       run: |
         pip install wheel
         python setup.py bdist_wheel
-        python setup.py sdist --formats=gztar,zip
+        python setup.py sdist --formats=gztar
     - name: Publish distribution 📦 to Test PyPI
       uses: pypa/gh-action-pypi-publish@master
       with:
