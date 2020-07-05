@@ -7,9 +7,19 @@ from ave import AVE, Character, config
 
 def run():
     """Run AVE in terminal."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Run the AVE game engine.')
+    parser.add_argument('folder', metavar='folder', nargs='?', default=None,
+                        help='A folder to load AVE games from.')
+
+    args = parser.parse_args()
+
     from .display.curses_screen import CursesScreen
     ave = AVE(screen=CursesScreen(), character=Character())
     ave.load_games_from_json(os.path.join(config.ave_folder, "gamelist.json"))
+    if args.folder is not None:
+        ave.load_games(args.folder, "[*] ")
     ave.start()
 
 
