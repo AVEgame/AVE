@@ -5,4 +5,7 @@
 
 build
 dist
-gamelist.json
+
+ave/VERSION
+ave/_games
+ave/_games/*
