@@ -21,7 +21,7 @@ entry_points = {'console_scripts': ['ave = ave.__main__:run',
 
 data_files = [
     ("ave/_avegames", [os.path.join("games", i) for i in os.listdir("games")
-                   if i.endswith(".ave")]),
+                       if i.endswith(".ave")]),
     ("ave/_avescreens", ["screens/credits", "screens/title", "screens/user"]),
     ("ave", ["VERSION", "gamelist.json"])]
 
