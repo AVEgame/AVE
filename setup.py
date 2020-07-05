@@ -20,9 +20,11 @@ entry_points = {'console_scripts': ['ave = ave.__main__:run',
                                     'ave-make-json = ave.__main__:make_json']}
 
 data_files = [
-    ("ave/_games", [os.path.join("ave/_games", i) for i in os.listdir("ave/_games")
-                       if i.endswith(".ave")]),
-    ("ave/screens", ["ave/screens/credits", "ave/screens/title", "ave/screens/user"]),
+    ("ave/_games", [os.path.join("ave/_games", i)
+                    for i in os.listdir("ave/_games")
+                    if i.endswith(".ave")]),
+    ("ave/screens", ["ave/screens/credits", "ave/screens/title",
+                     "ave/screens/user"]),
     ("ave", ["ave/VERSION", "ave/gamelist.json"])]
 
 
