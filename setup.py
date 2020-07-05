@@ -23,7 +23,7 @@ data_files = [
     ("ave/_games", [os.path.join("ave/_games", i) for i in os.listdir("ave/_games")
                        if i.endswith(".ave")]),
     ("ave/screens", ["ave/screens/credits", "ave/screens/title", "ave/screens/user"]),
-    ("ave", ["VERSION", "gamelist.json"])]
+    ("ave", ["ave/VERSION", "ave/gamelist.json"])]
 
 
 if __name__ == "__main__":
