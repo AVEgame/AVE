@@ -125,7 +125,7 @@ class Game:
     def __init__(self, file=None, url=None,
                  filename=None, title="untitled", number=None,
                  description="", author="anonymous",
-                 version=0, ave_version=(0, 0),
+                 version=1, ave_version=(0, 0),
                  active=True):
         """Make the class.
 

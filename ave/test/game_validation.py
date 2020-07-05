@@ -8,12 +8,33 @@ from ..components.items import NumberItem
 def check_game(game):
     """Check a game for errors."""
     errors = []
+    errors += check_metadata(game)
     errors += check_first_room(game)
     errors += get_inaccessible_rooms(game)
     errors += get_undefined_rooms(game)
     errors += get_trapped_rooms(game)
     errors += get_undefined_numbers(game)
     errors += explore_items(game)
+    return errors
+
+
+def check_metadata(game):
+    """Check that the game has valid metadata."""
+    errors = []
+    if game.title == "untitled":
+        errors.append(AVEError("The game's title is 'untitled' (the default value)."))
+    if game.description == "untitled":
+        errors.append(AVEError("The game's description is '' (the default value)."))
+    if game.author == "anonymous":
+        errors.append(AVEWarning("The game's title is 'anonymous' (the default value)."))
+    if game.version > 1:
+        errors.append(AVEInfo("The game's verion is greater than 1. It should be an update of a preexisting game."))
+    if not isinstance(game.version, int):
+        errors.append(AVEError("The game's version is not an integer."))
+    if max(game.ave_version) > 0:
+        errors.append(AVENote("The game is set to only work on AVE>=" + ".".join(str(i) for i in game.ave_version) + "."))
+    if not game.active:
+        errors.append(AVEInfo("The game is deactivated."))
     return errors
 
 
@@ -76,7 +97,6 @@ def get_undefined_numbers(game):
     for room in game.rooms.values():
         for thing in room.options + room.text:
             for item in thing.items:
-                print(item.item, c.is_number(item.item))
                 if not c.is_number(item.item) and item.value.get_value(c) != 1:
                     not_def.add(item.item)
     return [AVEWarning("The game wants to add a number to '" + i + "',"

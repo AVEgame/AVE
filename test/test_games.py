@@ -36,12 +36,13 @@ def test_games_for_errors(filename):
     game.load()
 
     errors = check_game(game)
-    errors.sort(key=lambda e: -e.error_value)
 
-    if len(errors) > 0:
-        print("Info about", filename)
-        for e in errors:
-            print(e)
+    for i in range(5, 0, -1):
+        ls = [e for e in errors if e.error_value == i]
+        if len(ls) > 0:
+            print("")
+            for e in ls:
+                print(e)
 
     # remove Info and Note errors
 

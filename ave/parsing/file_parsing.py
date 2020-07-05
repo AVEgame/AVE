@@ -189,7 +189,6 @@ def parse_item(id, item):
             if hidden is None:
                 hidden = False
             names.append(parse_name_part(line))
-    print(id, number)
     if number:
         return NumberItem(id=id, names=names, hidden=hidden, default=default)
     else:
