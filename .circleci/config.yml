@@ -49,6 +49,6 @@ workflows:
   main:
     jobs:
       - build-and-test
-      - windows-build-and-test
+      - windows-build-and-test:
           requires:
             - build-and-test
