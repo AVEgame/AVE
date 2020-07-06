@@ -32,6 +32,10 @@ class CursesScreen(Screen):
         # curses.assume_default_colors(-1, curses.COLOR_MAGENTA)
 
         bg_color = curses.COLOR_BLACK
+        if curses.can_change_color():
+            curses.init_color(curses.COLOR_MAGENTA, 190, 40, 140)
+            bg_color = curses.COLOR_MAGENTA
+
 
         # @ in title and credits
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_RED)
@@ -42,7 +46,7 @@ class CursesScreen(Screen):
         # menu unselected
         curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
         # menu selected
-        curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
+        curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_RED)
         # A in title
         curses.init_pair(6, curses.COLOR_RED, bg_color)
         # V in title
