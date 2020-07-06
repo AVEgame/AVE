@@ -54,9 +54,9 @@ class CursesScreen(Screen):
         # E in title
         curses.init_pair(8, curses.COLOR_BLUE, bg_color)
         # inventory
-        curses.init_pair(9, curses.COLOR_BLACK, curses.COLOR_BLUE)
+        curses.init_pair(9, curses.COLOR_WHITE, curses.COLOR_BLUE)
         # gameover
-        curses.init_pair(10, curses.COLOR_BLACK, curses.COLOR_BLUE)
+        curses.init_pair(10, curses.COLOR_WHITE, curses.COLOR_BLUE)
         # blank
         curses.init_pair(11, curses.COLOR_WHITE, bg_color)
 
