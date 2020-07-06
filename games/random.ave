@@ -10,9 +10,9 @@ You are standing in the road near a sign that says "Welcome to Lower Mudville".
 Enter Lower Mudville => generate_street
 
 # generate_street
- ~ street:bin ~ street:crisps
- + street:bin ? __R__ > 0.5 
- + street:crisps ? __R__ > 0.5 
+~ street:bin ~ street:crisps
++ street:bin ? __R__ > 0.5 
++ street:crisps ? __R__ > 0.5 
 You walk along the street.
 Continue => street
 
