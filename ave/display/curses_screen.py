@@ -36,7 +36,6 @@ class CursesScreen(Screen):
             curses.init_color(curses.COLOR_MAGENTA, 190, 40, 140)
             bg_color = curses.COLOR_MAGENTA
 
-
         # @ in title and credits
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_RED)
         # ^ in title and credits

@@ -88,7 +88,8 @@ def load_game_from_file(file, filename=None):
 def load_game_from_library(n):
     """Load the metadata of a game from the online library."""
     info = load_library_json()[n]
-    return Game(url="https://www.avegame.co.uk/download/user/" + info["filename"],
+    return Game(url="https://www.avegame.co.uk/download/user"
+                "/" + info["filename"],
                 title=info["title"], description=info["desc"],
                 author=info["author"], active=info["active"],
                 number=info["number"])
