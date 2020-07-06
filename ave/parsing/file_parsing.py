@@ -112,6 +112,10 @@ def parse_requirements(req, id_of_text="text"):
 
 def parse_line(line):
     """Parse a line in a .ave file."""
+    for a in ["? ", "?! ", "+ ", "~ "]:
+        if line.startswith(a):
+            line = " " + line
+            break
     i = min([line.index(a) if a in line else len(line) for a in
              [" ? ", " ?! ", " + ", " ~ "]])
     text = unescape(line[:i])
