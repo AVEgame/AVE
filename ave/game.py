@@ -275,7 +275,7 @@ class Room:
             if line.has_requirements(character):
                 line.get_items(character)
                 lines.append(line.text)
-        return finalise(" ".join(lines), character.numbers)
+        return finalise(" ".join([l for l in lines if l != ""]), character.numbers)
 
     def get_options(self, character):
         """Get the character's current destination options.
