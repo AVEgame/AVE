@@ -1,0 +1,28 @@
+== Welcome to Lower Mudville ==
+-- Explore this randomly generated village. What will you discover? --
+** Matthew Scroggs **
+@@ 3 @@
+vv 1 vv
+:: 1.9 ::
+
+# start
+You are standing in the road near a sign that says "Welcome to Lower Mudville".
+Enter Lower Mudville => generate_street
+
+# generate_street
+~ street:bin ~ street:crisps
++ street:bin ? __R__ > 0.5 
++ street:crisps ? __R__ > 0.5 
+You walk along the street.
+Continue => street
+
+# street
+You are standing in the street.
+There is a bin on the pavement near you. ? street:bin
+There is a crisp packed on the road next to you. ? street:crisps
+Put the crisp packet in the bin => street ? street:bin ? crisp_packet ~ crisp_packet
+Pick up the crisp packet => street ? street:crisps ?! crisp_packet + crisp_packet ~ street:crisps
+Walk along the street => generate_street
+
+% crisp_packet
+A crisp packet

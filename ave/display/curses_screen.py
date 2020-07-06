@@ -21,35 +21,43 @@ class CursesScreen(Screen):
             # Resize terminal iff it is too small
             y, x = self.stdscr.getmaxyx()
             if y < HEIGHT or x < WIDTH:
-                print("\x1b[8;" + str(HEIGHT) + ";" + str(WIDTH) + "t")
-                curses.resizeterm(HEIGHT, WIDTH)
+                print("\x1b[8;" + str(HEIGHT + 2) + ";" + str(WIDTH + 2) + "t")
+                curses.resizeterm(HEIGHT + 2, WIDTH + 2)
         except AttributeError:
             # Windows
             pass
 
         curses.start_color()
         curses.use_default_colors()
+        # curses.assume_default_colors(-1, curses.COLOR_MAGENTA)
+
+        bg_color = curses.COLOR_BLACK
+        if curses.can_change_color():
+            curses.init_color(curses.COLOR_MAGENTA, 190, 40, 140)
+            bg_color = curses.COLOR_MAGENTA
 
         # @ in title and credits
-        curses.init_pair(1, -1, curses.COLOR_RED)
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_RED)
         # ^ in title and credits
-        curses.init_pair(2, -1, curses.COLOR_GREEN)
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_GREEN)
         # = in title and credits
-        curses.init_pair(3, -1, curses.COLOR_BLUE)
+        curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_BLUE)
         # menu unselected
         curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_YELLOW)
         # menu selected
-        curses.init_pair(5, -1, curses.COLOR_RED)
+        curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_RED)
         # A in title
-        curses.init_pair(6, curses.COLOR_RED, -1)
+        curses.init_pair(6, curses.COLOR_RED, bg_color)
         # V in title
-        curses.init_pair(7, curses.COLOR_GREEN, -1)
+        curses.init_pair(7, curses.COLOR_GREEN, bg_color)
         # E in title
-        curses.init_pair(8, curses.COLOR_BLUE, -1)
+        curses.init_pair(8, curses.COLOR_BLUE, bg_color)
         # inventory
-        curses.init_pair(9, -1, curses.COLOR_BLUE)
+        curses.init_pair(9, curses.COLOR_WHITE, curses.COLOR_BLUE)
         # gameover
-        curses.init_pair(10, -1, curses.COLOR_BLUE)
+        curses.init_pair(10, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        # blank
+        curses.init_pair(11, curses.COLOR_WHITE, bg_color)
 
         curses.noecho()
         if cbreak:
@@ -69,7 +77,7 @@ class CursesScreen(Screen):
     def clear(self):
         """Clear the screen."""
         pad = self.newpad()
-        pad.refresh(0, 0, 0, 0, HEIGHT, WIDTH)
+        pad.refresh(0, 0, 1, 1, HEIGHT, WIDTH)
 
     def close(self, cbreak=True):
         """Close the curses screen."""
@@ -83,7 +91,10 @@ class CursesScreen(Screen):
 
     def newpad(self, y=HEIGHT, x=WIDTH):
         """Make a new pad to write to the screen."""
-        return curses.newpad(y, x)
+        pad = curses.newpad(y + 1, x)
+        for ypos in range(y):
+            pad.addstr(ypos, 0, " " * x, curses.color_pair(11))
+        return pad
 
     def put_ave_logo(self):
         """Print the AVE logo at the top of the screen."""
@@ -123,7 +134,7 @@ class CursesScreen(Screen):
                                 and line[x - 1] == "V" and c == "E":
                             stuff.append((y, x, "E", curses.color_pair(8)))
                         else:
-                            stuff.append((y, x, c, curses.color_pair(0)))
+                            stuff.append((y, x, c, curses.color_pair(11)))
                     y += 1
                     if y >= HEIGHT:
                         y -= 1
@@ -148,17 +159,18 @@ class CursesScreen(Screen):
 
     def gameend(self, text):
         """Allow the user to play again or go back to the menu."""
-        pad = self.newpad(8, WIDTH - 20)
+        pad = self.newpad(10, WIDTH - 19)
         gst = " " * ((WIDTH - 29) // 2) + text
         gst += " " * (WIDTH - len(gst))
-        pad.addstr(0, 0, " " * (WIDTH - 20), curses.color_pair(10))
-        pad.addstr(1, 0, gst, curses.color_pair(10))
-        pad.addstr(2, 0, " " * (WIDTH - 20), curses.color_pair(10))
+        gst = gst[:WIDTH - 20]
+        pad.addstr(1, 0, " " * (WIDTH - 20), curses.color_pair(10))
+        pad.addstr(2, 0, gst, curses.color_pair(10))
         pad.addstr(3, 0, " " * (WIDTH - 20), curses.color_pair(10))
         pad.addstr(4, 0, " " * (WIDTH - 20), curses.color_pair(10))
         pad.addstr(5, 0, " " * (WIDTH - 20), curses.color_pair(10))
         pad.addstr(6, 0, " " * (WIDTH - 20), curses.color_pair(10))
-        pad.refresh(0, 0, 3, 10, 9, WIDTH - 10)
+        pad.addstr(7, 0, " " * (WIDTH - 20), curses.color_pair(10))
+        pad.refresh(0, 0, 4, 11, 12, WIDTH - 9)
         return self.gameover_menu(["Play again", "Play another game", "Quit"])
 
     def show_inventory(self, inventory):
@@ -174,7 +186,7 @@ class CursesScreen(Screen):
                     curses.color_pair(9))
             else:
                 pad.addstr(i + 1, 0, " " * 19, curses.color_pair(9))
-        pad.refresh(0, 0, 1, WIDTH - 20, 13, WIDTH)
+        pad.refresh(0, 0, 2, WIDTH - 19, 13, WIDTH)
 
     def type_room_text(self, text):
         """Type the room text."""
@@ -211,10 +223,10 @@ class CursesScreen(Screen):
                 if char[2] != " " and (delay or title):
                     sleep(.01)
                 if len(char) == 3:
-                    pad.addch(char[0], char[1], char[2])
+                    pad.addch(char[0], char[1], char[2], curses.color_pair(11))
                 if len(char) == 4:
                     pad.addch(char[0], char[1], char[2], char[3])
-                pad.refresh(0, 0, py, px, y + py, x + px)
+                pad.refresh(0, 0, py + 1, px + 1, y + py, x + px)
         self.stdscr.nodelay(0)
 
     def show(self, stuff, py=0, px=0, y=HEIGHT, x=WIDTH - 21):
@@ -223,10 +235,10 @@ class CursesScreen(Screen):
         for char in stuff:
             if char[0] < y and char[1] < x:
                 if len(char) == 3:
-                    pad.addch(char[0], char[1], char[2])
+                    pad.addch(char[0], char[1], char[2], curses.color_pair(11))
                 if len(char) == 4:
                     pad.addch(char[0], char[1], char[2], char[3])
-        pad.refresh(0, 0, py, px, y + py, x + px)
+        pad.refresh(0, 0, py + 1, px + 1, y + py, x + px)
 
     def title_menu(self, ls, selected=0):
         """Let the user pick a built in game or go to download menu."""
@@ -308,10 +320,10 @@ class CursesScreen(Screen):
                 " " + title[: wide - 1] + " " * (wide - 1 - len(title)), col)
         if controls:
             if start > 0:
-                pad.addch(0, wx - 2, "^")
+                pad.addch(0, wx - 2, "^", curses.color_pair(11))
             if start < max(0, len(ls) - y):
-                pad.addch(y - 1, wx - 2, "v")
-        pad.refresh(0, 0, py, (WIDTH - wx) // 2, py + y - 1,
+                pad.addch(y - 1, wx - 2, "v", curses.color_pair(11))
+        pad.refresh(0, 0, py + 1, (WIDTH - wx) // 2 + 1, py + y,
                     wx + (WIDTH - wx) // 2)
 
     def show_titles(self, title, description, author, version):
