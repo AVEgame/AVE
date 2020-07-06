@@ -10,9 +10,16 @@ You are standing in the road near a sign that says "Welcome to Lower Mudville".
 Enter Lower Mudville => generate_street
 
 # generate_street
-~ street:bin ~ street:crisps
-+ street:bin ? __R__ > 0.5 
-+ street:crisps ? __R__ > 0.5 
+~ street:bin ~ street:crisps ~ street:police
+~ street:left:house ~ street:left:field
+~ street:right:villagehall
+~ leftgen ~ rightgen
++ street:bin ? __R__ > 0.5
++ street:crisps ? __R__ > 0.5 ?! crisp_packet 
++ street:police ? __R__ > 0.9
++ street:left:house ? __R__ > 0.5
++ street:left:field ?! street:left:house
++ street:right:villagehall ? __R__ > 0.95 
 You walk along the street.
 Continue => street
 
@@ -20,9 +27,106 @@ Continue => street
 You are standing in the street.
 There is a bin on the pavement near you. ? street:bin
 There is a crisp packed on the road next to you. ? street:crisps
-Put the crisp packet in the bin => street ? street:bin ? crisp_packet ~ crisp_packet
-Pick up the crisp packet => street ? street:crisps ?! crisp_packet + crisp_packet ~ street:crisps
+There is a police officer nearby. ? street:police
+There is a house to your left. ? street:left:house
+There is a field to your left. ? street:left:field
+There is a village hall to your right ? street:right:villagehall
+Put the crisp packet in the bin => street ? street:bin ? crisp_packet ~ crisp_packet + good
+Pick up the crisp packet => street ? street:crisps + crisp_packet ~ street:crisps
 Walk along the street => generate_street
+Go into the house => generate_house ? street:left:house ?! leftgen + leftgen
+Go into the field => generate_field ? street:left:field ?! leftgen + leftgen
+Go into the village hall => generate_village_hall ? street:right:villagehall ?! rightgen + rightgen
+Go back into the house => house ? street:left:house ? leftgen
+Go back into the field => field ? street:left:field ? leftgen
+Go back into the village hall => village_hall ? street:right:villagehall ? rightgen
+
+# generate_village_hall
+~ vhall:meeting
++ vhall:meeting ? __R__ > 0.65
+You walk into the village hall.
+Continue => village_hall
+
+# village_hall
+You are standing in the village hall.
+There is a parish council meeting taking place. ? vhall:meeting
+Talk to the parish councillors => council ? vhall:meeting
+Go back to the street => street
+
+# council
+As you approach the councillors, one of them points at you. ? good >= 20
+"You have done many kinds deeds for this village. I nominate you for Mayor." ? good >= 20
+"Can't you see we're busy," barks one of the councillors, "you'll have to come back later." ? good < 20 ~ good
+Go back to the street => street ? good < 20
+Continue => mayor ? good >= 20
+
+# mayor
+You are mayor of Lower Mudville.
+Continue => __WINNER__
+
+# generate_house
+~ house:angry ~ house:toolbox ~ house:toolhammer ~ house:tea ~ house:toolsaw ~ house:toolnails
+~ house:toolscrewdriver
++ house:angry ? __R__ > 0.9
++ house:tea ? __R__ > 0.75 ?! house:angry
++ house:toolbox ? __R__ > 0.8 ?! house:angry
++ house:toolhammer ? __R__ > 0.8 ? house:toolbox
++ house:toolsaw ? __R__ > 0.8 ? house:toolbox
++ house:toolnails ? __R__ > 0.8 ? house:toolbox
++ house:toolscrewdriver ? __R__ > 0.8 ? house:toolbox
+You walk into the house.
+Continue => house
+
+# generate_field
+You walk into the field.
+Continue => field
+
+# house
+You are standing in a house.
+The owner of the house angrily tells you to get out of their house. ? house:angry ~ good
+There is a cup of tea on the table. ? house:tea
+There is a toolbox on the table. ? house:toolbox
+Drink the tea => drinktea ? house:tea
+Look in the toolbox => toolbox ? house:toolbox
+Go back to the street => street
+
+# toolbox
+You look in the toolbox.
+There is a hammer. ? house:toolhammer ?! hammer
+There is a saw. ? house:toolsaw ?! saw
+There is are some nails. ? house:toolnails ?! nails
+There is a screwdriver. ? house:toolscrewdriver ?! screwdriver
+Pick up the hammer => toolbox ? house:toolhammer ?! hammer + hammer
+Pick up the saw => toolbox ? house:toolsaw ?! saw + saw
+Pick up the nails => toolbox ? house:toolnails ?! nails + nails
+Pick up the screwdriver => toolbox ? house:toolscrewdriver ?! screwdriver + screwdriver
+Continue => house
+
+# drinktea
+You drink the tea. It is delicious. ~ house:tea ~ thirst
+Continue => house
+
+# field
+You are standing in a field.
+Go back to the street => street
 
 % crisp_packet
 A crisp packet
+
+% hammer
+A hammer
+
+% saw
+A saw
+
+% nails
+Some nails
+
+% screwdriver
+A screwdriver
+
+% good
+__NUMBER__
+
+% thirst
+__NUMBER__(3)
