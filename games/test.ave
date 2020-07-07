@@ -2,6 +2,7 @@
 -- This game is very boring and so should only be used to test features. --
 ** Matthew Scroggs **
 vv 1 vv
+@@ 99 @@
 ~~ off ~~
 :: 1.9 ::
 
@@ -106,6 +107,7 @@ Spend a pound => nums ~ money ? money
 Drop all your money => nums + money=0 ? money
 Spend five pounds => nums + money-5 ? money>=5
 Add a random amount => nums + money+__R__
+Set money to be 5 => nums + money=5
 Spend two pounds => nums ~ money ~ money ? money >= 2
 Go back => start
 
