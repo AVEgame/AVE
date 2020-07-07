@@ -17,12 +17,20 @@ class CursesScreen(Screen):
         """Make the screen."""
         self.stdscr = curses.initscr()
 
+        curses.noecho()
+        if cbreak:
+            curses.cbreak()
+        curses.curs_set(0)
+        self.stdscr.keypad(1)
+
         try:
             # Resize terminal iff it is too small
             y, x = self.stdscr.getmaxyx()
             if y < HEIGHT or x < WIDTH:
                 print("\x1b[8;" + str(HEIGHT + 2) + ";" + str(WIDTH + 2) + "t")
                 curses.resizeterm(HEIGHT + 2, WIDTH + 2)
+                self.stdscr.clear()
+                self.stdscr.refresh()
         except AttributeError:
             # Windows
             pass
@@ -59,11 +67,6 @@ class CursesScreen(Screen):
         # blank
         curses.init_pair(11, curses.COLOR_WHITE, bg_color)
 
-        curses.noecho()
-        if cbreak:
-            curses.cbreak()
-        curses.curs_set(0)
-        self.stdscr.keypad(1)
         self.stdscr.refresh()
 
     def no_internet(self):
