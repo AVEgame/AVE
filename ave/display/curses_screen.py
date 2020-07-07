@@ -216,7 +216,8 @@ class CursesScreen(Screen):
                         self.type(stuff)
                         self.press_enter()
                         self.wait_for_input(["ENTER", "q"])
-                        return self.type_room_text(" ".join(text.split(" ")[wn + 1:]))
+                        return self.type_room_text(
+                            " ".join(text.split(" ")[wn + 1:]))
                 for i, c in enumerate(word):
                     stuff.append((y, x, c))
                     x += 1
