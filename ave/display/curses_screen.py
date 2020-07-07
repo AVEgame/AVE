@@ -284,6 +284,7 @@ class CursesScreen(Screen):
                 return key_map[key]
 
     def get_ord(self, key):
+        """Return the key code(s) of the key."""
         if key == "ENTER":
             return [curses.KEY_ENTER, ord("\n"), ord("\r")]
         return [ord(key)]
