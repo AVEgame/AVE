@@ -77,6 +77,13 @@ class CursesScreen(Screen):
             stuff.append((0, i, c, curses.color_pair(8)))
         self.show(stuff, 15, 5, 1, 56)
 
+    def press_enter(self):
+        """Display a "Press <enter> to continue" message."""
+        stuff = []
+        for i, c in enumerate("Press <enter> to continue."):
+            stuff.append((0, i, c, curses.color_pair(8)))
+        self.show(stuff, 15, 5, 1, 56)
+
     def clear(self):
         """Clear the screen."""
         pad = self.newpad()
@@ -197,7 +204,7 @@ class CursesScreen(Screen):
         x = 0
         stuff = []
         text = text.replace("\n", " \n ")
-        for word in text.split(" "):
+        for wn, word in enumerate(text.split(" ")):
             if word == "\n":
                 y += 1
                 x = 0
@@ -205,6 +212,11 @@ class CursesScreen(Screen):
                 if x + len(word) > WIDTH - 22:
                     y += 1
                     x = 0
+                    if y > 13:
+                        self.type(stuff)
+                        self.press_enter()
+                        self.wait_for_input(["ENTER", "q"])
+                        return self.type_room_text(" ".join(text.split(" ")[wn + 1:]))
                 for i, c in enumerate(word):
                     stuff.append((y, x, c))
                     x += 1
@@ -264,11 +276,16 @@ class CursesScreen(Screen):
     def wait_for_input(self, keys=['q']):
         """Wait for the user to press a key."""
         key = ""
-        keys = [ord(i) for i in keys]
+        key_map = {j: k for k in keys for j in self.get_ord(k)}
         while key is not None:
             key = self.stdscr.getch()
-            if key in keys:
-                return
+            if key in key_map:
+                return key_map[key]
+
+    def get_ord(self, key):
+        if key == "ENTER":
+            return [curses.KEY_ENTER, ord("\n"), ord("\r")]
+        return [ord(key)]
 
     def _internal_menu(self, ls, y=4, py=None, selected=0, wx=WIDTH,
                        controls=True, credits=False):
