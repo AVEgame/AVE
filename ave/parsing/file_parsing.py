@@ -38,8 +38,8 @@ def _parse_value(value):
         return no.Sum(*[_parse_value(unescape_expression(v))
                         for v in value.split("+")])
     if value.startswith("-"):
-        return no.Negative(unescape_expression(
-            _parse_value(value[1:])))
+        return no.Negative(_parse_value(
+            unescape_expression(value[1:])))
 
     if "*" in value:
         return no.Product(*[_parse_value(unescape_expression(v))
