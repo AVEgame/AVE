@@ -61,7 +61,7 @@ Continue => wall
 
 # wall
 You are standing by a wall.
-The wall is covered in grafitti. ? wall_unclean
+The wall is covered in grafitti. ? wall:unclean
 The wall is covered in dents made by a hammer. ? wall:dented
 Wash the wall => wash ? soap ? bucket ? sponge ? wall:unclean ~ wall:unclean
 Cover the wall in grafitti => wall ? paint ?! wall:unclean + wall:unclean + good-7 ~ paint
@@ -81,8 +81,8 @@ some nails ? good > -10 ?! police:nails
 to fix the village notice board. Do you have any?" ? good > -10 ? (!police:hammer !police:nails)
 "You've been making a mess of our village," say the police officer. "You are under arrest." ? good <= -10
 Stop talking to the police officer => street ? good > -10
-Give the police officer a hammer ? good > -10 ?! police:hammer ? hammer ~ hammer + good+5
-Give the police officer some nails ? good > -10 ?! police:nails ? nails ~ nails + good+5
+Give the police officer a hammer ? good > -10 ?! police:hammer + police:hammer ? hammer ~ hammer + good+5
+Give the police officer some nails ? good > -10 ?! police:nails + police:nails ? nails ~ nails + good+5
 Continue => arrest ? good <= -10
 
 # arrest
@@ -126,13 +126,17 @@ Continue => __GAMEOVER__
 # generate_house
 ~ house:angry ~ house:toolbox ~ house:toolhammer ~ house:tea ~ house:toolsaw ~ house:toolnails
 ~ house:toolscrewdriver
+~ house:soap ~ house:bucket ~ house:sponge
 + house:angry ? __R__ > 0.9
 + house:tea ? __R__ > 0.75 ?! house:angry
 + house:toolbox ? __R__ > 0.7 ?! house:angry
-+ house:toolhammer ? __R__ > 0.4 ? house:toolbox
-+ house:toolsaw ? __R__ > 0.4 ? house:toolbox
-+ house:toolnails ? __R__ > 0.4 ? house:toolbox
-+ house:toolscrewdriver ? __R__ > 0.4 ? house:toolbox
++ house:toolhammer ? __R__ > 0.4 ? house:toolbox ?! house:angry
++ house:toolsaw ? __R__ > 0.4 ? house:toolbox ?! house:angry
++ house:toolnails ? __R__ > 0.4 ? house:toolbox ?! house:angry
++ house:toolscrewdriver ? __R__ > 0.4 ? house:toolbox ?! house:angry
++ house:soap ? __R__ > 0.5 ?! house:angry ?! soap
++ house:bucket ? __R__ > 0.5 ?! house:angry ?! bucket
++ house:sponge ? __R__ > 0.5 ?! house:angry ?! sponge
 You walk into the house.
 Continue => house
 
@@ -140,8 +144,14 @@ Continue => house
 You are standing in a house.
 The owner of the house angrily tells you to get out of their house. ? house:angry ~ good
 There is a cup of tea on the table. ? house:tea
+There is a box of soap on the table. ? house:soap
+There is a bucket by the table. ? house:bucket
+There is a sponge on the table. ? house:sponge
 There is a toolbox on the table. ? house:toolbox
 Drink the tea => drinktea ? house:tea
+Pick up the soap => house ? house:soap ~ house:soap + soap
+Pick up the bucket => house ? house:bucket ~ house:bucket + bucket
+Pick up the sponge => house ? house:sponge ~ house:sponge + sponge
 Look in the toolbox => toolbox ? house:toolbox
 Go back to the street => street
 
