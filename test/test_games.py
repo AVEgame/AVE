@@ -49,8 +49,7 @@ def test_games_for_errors(filename):
     errors = [i for i in errors if i.error_value > 2]
 
     if filename.endswith("test.ave"):
-        assert len(errors) == 1
-        assert "fakeroom" in errors[0].description
+        assert len(errors) == 2
     else:
         # Assert that the worst error is a Warning or lower
         assert len(errors) == 0
