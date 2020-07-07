@@ -13,6 +13,7 @@ def check_game(game):
     errors += get_inaccessible_rooms(game)
     errors += get_undefined_rooms(game)
     errors += get_trapped_rooms(game)
+    errors += get_long_options(game)
     errors += get_undefined_numbers(game)
     errors += explore_items(game)
     return errors
@@ -74,6 +75,17 @@ def get_inaccessible_rooms(game):
                 ach.add(d)
     return [AVEWarning("The room '" + i + "' is not accessible.")
             for i in game.rooms if i not in ach]
+
+
+def get_long_options(game):
+    """Find options whose text is too long."""
+    errors = []  # 75
+    for room in game.rooms.values():
+        for option in room.options:
+            if len(option.text) > 75:
+                errors.append(AVEWarning(
+                    "The option text\"" + option.text + "\" is too long."))
+    return errors
 
 
 def get_undefined_rooms(game):
