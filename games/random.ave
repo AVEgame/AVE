@@ -248,11 +248,41 @@ Chase the crows away => field ? field:crows ~ field:crows + good+3
 Go back to the street => street
 
 # generatepub
+~ pub:oldmuddy ~ pub:mudvillegold ~ pub:mild
++ pub:oldmuddy ? __R__ > 0.3
++ pub:mudvillegold ? __R__ > 0.3
++ pub:mild ? __R__ > 0.3
 You walk into the pub.
 Continue => pub
 
 # pub
+You are in the pub.
+But a pint of Old Muddy for <money>3 => oldmuddy ? pub:oldmuddy ? money>3 + money-3
+But a pint of Mudville Gold for <money>3 => mudvillegold ? pub:mudvillegold ? money>3 + money-3
+But a pint of Born to be Mild for <money>2 => mild ? pub:mild ? money>2 + money-2
+Saw the bar in half => __R__(sawbargood,sawbarbad) ? saw
 Go back to the street => street
+
+# sawbargood
+The landlord look at you, confused.
+<newline><newline>
+"How on Earth did you know that I needed to cut the bar there to get the new fridge in?!" says the landlord.
+"You've saved me having to hire someone to do that, take this."
+<newline><newline>
+The landlord gives you <money>10
+
+
+# oldmuddy
+You drink a pint of Old Muddy and listen to villagers talk about how the parish council are looking to elect a new mayor of Mudville.
+Continue => pub
+
+# mudvillegold
+You drink a pint of Mudville Gold and listen to villagers talk about how the village policeman has been trying to fix the noticeboards in the village.
+Continue => pub
+
+# mild
+You drink a pint of Born to be Mild and listen to villagers talk about the village school needing to raise lots of money for roof repairs.
+Continue => pub
 
 # generatepostoffice
 You walk into the post office.
@@ -290,7 +320,7 @@ Continue => villagegreen
 Go back to the street => street
 
 % money
-Money
+£
 __NUMBER__(10)
 
 % crisp_packet

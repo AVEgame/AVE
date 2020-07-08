@@ -63,6 +63,7 @@ def between(text, pre, post):
 
 def _replacements(txt):
     txt = config.version.join(txt.split("%v%"))
+    txt = "£".join(txt.split("<money>"))
     return txt
 
 

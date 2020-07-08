@@ -108,7 +108,10 @@ class Character:
             if not item.hidden:
                 name = item.get_name(self)
                 if name is not None:
-                    inv.append(finalise(name, self.numbers) + ": " + str(n))
+                    display_name = finalise(name, self.numbers)
+                    if item.id != "money" or display_name != "£":
+                        display_name += ": "
+                    inv.append(display_name + str(n))
         for i in self.inventory:
             if i in items:
                 item = items[i]
