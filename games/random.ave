@@ -12,17 +12,23 @@ Enter Lower Mudville => generate_street
 # generate_street
 + tired
 ~ street:bin ~ street:crisps ~ street:police
-~ street:left:house ~ street:left:field ~ street:left:wall
-~ street:right:villagehall ~ street:right:house
+~ street:left:wall ~ street:left:postoffice ~ street:left:pub ~ street:left:field ~ street:left:house
+~ street:right:villagegreen ~ street:right:blacksmith ~ street:right:school ~ street:right:shop ~ street:right:house ~ street:right:villagehall
 ~ leftgen ~ rightgen
-+ street:bin ? __R__ > 0.5
++ street:bin ? __R__ > 0.8
 + street:crisps ? __R__ > 0.5
 + street:police ? __R__ > 0.9
-+ street:left:house ? __R__ > 0.5
-+ street:left:field ?! street:left:house ? __R__ > 0.5
-+ street:left:wall ?! street:left:house ?! street:left:field
-+ street:right:villagehall ? __R__ > 0.95 
-+ street:right:house ?! street:right:villagehall ?! street:left:house ? __R__ > 0.6
++ street:left:house ? __R__ > 0.8
++ street:left:field ?! street:left:house ? __R__ > 0.75
++ street:left:pub ?! street:left:field ?! street:left:house ? __R__ > 0.6666
++ street:left:postoffice ?! street:left:pub ?! street:left:field ?! street:left:house ? __R__ > 0.5
++ street:left:wall ?! street:left:postoffice ?! street:left:pub ?! street:left:field ?! street:left:house ? __R__ > 0.1
++ street:right:villagehall ? __R__ > 0.9
++ street:right:house ?! street:right:villagehall ?! street:left:house ? __R__ > 0.8
++ street:right:shop ?! street:right:house ?! street:right:villagehall ? __R__ > 0.7
++ street:right:school ?! street:right:shop ?! street:right:house ?! street:right:villagehall ? __R__ > 0.6
++ street:right:blacksmith ?! street:right:school ?! street:right:shop ?! street:right:house ?! street:right:villagehall ? __R__ > 0.5
++ street:right:villagegreen ?! street:right:blacksmith ?! street:right:school ?! street:right:shop ?! street:right:house ?! street:right:villagehall ? __R__ > 0.4
 You walk along the street.
 Continue => street
 
@@ -34,28 +40,47 @@ There is a police officer nearby. ? street:police
 There is a house to your left. ? street:left:house
 There is a field to your left. ? street:left:field
 There is a wall to your left. ? street:left:wall
-There is a village hall to your right ? street:right:villagehall
+There is a post office to your left. ? street:left:postoffice
+There is a pub to your left. ? street:left:pub
+There is a village hall to your right. ? street:right:villagehall
 There is a house to your right. ? street:right:house
+There is a village green to your right. ? street:right:villagegreen
+There is a blacksmith's shop to your right. ? street:right:blacksmith
+There is a school to your right. ? street:right:school
+There is a shop to your right. ? street:right:shop
 You are very tired. ? tired>20
 Put the crisp packet(s) in the bin => street ? street:bin ? crisp_packet + good+crisp_packet + crisp_packet=0
 Pick up the crisp packet => street ? street:crisps + crisp_packet ~ street:crisps
 Walk along the street => generate_street
-Go to the wall => generate_wall ? street:left:wall ?! leftgen + leftgen
 Go into the house => generate_house ? street:left:house ?! leftgen + leftgen
-Go into the house => generate_house ? street:right:house ?! rightgen + rightgen
 Go into the field => generate_field ? street:left:field ?! leftgen + leftgen
-Go into the village hall => generate_village_hall ? street:right:villagehall ?! rightgen + rightgen
-Go back to the wall => wall ? street:left:wall ? leftgen
+Go to the wall => generate_wall ? street:left:wall ?! leftgen + leftgen
+Go into the post office => generate_postoffice ? street:left:postoffice ?! leftgen + leftgen
+Go into the pub => generate_pub ? street:left:pub ?! leftgen + leftgen
+Go into the village hall => generate_villagehall ? street:right:villagehall ?! rightgen + rightgen
+Go into the house => generate_house ? street:right:house ?! rightgen + rightgen
+Go to the village green => generate_villagegreem ? street:right:villagegreen ?! rightgen + rightgen
+Go to the blacksmith's shop => generate_blacksmith ? street:right:blacksmith ?! rightgen + rightgen
+Go to the school => generate_school ? street:right:school ?! rightgen + rightgen
+Go to the shop => generate_shop ? street:right:shop ?! rightgen + rightgen
 Go back into the house => house ? street:left:house ? leftgen
-Go back into the house => house ? street:right:house ? rightgen
 Go back into the field => field ? street:left:field ? leftgen
-Go back into the village hall => village_hall ? street:right:villagehall ? rightgen
+Go back to the wall => wall ? street:left:wall ? leftgen
+Go back into the post office => postoffice ? street:left:postoffice ? leftgen
+Go back into the pub => pub ? street:left:pub ? leftgen
+Go back into the village hall => villagehall ? street:right:villagehall ? rightgen
+Go back into the house => house ? street:right:house ? rightgen
+Go back to the village green => villagegreem ? street:right:villagegreen ? rightgen
+Go back to the blacksmith's shop => blacksmith ? street:right:blacksmith ? rightgen
+Go back to the school => school ? street:right:school ? rightgen
+Go back to the shop => shop ? street:right:shop ? rightgen
 Have a nap in the street => streetnap ? tired>20
 Talk to the police officer => policetalk ? street:police
 
 # generate_wall
-~ wall:unclean ~ wall:dented
+~ wall:unclean ~ wall:dented ~ wall:noticeboard
 ~ wall:unclean ? __R__ > 0.6
+~ wall:noticeboard ? __R__ > 0.6
 You walk over to the wall.
 Continue => wall
 
@@ -63,7 +88,10 @@ Continue => wall
 You are standing by a wall.
 The wall is covered in grafitti. ? wall:unclean
 The wall is covered in dents made by a hammer. ? wall:dented
+There is a notice board on the wall. ? wall:noticeboard ? wall:noticeboardfixed
+The noticeboard is only attached by one corner. ? wall:noticeboard
 Wash the wall => wash ? soap ? bucket ? sponge ? wall:unclean ~ wall:unclean
+Reattach the notice board to the wall => wall ? wall:noticeboard ~ wall:noticeboard + wall:noticeboardfixed ? hammer ? nails>3 + nails-3
 Cover the wall in grafitti => wall ? paint ?! wall:unclean + wall:unclean + good-7 ~ paint
 Put dents in the wall with the hammer => wall ? hammer ?! wall:dented + wall:dented + good-5
 Go back to the street => street 
@@ -82,7 +110,7 @@ to fix the village notice board. Do you have any?" ? good > -10 ? (!police:hamme
 "You've been making a mess of our village," say the police officer. "You are under arrest." ? good <= -10
 Stop talking to the police officer => street ? good > -10
 Give the police officer a hammer ? good > -10 ?! police:hammer + police:hammer ? hammer ~ hammer + good+5
-Give the police officer some nails ? good > -10 ?! police:nails + police:nails ? nails ~ nails + good+5
+Give the police officer some nails ? good > -10 ?! police:nails + police:nails ? nails>3 + nails=0 + good+5
 Continue => arrest ? good <= -10
 
 # arrest
@@ -126,8 +154,14 @@ Continue => __GAMEOVER__
 # generate_house
 ~ house:angry ~ house:toolbox ~ house:toolhammer ~ house:tea ~ house:toolsaw ~ house:toolnails
 ~ house:toolscrewdriver
+~ house:brokentable
 ~ house:soap ~ house:bucket ~ house:sponge
+~ house:armchair ~ house:sofa ~ house:tv ~ house:table ~ house:smashtv
 + house:angry ? __R__ > 0.9
++ house:armchair ? __R__ > 0.2 ?! house:angry
++ house:sofa ? __R__ > 0.2 ?! house:angry
++ house:tv ? __R__ > 0.2 ?! house:angry
++ house:table ? __R__ > 0.2 ?! house:angry
 + house:tea ? __R__ > 0.75 ?! house:angry
 + house:toolbox ? __R__ > 0.7 ?! house:angry
 + house:toolhammer ? __R__ > 0.4 ? house:toolbox ?! house:angry
@@ -142,44 +176,67 @@ Continue => house
 
 # house
 You are standing in a house.
+There is a table in the house. ? house:table
+There are some broken pieces of a table in the house. ? house:brokentable
+There is an armchair in the corner. ? house:armchair
+There is a sofa in the room. ? house:sofa
+There is a TV in the house. ? house:tv
+There is a smashed TV in the house. ? house:smashtv
 The owner of the house angrily tells you to get out of their house. ? house:angry ~ good
-There is a cup of tea on the table. ? house:tea
-There is a box of soap on the table. ? house:soap
-There is a bucket by the table. ? house:bucket
-There is a sponge on the table. ? house:sponge
-There is a toolbox on the table. ? house:toolbox
+There is a cup of tea on the table. ? house:tea ? house:table
+There is a box of soap on the table. ? house:soap ? house:table
+There is a bucket by the table. ? house:bucket ? house:table
+There is a sponge on the table. ? house:sponge ? house:table
+There is a toolbox on the table. ? house:toolbox ? house:table
+There is a cup of tea on the floor. ? house:tea ?! house:table
+There is a box of soap on the floor. ? house:soap ?! house:table
+There is a bucket on the floor. ? house:bucket ?! house:table
+There is a sponge on the floor. ? house:sponge ?! house:table
+There is a toolbox on the floor. ? house:toolbox ?! house:table
 Drink the tea => drinktea ? house:tea
 Pick up the soap => house ? house:soap ~ house:soap + soap
 Pick up the bucket => house ? house:bucket ~ house:bucket + bucket
 Pick up the sponge => house ? house:sponge ~ house:sponge + sponge
 Look in the toolbox => toolbox ? house:toolbox
+Cut a leg off the table => legless ? house:table ? saw
+Have a nap on the sofa => house ? house:sofa ? tired > 0 + tired=0
+Have a nap on the armchair => house ? house:armchair ? tired > 0 + tired=0
+Hit the TV with the hammer => house ? house:tv ~ house:tv + house:smashtv + good-3
 Go back to the street => street
+
+# legless
+You cut a leg off the table, the table tips over and cracks in half. + good-5 + house:brokentable ~ house:table
+The cup of tea spills ? house:tea ~ house:tea
+Continue => house
 
 # toolbox
 You look in the toolbox.
 It is empty. ?! house:toolhammer ?! house:toolsaw ?! house:toolnails ?! house:toolscrewdriver
-There is a hammer. ? house:toolhammer ?! hammer
-There is a saw. ? house:toolsaw ?! saw
-There is are some nails. ? house:toolnails ?! nails
-There is a screwdriver. ? house:toolscrewdriver ?! screwdriver
-Pick up the hammer => toolbox ? house:toolhammer ?! hammer + hammer
-Pick up the saw => toolbox ? house:toolsaw ?! saw + saw
-Pick up the nails => toolbox ? house:toolnails ?! nails + nails
-Pick up the screwdriver => toolbox ? house:toolscrewdriver ?! screwdriver + screwdriver
+There is a hammer. ? house:toolhammer
+There is a saw. ? house:toolsaw
+There are some nails. ? house:toolnails
+There is a screwdriver. ? house:toolscrewdriver
+Pick up the hammer => toolbox ? house:toolhammer ?! hammer + hammer ~ house:toolhammer
+Pick up the saw => toolbox ? house:toolsaw ?! saw + saw ~ house:toolsaw
+Pick up the nails => toolbox ? house:toolnails ?! nails + nails=10 ~ house:toolnails
+Pick up the screwdriver => toolbox ? house:toolscrewdriver ?! screwdriver + screwdriver ~ house:toolscrewdriver
 Continue => house
 
 # drinktea
-You drink the tea. It is delicious (but a little cold). ~ house:tea + tired=0
+You drink the tea. It is delicious (but a little cold). ~ house:tea + tired-5
++ tired=0 ? tired<0
 Continue => house
 
 # generate_field
-~ field:scarecrow ~ field:buckethead ~ field:scarecrowcutdown ~ field:crisps
+~ field:scarecrow ~ field:buckethead ~ field:scarecrowcutdown ~ field:crisps ~ field:crows
 + field:scarecrow ? __R__ > 0.6
++ field:crows ?! field:scarecrow ? __R__ > 0.3
 You walk into the field.
 Continue => field
 
 # field
 You are standing in a field.
+There are crows in the field eating the crops.
 There is a crisp packed in the field next to you. ? field:crisps
 There is a scarecrow standing in the field. ? field:scarecrow ?! field:scarecrowcutdown
 There is a scarecrow lying in the field. ? field:scarecrow ? field:scarecrowcutdown
@@ -187,8 +244,54 @@ There is bucket on the scarecrow's head. ? field:scarecrow ? field:buckethead
 Pick up the crisp packet => field ? field:crisps ~ field:crisps + crisp_packet + good
 Put the bucket on the scarecrow's head => field ? field:scarecrow ? bucket ~ bucket + field:buckethead ?! field:buckethead + good-3
 Use the saw to cut down the scarecrow => field ? field:scarecrow ? saw ?! field:scarecrowcutdown + field:scarecrowcutdown + good-6
+Chase the crows away => field ? field:crows ~ field:crows + good+3
 Go back to the street => street
 
+# generatepub
+You walk into the pub.
+Continue => pub
+
+# pub
+Go back to the street => street
+
+# generatepostoffice
+You walk into the post office.
+Continue => postoffice
+
+# postoffice
+Go back to the street => street
+
+# generateshop
+You walk into the shop.
+Continue => shop
+
+# shop
+Go back to the street => street
+
+# generateschool
+You walk over to the school.
+Continue => school
+
+# school
+Go back to the street => street
+
+# generateblacksmith
+You walk over to the blacksmith.
+Continue => blacksmith
+
+# blacksmith
+Go back to the street => street
+
+# generatevillagegreen
+You walk onto the village green.
+Continue => villagegreen
+
+# villagegreen
+Go back to the street => street
+
+% money
+Money
+__NUMBER__(10)
 
 % crisp_packet
 Crisp packets ? crisp_packet>0
@@ -201,7 +304,8 @@ A hammer
 A saw
 
 % nails
-Some nails
+__NUMBER__
+Nails ? nails
 
 % screwdriver
 A screwdriver
@@ -222,4 +326,4 @@ Spray paint
 __NUMBER__
 
 % tired
-__NUMBER__(0)
+__NUMBER__
