@@ -59,7 +59,7 @@ Go into the post office => generate_postoffice ? street:left:postoffice ?! leftg
 Go into the pub => generate_pub ? street:left:pub ?! leftgen + leftgen
 Go into the village hall => generate_villagehall ? street:right:villagehall ?! rightgen + rightgen
 Go into the house => generate_house ? street:right:house ?! rightgen + rightgen
-Go to the village green => generate_villagegreem ? street:right:villagegreen ?! rightgen + rightgen
+Go to the village green => generate_villagegreen ? street:right:villagegreen ?! rightgen + rightgen
 Go to the blacksmith's shop => generate_blacksmith ? street:right:blacksmith ?! rightgen + rightgen
 Go to the school => generate_school ? street:right:school ?! rightgen + rightgen
 Go to the shop => generate_shop ? street:right:shop ?! rightgen + rightgen
@@ -67,10 +67,10 @@ Go back into the house => house ? street:left:house ? leftgen
 Go back into the field => field ? street:left:field ? leftgen
 Go back to the wall => wall ? street:left:wall ? leftgen
 Go back into the post office => postoffice ? street:left:postoffice ? leftgen
-Go back into the pub => pub ? street:left:pub ? leftgen
+Go back into the pub => pub ? street:left:pub ? leftgen ?! pub:barred
 Go back into the village hall => villagehall ? street:right:villagehall ? rightgen
 Go back into the house => house ? street:right:house ? rightgen
-Go back to the village green => villagegreem ? street:right:villagegreen ? rightgen
+Go back to the village green => villagegreen ? street:right:villagegreen ? rightgen
 Go back to the blacksmith's shop => blacksmith ? street:right:blacksmith ? rightgen
 Go back to the school => school ? street:right:school ? rightgen
 Go back to the shop => shop ? street:right:shop ? rightgen
@@ -122,13 +122,13 @@ You have a nap in the road. + tired=0
 You wake up to find there is a queue of cars waiting for you to move. The drivers look annoyed. + good-4 ? __R__ > 0.3
 Continue => street
 
-# generate_village_hall
+# generate_villagehall
 ~ vhall:meeting
-+ vhall:meeting ? __R__ > 0.65
++ vhall:meeting ? __R__ > 0.2
 You walk into the village hall.
-Continue => village_hall
+Continue => villagehall
 
-# village_hall
+# villagehall
 You are standing in the village hall.
 There is a parish council meeting taking place. ? vhall:meeting
 Talk to the parish councillors => council ? vhall:meeting
@@ -154,10 +154,11 @@ Continue => __GAMEOVER__
 # generate_house
 ~ house:angry ~ house:toolbox ~ house:toolhammer ~ house:tea ~ house:toolsaw ~ house:toolnails
 ~ house:toolscrewdriver
-~ house:brokentable
+~ house:brokentable ~ house:wallet ~ house:moneytaken
 ~ house:soap ~ house:bucket ~ house:sponge
 ~ house:armchair ~ house:sofa ~ house:tv ~ house:table ~ house:smashtv
 + house:angry ? __R__ > 0.9
++ house:wallet ? __R__ > 0.2 ?! house:angry
 + house:armchair ? __R__ > 0.2 ?! house:angry
 + house:sofa ? __R__ > 0.2 ?! house:angry
 + house:tv ? __R__ > 0.2 ?! house:angry
@@ -188,12 +189,15 @@ There is a box of soap on the table. ? house:soap ? house:table
 There is a bucket by the table. ? house:bucket ? house:table
 There is a sponge on the table. ? house:sponge ? house:table
 There is a toolbox on the table. ? house:toolbox ? house:table
+There is a wallet on the table. ? house:wallet ? house:table
 There is a cup of tea on the floor. ? house:tea ?! house:table
 There is a box of soap on the floor. ? house:soap ?! house:table
 There is a bucket on the floor. ? house:bucket ?! house:table
 There is a sponge on the floor. ? house:sponge ?! house:table
 There is a toolbox on the floor. ? house:toolbox ?! house:table
+There is a wallet on the floor. ? house:wallet ? house:table
 Drink the tea => drinktea ? house:tea
+Take money from the wallet => house + money+20 + good-7 ? house:wallet ?! house:moneytaken + house:moneytaken
 Pick up the soap => house ? house:soap ~ house:soap + soap
 Pick up the bucket => house ? house:bucket ~ house:bucket + bucket
 Pick up the sponge => house ? house:sponge ~ house:sponge + sponge
@@ -247,7 +251,8 @@ Use the saw to cut down the scarecrow => field ? field:scarecrow ? saw ?! field:
 Chase the crows away => field ? field:crows ~ field:crows + good+3
 Go back to the street => street
 
-# generatepub
+# generate_pub
+~ pub:barred
 ~ pub:oldmuddy ~ pub:mudvillegold ~ pub:mild
 + pub:oldmuddy ? __R__ > 0.3
 + pub:mudvillegold ? __R__ > 0.3
@@ -257,9 +262,9 @@ Continue => pub
 
 # pub
 You are in the pub.
-But a pint of Old Muddy for <money>3 => oldmuddy ? pub:oldmuddy ? money>3 + money-3
-But a pint of Mudville Gold for <money>3 => mudvillegold ? pub:mudvillegold ? money>3 + money-3
-But a pint of Born to be Mild for <money>2 => mild ? pub:mild ? money>2 + money-2
+But a pint of Old Muddy for <money>3 => oldmuddy ? pub:oldmuddy ? money>=3 + money-3
+But a pint of Mudville Gold for <money>3 => mudvillegold ? pub:mudvillegold ? money>=3 + money-3
+But a pint of Born to be Mild for <money>2 => mild ? pub:mild ? money>=2 + money-2
 Saw the bar in half => __R__(sawbargood,sawbarbad) ? saw
 Go back to the street => street
 
@@ -269,8 +274,14 @@ The landlord look at you, confused.
 "How on Earth did you know that I needed to cut the bar there to get the new fridge in?!" says the landlord.
 "You've saved me having to hire someone to do that, take this."
 <newline><newline>
-The landlord gives you <money>10
+The landlord gives you <money>10. + money+10 + good+2
+Continue => pub
 
+# sawbarbad
+The landlord look at you, confused.
+<newline><newline>
+"What on Earth are you doing?! You're barred!" + good-3 + pub:barred
+Continue => street
 
 # oldmuddy
 You drink a pint of Old Muddy and listen to villagers talk about how the parish council are looking to elect a new mayor of Mudville.
@@ -284,39 +295,103 @@ Continue => pub
 You drink a pint of Born to be Mild and listen to villagers talk about the village school needing to raise lots of money for roof repairs.
 Continue => pub
 
-# generatepostoffice
+# generate_postoffice
+~ po:crisps ~ po:soap ~ po:paint ~ po:scratchcard
++ po:crisps ? __R__ > 0.2
++ po:soap ? __R__ > 0.2
++ po:paint ? __R__ > 0.2
 You walk into the post office.
 Continue => postoffice
 
 # postoffice
+You are in the post office.
+Post a letter to your friend (for <money>1) => postoffice ? money>=1 + money-1 + good
+Buy a packet of crisps for <money>1 => pocrisps ? po:crisps ? money>=1 + money-1
+Buy a box of soap for <money>2 => postoffice ? po:soap ?! soap ? money>=2 + money-2
+Buy some spray paint <money>2 => postoffice ? po:paint ?! paint ? money>=2 + money-2
+Buy a scratchcard for <money>1 => posc ? money>=1 + money-1
 Go back to the street => street
 
-# generateshop
+# posc
+You scratch off the windows on the scratchcard...
+Continue => __R__(posc_big_win,posc_win,posc_lose)[1,10,100]
+
+# posc_big_win
+You win <money>100! + money+100
+Continue => postoffice
+
+# posc_win
+You win <money>10! + money+10
+Continue => postoffice
+
+# posc_lose
+You didn't win a prize this time.
+Continue => postoffice
+
+# pocrisps
+You eat the crisps. + crisp_packet
+Continue => postoffice
+
+# generate_shop
+~ shop:hammer ~ shop:saw ~ shop:nails ~ shop:screwdriver ~ shop:bucket ~ shop:sponge ~ shop:soap ~ shop:paint
++ shop:hammer ? __R__ > 0.4
++ shop:saw ? __R__ > 0.4
++ shop:nails ? __R__ > 0.4
++ shop:screwdriver ? __R__ > 0.4
++ shop:bucket ? __R__ > 0.4
++ shop:sponge ? __R__ > 0.4
++ shop:soap ? __R__ > 0.4
++ shop:paint ? __R__ > 0.4
 You walk into the shop.
 Continue => shop
 
 # shop
+You are in a shop.
+Put <money>1 in the charity donation box => shop ? money>=1 ~ money + good
+Buy a hammer for <money>1 ? shop:hammer ?! hammer + hammer ? money>=1 + money-1
+Buy a saw for <money>2 ? shop:saw ?! saw + saw ? money>=2 + money-2
+Buy 10 nails for <money>1 ? shop:nails + nails+10 ? money>=1 + money-1
+Buy 25 nails for <money>2 ? shop:nails + nails+25 ? money>=2 + money-2
+Buy a screwdriver for <money>1 ? shop:screwdriver ?! screwdriver + screwdriver ? money>=1 + money-1
+Buy a bucket for <money>2 ? shop:bucket ?! bucket + bucket ? money>=2 + money-2
+Buy a sponge for <money>1 ? shop:sponge ?! sponge + sponge ? money>=1 + money-1
+Buy a box of soap for <money>1 ? shop:soap ?! soap + soap ? money>=1 + money-1
+Buy some spray paint for <money>3 ? shop:paint ?! paint + paint ? money>=3 + money-3
 Go back to the street => street
 
-# generateschool
+# generate_school
 You walk over to the school.
 Continue => school
 
 # school
+There is a donation box by the school entrance. They are raising money for roof repairs.
+Donate <money>1 => school ? money>=1 + money-1 + good
+Donate <money>2 => school ? money>=2 + money-2 + good+3
+Donate <money>5 => school ? money>=5 + money-5 + good+8
 Go back to the street => street
 
-# generateblacksmith
-You walk over to the blacksmith.
+# generate_blacksmith
+~ bs:nohammer
++ bs:nohammer ? __R__ > 0.2
+You walk over to the blacksmith's shop.
 Continue => blacksmith
 
 # blacksmith
+You are at the blacksmith's shop.
+The blacksmith has had their hammer stolen. ? bs:nohammer
+Give the blacksmith a hammer => blacksmith ? bs:nohammer ~  bs:nohammer ? hammer ~ hammer + good+2
 Go back to the street => street
 
-# generatevillagegreen
+# generate_villagegreen
+~ vg:crisps
++ vg:crisps ? __R__ > 0.8
 You walk onto the village green.
 Continue => villagegreen
 
 # villagegreen
+You are on the village green.
+There is a crisp packet next to you. ? vg:crisps
+Pick up the crisp packet => villagegreen ? vg:crisps ~ vg:crisps + crisp_packet + good
 Go back to the street => street
 
 % money
