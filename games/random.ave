@@ -35,7 +35,7 @@ Continue => street
 # street
 You are standing in the street.
 There is a bin on the pavement near you. ? street:bin
-There is a crisp packed on the road next to you. ? street:crisps
+There is a crisp packet on the road next to you. ? street:crisps
 There is a police officer nearby. ? street:police
 There is a house to your left. ? street:left:house
 There is a field to your left. ? street:left:field
@@ -109,8 +109,8 @@ some nails ? good > -10 ?! police:nails
 to fix the village notice board. Do you have any?" ? good > -10 ? (!police:hammer !police:nails)
 "You've been making a mess of our village," say the police officer. "You are under arrest." ? good <= -10
 Stop talking to the police officer => street ? good > -10
-Give the police officer a hammer ? good > -10 ?! police:hammer + police:hammer ? hammer ~ hammer + good+5
-Give the police officer some nails ? good > -10 ?! police:nails + police:nails ? nails>3 + nails=0 + good+5
+Give the police officer a hammer => street ? good > -10 ?! police:hammer + police:hammer ? hammer ~ hammer + good+5
+Give the police officer some nails => street ? good > -10 ?! police:nails + police:nails ? nails>3 + nails=0 + good+5
 Continue => arrest ? good <= -10
 
 # arrest
@@ -241,7 +241,7 @@ Continue => field
 # field
 You are standing in a field.
 There are crows in the field eating the crops.
-There is a crisp packed in the field next to you. ? field:crisps
+There is a crisp packet in the field next to you. ? field:crisps
 There is a scarecrow standing in the field. ? field:scarecrow ?! field:scarecrowcutdown
 There is a scarecrow lying in the field. ? field:scarecrow ? field:scarecrowcutdown
 There is bucket on the scarecrow's head. ? field:scarecrow ? field:buckethead
@@ -348,15 +348,15 @@ Continue => shop
 # shop
 You are in a shop.
 Put <money>1 in the charity donation box => shop ? money>=1 ~ money + good
-Buy a hammer for <money>1 ? shop:hammer ?! hammer + hammer ? money>=1 + money-1
-Buy a saw for <money>2 ? shop:saw ?! saw + saw ? money>=2 + money-2
-Buy 10 nails for <money>1 ? shop:nails + nails+10 ? money>=1 + money-1
-Buy 25 nails for <money>2 ? shop:nails + nails+25 ? money>=2 + money-2
-Buy a screwdriver for <money>1 ? shop:screwdriver ?! screwdriver + screwdriver ? money>=1 + money-1
-Buy a bucket for <money>2 ? shop:bucket ?! bucket + bucket ? money>=2 + money-2
-Buy a sponge for <money>1 ? shop:sponge ?! sponge + sponge ? money>=1 + money-1
-Buy a box of soap for <money>1 ? shop:soap ?! soap + soap ? money>=1 + money-1
-Buy some spray paint for <money>3 ? shop:paint ?! paint + paint ? money>=3 + money-3
+Buy a hammer for <money>1 => shop ? shop:hammer ?! hammer + hammer ? money>=1 + money-1
+Buy a saw for <money>2 => shop ? shop:saw ?! saw + saw ? money>=2 + money-2
+Buy 10 nails for <money>1 => shop ? shop:nails + nails+10 ? money>=1 + money-1
+Buy 25 nails for <money>2 => shop ? shop:nails + nails+25 ? money>=2 + money-2
+Buy a screwdriver for <money>1 => shop ? shop:screwdriver ?! screwdriver + screwdriver ? money>=1 + money-1
+Buy a bucket for <money>2 => shop ? shop:bucket ?! bucket + bucket ? money>=2 + money-2
+Buy a sponge for <money>1 => shop ? shop:sponge ?! sponge + sponge ? money>=1 + money-1
+Buy a box of soap for <money>1 => shop ? shop:soap ?! soap + soap ? money>=1 + money-1
+Buy some spray paint for <money>3 => shop ? shop:paint ?! paint + paint ? money>=3 + money-3
 Go back to the street => street
 
 # generate_school
