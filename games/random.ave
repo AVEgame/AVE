@@ -18,7 +18,7 @@ Enter Lower Mudville => generate_street
 + street:bin ? __R__ > 0.8
 + street:crisps ? __R__ > 0.5
 + street:police ? __R__ > 0.9
-+ street:police ? good<=-20 ? __R__ > 0.1
++ street:police ? (good<=-20 good>=20) ? __R__ > 0.1
 + street:left:house ? __R__ > 0.8
 + street:left:field ?! street:left:house ? __R__ > 0.75
 + street:left:pub ?! street:left:field ?! street:left:house ? __R__ > 0.6666
