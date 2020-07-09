@@ -3,6 +3,7 @@ import os
 import setuptools
 
 os.system("cp VERSION ave/")
+os.system("rm -rf ave/_games")
 os.system("cp -r games ave/_games")
 
 if sys.version_info < (3, 4):
