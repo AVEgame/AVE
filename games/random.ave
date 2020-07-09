@@ -18,11 +18,13 @@ Enter Lower Mudville => generate_street
 + street:bin ? __R__ > 0.8
 + street:crisps ? __R__ > 0.5
 + street:police ? __R__ > 0.9
++ street:police ? good<=-20 ? __R__ > 0.1
 + street:left:house ? __R__ > 0.8
 + street:left:field ?! street:left:house ? __R__ > 0.75
 + street:left:pub ?! street:left:field ?! street:left:house ? __R__ > 0.6666
 + street:left:postoffice ?! street:left:pub ?! street:left:field ?! street:left:house ? __R__ > 0.5
 + street:left:wall ?! street:left:postoffice ?! street:left:pub ?! street:left:field ?! street:left:house ? __R__ > 0.1
++ street:right:villagehall ? good>=20 ? __R__ > 0.1
 + street:right:villagehall ? __R__ > 0.9
 + street:right:house ?! street:right:villagehall ?! street:left:house ? __R__ > 0.8
 + street:right:shop ?! street:right:house ?! street:right:villagehall ? __R__ > 0.7
@@ -371,15 +373,18 @@ Donate <money>5 => school ? money>=5 + money-5 + good+8
 Go back to the street => street
 
 # generate_blacksmith
-~ bs:nohammer
+~ bs:nohammer ~ bs:nails
 + bs:nohammer ? __R__ > 0.2
++ bs:nails ? __R__ > 0.2
 You walk over to the blacksmith's shop.
 Continue => blacksmith
 
 # blacksmith
 You are at the blacksmith's shop.
 The blacksmith has had their hammer stolen. ? bs:nohammer
+The blacksmith is selling nails. ? bs:nails
 Give the blacksmith a hammer => blacksmith ? bs:nohammer ~  bs:nohammer ? hammer ~ hammer + good+2
+Buy 20 nails for <money>1 => blacksmith ? bs:nails ? money>=1 + money-1 + nails+20
 Go back to the street => street
 
 # generate_villagegreen
