@@ -44,7 +44,7 @@ Write the checkout => checkout ? checkout ? money
 No more, I'm done => done ? money ?! checkout ? bread ? basket
 
 # done
-Congratulations, you have written an AVE game! You can play the shopping simulator at [http://avegame.co.uk/play/shop.ave](avegame.co.uk/play/shop.ave).
+Congratulations, you have written an AVE game! You can play the shopping simulator at avegame.co.uk/play/shop.ave.
 Continue => __WINNER__
 
 # basket
@@ -126,18 +126,40 @@ You have withdrawn cash. <newline>
 Continue => next
 
 # download
-What operating system are you using?
+Which operating system are you using?
 Windows => windows
 Linux => unix
 Mac => unix
-Other => windows
 
 # unix
-On Linux and Mac, you can download and run the python version of AVE on your computer.
-More details about how to do this can be found [http://avegame.co.uk/docs/python.md](here).
+On Linux and Mac, you can install AVE by opening terminal and running:
+<newline>
+pip install avegame
+<newline>
+You can then play AVE by opening terminal and running:
+<newline>
+ave
+<newline>
+To test out games you have written, run:
+<newline>
+ave /path/to/folder
+<newline>
+where /path/to/folder is the location where your games are saved.
 Start writing a game => go
 
 # windows
-The Python version of AVE cannot run natively on your computer, so you should run the VirtualBox image.
-More details about how to do this can be found [http://avegame.co.uk/docs/virtualbox.md](here).
+On Windows, you can install AVE by opening command prompt and running:
+<newline>
+py -m pip install avegame
+<newline>
+You will need to install Python before you can do this.
+You can then play AVE by opening terminal and running:
+<newline>
+ave
+<newline>
+To test out games you have written, run:
+<newline>
+ave /path/to/folder
+<newline>
+where /path/to/folder is the location where your games are saved.
 Start writing a game => go
