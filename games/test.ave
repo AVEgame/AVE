@@ -94,7 +94,7 @@ Randomly test numbers or newlines => __R__(newline,nums)
 Randomly test numbers or newlines (more likely) => __R__(newline,nums)[6,1]
 
 % money
-Money
+£
 __NUMBER__
 % two
 Two
