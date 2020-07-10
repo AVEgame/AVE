@@ -395,16 +395,40 @@ Buy 20 nails for <money>1 => blacksmith ? bs:nails ? money>=1 + money-1 + nails+
 Go back to the street => street
 
 # generate_villagegreen
-~ vg:crisps
+~ vg:crisps ~ vg:dogwalker ~ vg:hammer
 + vg:crisps ? __R__>0.8
++ vg:dogwalker ? __R__>0.5
++ vg:hammer ? __R__ > 0.6 ?! hammer
 You walk onto the village green.
 Continue => villagegreen
 
 # villagegreen
 You are on the village green.
 There is a crisp packet next to you. ? vg:crisps
+Someone is walking their dog on the green. ? vg:dogwalker
+Someone is around the green with a hammer. ? vg:hammer
 Pick up the crisp packet => villagegreen ? vg:crisps ~ vg:crisps + crisp_packet + good
+Talk to the dog walker => dogtalker ? vg:dogwalker
+Talk to the dog => dogtalk ? vg:dogwalker
+Talk to the hammer holder => hammertalk ? vg:hammer
 Go back to the street => street
+
+# dogtalk
+"Woof!" says the dog.
+Continue => villagegreen
+
+# dogtalker
+"My dog is friendly, why don't you say hello," says the dog walker.
+Continue => villagegreen
+
+# hammertalk
+"I stole this hammer from the blacksmith," laugh the holder of the hammer.
+Take the hammer => takehammer
+Continue => villagegreen
+
+# takehammer
+You take the hammer. The hammer holder runs away. + hammer ~ vg:hammer
+Continue => villagegreen
 
 % money
 £
