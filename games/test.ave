@@ -79,8 +79,8 @@ Item 12
 Item 13
 
 # escaping
-"You have $money$ pounds" is not escaped.
-<|"You have $money$ pounds"|> is  escaped.
+"You have <money>$money$" is not escaped.
+<|"You have <money>$money$"|> is  escaped.
 <|Continue => start|>
 Continue => start
 

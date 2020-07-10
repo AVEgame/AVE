@@ -20,13 +20,13 @@ symbols = {
     "[": "SYMBOLOOPPEENNSQ",
     "]": "SYMBOLCCLLOOSSEESQ",
     "(": "SYMBOLOOPPEENNRO",
-    ")": "SYMBOLCCLLOOSSEERO",
-    "<": "SYMBOLOOPPEENNPO",
-    ">": "SYMBOLCCLLOOSSEEPO"
+    ")": "SYMBOLCCLLOOSSEERO"
 }
 
 more_symbols = {
-    "$": "SYMBOLDDOOLLAARR"
+    "$": "SYMBOLDDOOLLAARR",
+    "<": "SYMBOLOOPPEENNPO",
+    ">": "SYMBOLCCLLOOSSEEPO"
 }
 
 expression_symbols = {
