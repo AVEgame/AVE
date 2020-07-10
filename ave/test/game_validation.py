@@ -56,7 +56,7 @@ def check_first_room(game):
     c = Character()
     c.reset(game.items)
     try:
-        game["start"].get_text(c)
+        game["start"].get_text(c, game.currency)
     except:  # noqa: E722
         errors.append(AVEFatalError("Could not load text for first room."))
     try:

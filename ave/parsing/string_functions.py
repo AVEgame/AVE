@@ -63,7 +63,6 @@ def between(text, pre, post):
 
 def _replacements(txt):
     txt = config.version.join(txt.split("%v%"))
-    txt = "£".join(txt.split("<money>"))
     return txt
 
 
@@ -114,10 +113,12 @@ def more_unescape(text):
     return text
 
 
-def finalise(txt, numbers):
+def finalise(txt, numbers, currency=None):
     """Insert variables into text, then unescape final characters."""
     for i, n in numbers.items():
         txt = txt.replace("$" + i + "$", str(n))
+    if currency is not None:
+        txt = txt.replace("<money>", currency)
     return more_unescape(txt)
 
 

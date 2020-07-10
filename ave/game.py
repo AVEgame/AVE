@@ -72,6 +72,7 @@ class Character:
             The value to set it to
         """
         self.numbers[item] = value
+        self.currency = "£"
 
     def remove(self, item, value=1):
         """Remove an item or take from a number.
@@ -94,7 +95,7 @@ class Character:
             raise ValueError("item must be a string")
         return item in self.numbers
 
-    def get_inventory(self, items):
+    def get_inventory(self, items, currency):
         """Get the names of the character's inventory.
 
         Returns
@@ -108,8 +109,8 @@ class Character:
             if not item.hidden:
                 name = item.get_name(self)
                 if name is not None:
-                    display_name = finalise(name, self.numbers)
-                    if item.id != "money" or display_name != "£":
+                    display_name = finalise(name, self.numbers, currency)
+                    if item.id != "money" or currency is None:
                         display_name += ": "
                     inv.append(display_name + str(n))
         for i in self.inventory:
@@ -118,7 +119,8 @@ class Character:
                 if not item.hidden:
                     name = item.get_name(self)
                     if name is not None:
-                        inv.append(finalise(item.get_name(self), self.numbers))
+                        inv.append(finalise(item.get_name(self), self.numbers,
+                                            currency))
         return [i for i in inv if i is not None and i != ""]
 
 
@@ -170,7 +172,9 @@ class Game:
         self.active = active
         self.version = version
         self.ave_version = tuple(ave_version)
+        self.currency = None
         self.rooms = None
+        self.items = None
 
         self.options = []
 
@@ -186,6 +190,11 @@ class Game:
             self.rooms, self.items = load_full_game_from_url(self.url)
         else:
             raise ValueError("One of url and file must be set to load a game.")
+
+        if "money" in self.items:
+            c = self.items["money"].names[0].text
+            if c in ["$", "£"]:
+                self.currency = c
 
     def __getitem__(self, id):
         """Get a room with given id."""
@@ -217,7 +226,7 @@ class Game:
         o.get_items(character)
         character.location = o.get_destination()
 
-    def get_room_info(self, character):
+    def get_room_info(self, character, currency):
         """Get the information about the character's current room.
 
         Parameters
@@ -233,9 +242,9 @@ class Game:
             The available destination options that the character could take
         """
         room = self[character.location]
-        text = room.get_text(character)
+        text = room.get_text(character, currency)
         options = room.get_options(character)
-        return text, {i: finalise(o.text, character.numbers)
+        return text, {i: finalise(o.text, character.numbers, currency)
                       for i, o in options.items()}
 
     def fail_room(self):
@@ -260,7 +269,7 @@ class Room:
         """Return a string."""
         return "Room with id " + self.id
 
-    def get_text(self, character):
+    def get_text(self, character, currency):
         """Get the text for the room.
 
         Parameters
@@ -279,7 +288,7 @@ class Room:
                 line.get_items(character)
                 lines.append(line.text)
         return finalise(" ".join([i for i in lines if i != ""]),
-                        character.numbers)
+                        character.numbers, currency)
 
     def get_options(self, character):
         """Get the character's current destination options.
