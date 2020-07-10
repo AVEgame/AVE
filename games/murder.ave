@@ -1,0 +1,121 @@
+== T2: The Wonderful Mystery Journey ==
+-- You're ready to start your epic adventure. But first, whodunnit? --
+** Matthew Scroggs & Gin Grasso **
+@@ 1 @@
+vv 1 vv
+
+# start
+You feel ready for your adventure, now that you've had your lovely cup of tea.
+Look at the fridge => fridgeon ?! note
+Head into the hall => hall
+
+# hall
+You are standing in the hall.
+Go to the kitchen => start
+Go to the living room => livingroom
+Go back up the stairs => stairs
+Go out the front door => outside
+
+# livingroom
+There is a sofa in the living room. There is also a coffee table and a door to the outside world.
+Sit on the sofa => sofa
+Go to the coffee table => coffee_table
+Go through the door => gardendoor
+Go back to the hall => hall
+
+# bathroom
+You are in the bathroom.
+Use the toilet => pee ?! pee
+Leave the bathroom => stairs
+
+# pee
+You pee. + pee
+You really needed that. You wonder why you didn't go as soon as you got up.
+Continue => bathroom
+
+# stairs
+You are at the top of the stairs.
+You also see the door to the bathroom.
+Walk down the stairs => hall
+Head to the bathroom => bathroom
+Go back to your room => bedroom
+
+# sofa
+You sit on the sofa.
+Stand up => livingroom
+
+# coffee_table
+The coffee table is very tidy.
+Step away from the coffee table => livingroom
+
+# gardendoor
+The door is unlocked. There is smashed glass everywhere.
+Go back to the living room => livingroom
+Go out to the garden => garden
+
+# garden
+The garden is lovely.
+Go back inside => livingroom
+
+# fridge
+The portal is gone. How did that happen?
+Continue => fridgeon
+
+# fridgeon
+There is a note on the fridge in your handwriting.
+Read the note => note + note
+Look in the fridge => fridge
+Step away from the fridge cautiously => start
+
+# note
+You read the note. It says: <newline>
+"Once you are ready to start your epic adventure, visit Gideon to pick up the sword that he is enchanting for you."
+Continue => start
+
+# bedroom
+You are in your bedroom. The bed is calling you.
+What do you want to do?
+Lie down in the bed => bed
+Leave your room => stairs
+
+# bed
+You couldn't possible sleep, tea is coursing through your veins.
+Get up => bedroom
+
+# outside
+You head outside. It is bright. Thankfully you had that cup of tea so can bear it. ?! outside + outside
+You are outside your house. ? outside
+Go to Gideon's house => gideon
+Go back in into your house => hall
+
+# gideon
+You walk to your neighbour Gideon's house.
+Knock on the door => knockknock
+Burst through the door => burst
+Go home => outside
+
+# knockknock
+You knock on the door. There is no answer.
+Burst through the door => burst
+Go home => outside
+
+# burst
+You take five steps back. You brace yourself. You run at the door shoulder first.
+Continue => opendoor
+
+# opendoor
+The door opens with no effort. You stumble through.
+Continue => ingideonshouse
+
+# ingideonshouse
+You are in the hall of Gideon's house. Why is it so much bigger than your house?
+Continue => gideondead
+
+# gideondead
+Oh look, Gideon is lying on the floor. <newline> Oh no! He's dead! <newline> And your sword is sticking out of his chest.
+Continue => startsolving
+
+# startsolving
+
+% note
+A note
