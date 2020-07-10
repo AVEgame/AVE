@@ -196,7 +196,7 @@ class CursesScreen(Screen):
                     curses.color_pair(9))
             else:
                 pad.addstr(i + 1, 0, " " * 19, curses.color_pair(9))
-        pad.refresh(0, 0, 2, WIDTH - 19, 13, WIDTH)
+        pad.refresh(0, 0, 2, WIDTH - 19, 14, WIDTH)
 
     def type_room_text(self, text):
         """Type the room text."""

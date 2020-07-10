@@ -23,6 +23,9 @@ Test missing room => fakeroom
 Test overflowing text  => overflow
 
 # overflow
+ThisisaverylongwordIhopeitdoesntcauseerrorsbutatleastwearestestingfortheseerrorsnowsothewebsitewontjustrandomlynotworkoopsihopenoonenoticed
+<newline>
+<newline>
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
@@ -76,8 +79,8 @@ Item 12
 Item 13
 
 # escaping
-"You have $money$ pounds" is not escaped.
-<|"You have $money$ pounds"|> is  escaped.
+"You have <money>$money$" is not escaped.
+<|"You have <money>$money$"|> is  escaped.
 <|Continue => start|>
 Continue => start
 
@@ -91,7 +94,7 @@ Randomly test numbers or newlines => __R__(newline,nums)
 Randomly test numbers or newlines (more likely) => __R__(newline,nums)[6,1]
 
 % money
-Money
+$
 __NUMBER__
 % two
 Two
