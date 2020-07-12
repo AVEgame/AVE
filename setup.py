@@ -14,7 +14,7 @@ with open("VERSION") as f:
     VERSION = f.read()
 
 entry_points = {'console_scripts': ['ave = ave.__main__:run',
-                                    'ave-make-json = ave.__main__:make_json']}
+                                    'ave-test = ave.__main__:test_game']}
 
 data_files = [
     ("ave/_games", [os.path.join("ave/_games", i)
