@@ -51,10 +51,11 @@ def generate_json(game_folder=config.games_folder):
 
 
 def test_game():
-    """Run AVE in terminal."""
+    """Test an AVE game for errors."""
     import argparse
 
-    parser = argparse.ArgumentParser(description='Test an AVE game for errors.')
+    parser = argparse.ArgumentParser(
+        description='Test an AVE game for errors.')
     parser.add_argument('file', metavar='file',
                         help='A file to test')
 
