@@ -233,6 +233,8 @@ class Game:
         ----------
         character : ave.game.Character
             The character
+        currency : str
+            The currency symbol of the money variable
 
         Returns
         -------
