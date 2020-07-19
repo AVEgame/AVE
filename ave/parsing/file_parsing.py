@@ -1,7 +1,8 @@
 """Parsing a .ave file."""
 
 import re
-from ..game import Room
+from ..game import Room, CutsceneRoom
+from ..cutscene import Frame
 from ..components import (TextWithRequirements, OptionWithRequirements,
                           NameWithRequirements)
 from .string_functions import escape, unescape, clean, between
@@ -160,8 +161,18 @@ def parse_name_part(line):
 def parse_room(id, room):
     """Parse a room."""
     room = escape(room)
-    text = []
     options = []
+    if "__CUTSCENE__" in room:
+        frames = []
+        for line in room.split("\n"):
+            if "=>" in line:
+                options.append(parse_option(line))
+            else:
+                for i in line.split(" "):
+                    if i != "" and i != "__CUTSCENE__":
+                        frames.append(i)
+        return CutsceneRoom(id=id, frames=frames, options=options)
+    text = []
     for line in room.split("\n"):
         line = clean(line)
         if "=>" in line:
@@ -197,3 +208,11 @@ def parse_item(id, item):
         return NumberItem(id=id, names=names, hidden=hidden, default=default)
     else:
         return Item(id=id, names=names, hidden=hidden)
+
+
+def parse_frame(id, frame):
+    """Parse a frame."""
+    frame = escape(frame)
+    frame = frame.strip("\n")
+    return frame.split("\n")
+

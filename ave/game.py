@@ -305,3 +305,49 @@ class Room:
         """
         return {i: o for i, o in enumerate(self.options)
                 if o.has_requirements(character)}
+
+
+class CutsceneRoom:
+    """A cutscene."""
+
+    def __init__(self, id=None, frames=[], options=[]):
+        """Make the cutscene."""
+        self.id = id
+        self.frames = frames
+        self.options = options
+
+    def __str__(self):
+        """Return a string."""
+        return "Cutscene with id " + self.id
+
+    def get_text(self, frames):
+        """Get the cutscene frames.
+
+        Parameters
+        ----------
+        frames : list
+            The animation frames
+
+        Returns
+        -------
+        str
+            The room text
+        """
+        return finalise(frames[f]" ".join([i for i in lines if i != ""]),
+                        character.numbers, currency)
+
+    def get_destination(self, character):
+        """Get the character's destination.
+
+        Parameters
+        ----------
+        character : ave.game.Character
+            The character
+
+        Returns
+        -------
+        string
+            The destination
+        """
+        return {i: o for i, o in enumerate(self.options)
+                if o.has_requirements(character)}
