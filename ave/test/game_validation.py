@@ -114,7 +114,10 @@ def get_undefined_numbers(game):
     c = Character()
     c.reset(game.items)
     for room in game.rooms.values():
-        for thing in room.options + room.text:
+        things = room.options
+        if room.room_type == "room":
+            things += room.text
+        for thing in things:
             for item in thing.items:
                 if not c.is_number(item.item) and item.value.get_value(c) != 1:
                     not_def.add(item.item)
@@ -129,7 +132,10 @@ def explore_items(game):
     c = Character()
     c.reset(game.items)
     for room in game.rooms.values():
-        for thing in room.options + room.text:
+        things = room.options
+        if room.room_type == "room":
+            things += room.text
+        for thing in things:
             for item in thing.items:
                 used.add(item.item)
             for item in thing.needs.get_all():

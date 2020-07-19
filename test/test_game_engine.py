@@ -17,7 +17,7 @@ def test_website_move():
                           location=current_room)
     game.pick_option(option_key, character)
     try:
-        text, options = game.get_room_info(character, game.currency)
+        rtype, text, options = game.get_room_info(character, game.currency)
     except AVEGameOver:
         return {"room": "__GAMEOVER__"}
     except AVEWinner:
