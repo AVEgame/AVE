@@ -1,5 +1,6 @@
 """The Frame class for cutscenes."""
 
+
 class Frame:
     """A cutscene frame."""
 
