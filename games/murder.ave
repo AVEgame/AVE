@@ -166,12 +166,22 @@ Continue => gideon:desk
 # g_bedroom_a
 You are in Ava's bedroom.
 Ava is sitting in bed reading. + avafound
+Ask Ava who killed Gideon => ava:whokilled
+Ask Ava what she's reading => ava:reading
 Ask Ava about Scott Jones => ask_ava:scott ? know_about_quest
 Ask Ava about quests => ask_ava:quest ? know_about_ava_quest
 Ask Ava about her best friend => ask_ava:friend ? know_ava_friend
 Tell Ava that Dom Spuney is Scott Jones => tell_ava:friend ? know_dom_is_son
-Ask Ava if she killed Gideon => ava:confront ? know_ava_dom_is_son ? know_about_anger
+Ask Ava if she killed Gideon => ava:confront ? know_ava_dom_is_son ? know_about_argument
 Leave the room => g_upstairs
+
+# ava:whokilled
+"Dad's dead?!" says Ava. "Heavens above, what awful news. Who could have done this?"
+Continue => g_bedroom_a
+
+# ava:reading
+"I'm reading a The Mighty Ducks tie-in novel," says Ava.
+Continue => g_bedroom_a
 
 # ava:confront
 "How dare you accuse me?!" yells Ava. "Get out of my room." + ava_locked
@@ -184,7 +194,7 @@ Continue => g_bedroom_a
 # tell_ava:friend
 Ava doesn't look surprised.
 <newline>
-"Scott told me it was him last night," she says, "but made me promise not to tell anyone." + know_ava_dom_is_son + know_about_conversation
+"Scott told me it was him last night," she says, "but made me promise not to tell anyone. Harry's got spies everywhere." + know_ava_dom_is_son + know_about_conversation + know_about_spies
 Continue => g_bedroom_a
 
 # ask_ava:friend
@@ -202,19 +212,37 @@ Continue => g_bedroom_a
 # g_bedroom_s
 You are in Gideon's spare room.
 There is a man asleep on the bed. ?! domwoken
-Dom Spuney ?! know_dom_is_son
-Scott Jones (aka Dom Spuney) ? know_dom_is_son
-is sitting on the bed.
+Dom Spuney ?! know_dom_is_son ? domwoken
+Scott Jones (aka Dom Spuney) ? know_dom_is_son ? domwoken
+is sitting on the bed. ? domwoken
 Wake up the man => wakedom + domwoken ?! domwoken
-Ask Dom Spuney about his quest => dom:quest ? know_about_quest + know_more_about_quest ?! know_dom_is_son
-Ask Dom Spuney who sent him on his quest => dom:quest2 ? know_more_about_quest + know_even_more_about_quest ?! know_dom_is_son
-Ask Dom Spuney if Gideon sent him on his quest => dom:quest3 ? know_even_more_about_quest ?! know_dom_is_son
-Ask Dom Spuney if he is Scott Jones => dom:is_he_scott ? know_even_more_about_quest ? know_about_son ?! know_dom_is_son ? know_son_return
-Ask Dom Spuney about his conversation with Ava => dom:convo1 ?! know_dom_is_son ? know_about_conversation
-Ask Scott Jones about his conversation with Ava => dom:convo2 ? know_dom_is_son ? know_about_conversation
-Ask Dom Spuney about his argument with Gideon => dom:arg1 ?! know_dom_is_son ? know_about_argument
-Ask Scott Jones about his argument with Gideon => dom:arg2 ? know_dom_is_son ? know_about_argument
+Ask Dom Spuney who killed Gideon => dom:whokilled ? domwoken ?! know_dom_is_son
+Ask Scott Jones who killed Gideon => scott:whokilled ? domwoken ? know_dom_is_son
+Ask Dom Spuney how he knows Gideon => dom:knowsgideon ? domwoken
+Ask Dom Spuney about his quest => dom:quest ? know_about_quest + know_more_about_quest ?! know_dom_is_son ? domwoken
+Ask Dom Spuney who sent him on his quest => dom:quest2 ? know_more_about_quest + know_even_more_about_quest ?! know_dom_is_son ? domwoken
+Ask Dom Spuney if Gideon sent him on his quest => dom:quest3 ? know_even_more_about_quest ?! know_dom_is_son ? domwoken
+Ask Dom Spuney if he is Scott Jones => dom:is_he_scott ? know_even_more_about_quest ? know_about_son ?! know_dom_is_son ? know_son_return ? domwoken
+Ask Dom Spuney about his conversation with Ava => dom:convo1 ?! know_dom_is_son ? know_about_conversation ? domwoken
+Ask Scott Jones about his conversation with Ava => dom:convo2 ? know_dom_is_son ? know_about_conversation ? domwoken
+Ask Scott Jones why he risked coming back => dom:risk ? know_dom_is_son ? know_about_spies
 Leave the room => g_upstairs
+
+# dom:whokilled
+"It must have been..." Dom trails off. "I'm not sure."
+Continue => g_bedroom_s
+
+# scott:whokilled
+"It must have been..." Scott trails off. "I'm not sure."
+Continue => g_bedroom_s
+
+# dom:risk
+"I had to see Ava one last time," says Scott, "before I go into hiding forever. After we spoke last night, she headed downstairs to beg Gideon to let he come with me."
+Continue => g_bedroom_s
+
+# dom:knowsgideon
+"I met him in the Post Office last week," says Dom. "We got chatting and he invited me over for dinner."
+Continue => g_bedroom_s
 
 # dom:arg1
 "Gideon was drunk," says Dom. "He wasn't making any sense and got a bit shouty at me."
@@ -284,7 +312,7 @@ Leave the table => g_livingroom
 # g_lookatpapers
 The papers on the table are about a quest that Gideon sent someone on ten years ago. ?! know_about_quest
 The papers on the table are about the quest that Gideon sent Scott Jones on. ? know_about_quest
-Could this be what Gideon and Dom were arguing about?! ? know_about_argument
+Could this be what Gideon and Ava were arguing about?! ? know_about_argument
 + know_about_papers
 Continue => g_livingroom
 
@@ -292,15 +320,20 @@ Continue => g_livingroom
 You are in Gideon's library.
 There is a man asleep in a chair. ?! wakeupjeff
 Jeff Jones is sitting in a chair. ? wakeupjeff
-Wake up the man => wakejeff + wakeupjeff
+Wake up the man => wakejeff + wakeupjeff ?! wakeupjeff
 Ask Jeff who killed Gideon => jeff:whokilled ? wakeupjeff
+Ask Jeff why he was asleep in the library => jeff:whysleep
 Ask Jeff about his son => jeff:son ? wakeupjeff ? know_about_son
 Tell Jeff that Dom is his son => jeff:tellson ? wakeupjeff ? know_dom_is_son
 Ask Jeff about Dom Spuney => jeff:dom ? wakeupjeff
-Go back to the living Room => g_livingroom
+Go back to the living room => g_livingroom
+
+# jeff:whysleep
+"Gideon told me to wait here for him, as he wanted to talk to me," says Jeff, "but he never came. I must have dozed off while waiting."
+Continue => g_library
 
 # jeff:whokilled
-"I don't know," says Jeff, "but I did hear Gideon arguing with Dom Spuney before I fell asleep." + know_about_argument
+"I don't know," says Jeff, "but I did hear Gideon arguing with Ava before I fell asleep." + know_about_argument
 Continue => g_library
 
 # jeff:son
@@ -337,7 +370,7 @@ You are in Gideon's kitchen. The butler is making himself porridge. + butlerfoun
 <newline>
 <newline>
 "Who's there?" asks the butler. "I've lost my glasses." ?! butler_has_glasses
-"Thanks for finding my glasses," says the butler. "How can I help you?"
+"Thanks for finding my glasses," says the butler. "How can I help you?" ? butler_has_glasses
 Give the butler his glasses => g_kitchen + butler_has_glasses ? glasses ~ glasses ?! butler_has_glasses
 Ask the butler who was at dinner => ask_no ?! butler_has_glasses
 Ask the butler who was at dinner => who_was_at_dinner ? butler_has_glasses
@@ -348,8 +381,12 @@ Ask the butler about Jeff Jones => ask_butler:jeff ? butler_has_glasses ? ask1
 Ask the butler about Harry => ask_butler:harry ? butler_has_glasses ? know_about_harry
 Ask the butler what his favourite film is => ask_film ? butler_has_glasses
 Ask the butler whose coat is in the dining room => ask_coat ? butler_has_glasses ? map
-Tell the butler to call the police => g_kitchen ?! policecalled + policecalled
+Tell the butler to call the police => callthepolice ?! policecalled + policecalled
 Go back to the dining room => g_diningroom
+
+# callthepolice
+The butler calls the police. They'll be here in a while.
+Continue => g_kitchen
 
 # ask_butler:harry
 "I used to work for Harry before I came here," says the butler. "I quit after I saw the injuries that Harry inflicted on his enemies: he left them as twisted,
@@ -465,19 +502,30 @@ Change your mind => reveal3
 
 # accuse_daughter
 Ava looks shocked. The police officer asks you why she killed Gideon.
-"She was fed up of Gideon ordering her around." => accuse_daughter2 + reason=1
-"Gideon sent her son on a quest from which she never returned." => accuse_daughter2 + reason=2
+"Gideon wouldn't let her marry Scott Jones." => accuse_daughter2 + reason=1
+"Gideon sent her on a quest from which she never returned." => accuse_daughter2 + reason=2
 "Gideon insulted her taste in fine wine." => accuse_daughter2 + reason=3
-"Gideon wouldn't let her go on a quest." => accuse_daughter2 + reason=4
+"Gideon wouldn't let her go on a quest." => accuse_daughter2 + reason=4 + 4done
 "A ghost told her to." => accuse_daughter2 + reason=5
-"Gideon sent her friend on a quest during which he was injured." => accuse_daughter2 + reason=6
+"Gideon sent her friend on a quest during which he was injured." => accuse_daughter2 + reason=6 + 6done
+Change your mind => reveal3
+
+# more_reasons
+The police officer isn't convinced, and asks if you have a bigger reason.
+"Gideon wouldn't let her marry Scott Jones." => accuse_daughter2 + reason=1
+"Gideon sent her on a quest from which she never returned." => accuse_daughter2 + reason=2
+"Gideon insulted her taste in fine wine." => accuse_daughter2 + reason=3
+"Gideon wouldn't let her go on a quest." => accuse_daughter2 + reason=4 ?! 4done + 4done
+"A ghost told her to." => accuse_daughter2 + reason=5
+"Gideon sent her friend on a quest during which he was injured." => accuse_daughter2 + reason=6 ?! 6done + 6done
 Change your mind => reveal3
 
 # accuse_daughter2
 The police officer thinks for a moment.
-Continue => arrest_daughter ? (reason=4 reason=6)
-Continue => arrest_nonsense ? (reason=5 reason=3)
-Continue => noarrest ? (reason=1 reason=2)
+Continue => more_reasons ? (reason=4 reason=6) ?! (4done 6done)
+Continue => arrest_daughter ? reason=1
+Continue => arrest_nonsense ? (reason=2 reason=5 reason=3)
+Continue => noarrest2 ? (4done 6done)
 
 # accuse_oldfriend2
 The police officer thinks for a moment.
@@ -533,6 +581,13 @@ Continue => __GAMEOVER__
 
 # noarrest
 "That doesn't make any sense," says the police officer. "I'm going back to the police station."
+<newline>
+<newline>
+The police officer leaves. The murderer has gotten away with it despite the meddling kids.
+Continue => __GAMEOVER__
+
+# noarrest2
+"I'm not convinced," says the police officer. "I'm going back to the police station."
 <newline>
 <newline>
 The police officer leaves. The murderer has gotten away with it despite the meddling kids.
