@@ -191,11 +191,11 @@ class Game:
         if config.version_tuple < self.ave_version:
             raise AVEVersionError()
         if self.file is not None:
-            from .parsing.game_loader import load_full_game_from_file
-            self.rooms, self.items, self.frames = load_full_game_from_file(self.file)
+            from .parsing.game_loader import load_full_game_from_file as lg
+            self.rooms, self.items, self.frames = lg(self.file)
         elif self.url is not None:
-            from .parsing.game_loader import load_full_game_from_url
-            self.rooms, self.items, self.frames = load_full_game_from_url(self.url)
+            from .parsing.game_loader import load_full_game_from_url as lg
+            self.rooms, self.items, self.frames = lg(self.url)
         else:
             raise ValueError("One of url and file must be set to load a game.")
 
