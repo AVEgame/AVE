@@ -3,6 +3,7 @@
 from ..exceptions import AVEToMenu, AVEQuit
 from .. import config
 from ..parsing.string_functions import clean_newlines
+from ..cutscene import color
 from .base import Screen
 import curses
 
@@ -66,6 +67,8 @@ class CursesScreen(Screen):
         curses.init_pair(10, curses.COLOR_WHITE, curses.COLOR_BLUE)
         # blank
         curses.init_pair(11, curses.COLOR_WHITE, bg_color)
+        # whitebg
+        curses.init_pair(12, curses.COLOR_WHITE, curses.COLOR_WHITE)
 
         self.stdscr.refresh()
 
@@ -112,6 +115,20 @@ class CursesScreen(Screen):
                  (0, 1, "V", curses.color_pair(7)),
                  (0, 2, "E", curses.color_pair(8))]
         self.show(stuff, 0, WIDTH - 3, 2, 3)
+
+    def show_frame(self, frame):
+        """Print a cutscene frame."""
+        map = {color.RED: curses.color_pair(1),
+               color.GREEN: curses.color_pair(2),
+               color.BLUE: curses.color_pair(3),
+               color.WHITE: curses.color_pair(12),
+               color.BLACK: curses.color_pair(11),
+               }
+        stuff = []
+        for y, line in enumerate(frame):
+            for x, c in enumerate(line):
+                stuff.append((y, x, " ", map[c]))
+        self.show(stuff, y=HEIGHT, x=WIDTH)
 
     def print_file(self, filename):
         """Print the contents of a text file."""

@@ -2,6 +2,7 @@
 
 import os
 import json
+from time import sleep
 
 from . import config
 from .exceptions import (AVEGameOver, AVEWinner, AVEToMenu, AVEQuit,
@@ -217,15 +218,22 @@ class AVE:
             The game
         """
         while True:
-            text, options = the_game.get_room_info(
+            rtype, text, options = the_game.get_room_info(
                 self.character, the_game.currency)
-            self.screen.clear()
-            self.screen.put_ave_logo()
-            self.screen.show_inventory(
-                self.character.get_inventory(the_game.items,
-                                             the_game.currency))
-            self.screen.type_room_text(text)
-            next_id = self.screen.menu(list(options.values()))
+            if rtype == "room":
+                self.screen.clear()
+                self.screen.put_ave_logo()
+                self.screen.show_inventory(
+                    self.character.get_inventory(the_game.items,
+                                                 the_game.currency))
+                self.screen.type_room_text(text)
+                next_id = self.screen.menu(list(options.values()))
+            elif rtype == "cutscene":
+                for frame in text:
+                    self.screen.clear()
+                    self.screen.show_frame(frame.data)
+                    sleep(0.3)
+                next_id = 0
             the_game.pick_option(
                 list(options.keys())[next_id],
                 self.character)

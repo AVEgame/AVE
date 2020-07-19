@@ -1,0 +1,5 @@
+RED = "r"
+GREEN = "g"
+BLUE = "b"
+BLACK = "k"
+WHITE = "w"

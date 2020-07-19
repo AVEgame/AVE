@@ -48,12 +48,12 @@ def load_full_game(text):
 
     frames = {}
     for frame in re.split(r"(^|\n)&", text)[1:]:
-        frame_id, frame = re.split(r"(^|\n)(#|%)", item)[0].split("\n", 1)
+        frame_id, frame = re.split(r"(^|\n)(#|%)", frame)[0].split("\n", 1)
         frame_id = clean(frame_id)
         if frame_id != "":
             frames[frame_id] = parse_frame(frame_id, frame)
 
-    return rooms, items
+    return rooms, items, frames
 
 
 def load_game_from_file(file, filename=None):

@@ -2,7 +2,7 @@
 
 import re
 from ..game import Room, CutsceneRoom
-from ..cutscene import Frame
+from ..cutscene import Frame, color
 from ..components import (TextWithRequirements, OptionWithRequirements,
                           NameWithRequirements)
 from .string_functions import escape, unescape, clean, between
@@ -212,7 +212,8 @@ def parse_item(id, item):
 
 def parse_frame(id, frame):
     """Parse a frame."""
-    frame = escape(frame)
+    map = {"R": color.RED, "G": color.GREEN, "B": color.BLUE, ".": color.BLACK,
+           "W": color.WHITE}
     frame = frame.strip("\n")
-    return frame.split("\n")
-
+    data = [[map[i] for i in line] for line in frame.split("\n")]
+    return Frame(id, data)

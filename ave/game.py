@@ -175,8 +175,16 @@ class Game:
         self.currency = None
         self.rooms = None
         self.items = None
+        self.frames = None
 
         self.options = []
+
+    def room_type(self, id):
+        if id in self.rooms:
+            return "room"
+        if id in self.frames:
+            return "cutscene"
+        return None
 
     def load(self):
         """Load the full game from the file or url."""
@@ -184,10 +192,10 @@ class Game:
             raise AVEVersionError()
         if self.file is not None:
             from .parsing.game_loader import load_full_game_from_file
-            self.rooms, self.items = load_full_game_from_file(self.file)
+            self.rooms, self.items, self.frames = load_full_game_from_file(self.file)
         elif self.url is not None:
             from .parsing.game_loader import load_full_game_from_url
-            self.rooms, self.items = load_full_game_from_url(self.url)
+            self.rooms, self.items, self.frames = load_full_game_from_url(self.url)
         else:
             raise ValueError("One of url and file must be set to load a game.")
 
@@ -244,10 +252,15 @@ class Game:
             The available destination options that the character could take
         """
         room = self[character.location]
-        text = room.get_text(character, currency)
+        rtype = room.room_type
+        if rtype == "room":
+            rinfo = room.get_text(character, currency)
+        elif rtype == "cutscene":
+            rinfo = room.get_frames(self.frames)
+
         options = room.get_options(character)
-        return text, {i: finalise(o.text, character.numbers, currency)
-                      for i, o in options.items()}
+        return rtype, rinfo, {i: finalise(o.text, character.numbers, currency)
+                              for i, o in options.items()}
 
     def fail_room(self):
         """Return a 404 error room."""
@@ -258,11 +271,32 @@ class Game:
             [OptionWithRequirements("Continue", "__GAMEOVER__")])
 
 
-class Room:
+class BaseRoom:
+    """A base class for game rooms."""
+
+    def get_options(self, character):
+        """Get the character's current destination options.
+
+        Parameters
+        ----------
+        character : ave.game.Character
+            The character
+
+        Returns
+        -------
+        dict
+            The available destination options that the character could take
+        """
+        return {i: o for i, o in enumerate(self.options)
+                if o.has_requirements(character)}
+
+
+class Room(BaseRoom):
     """A room in a game."""
 
     def __init__(self, id=None, text="", options=[]):
         """Make the room."""
+        self.room_type = "room"
         self.id = id
         self.text = text
         self.options = options
@@ -292,28 +326,13 @@ class Room:
         return finalise(" ".join([i for i in lines if i != ""]),
                         character.numbers, currency)
 
-    def get_options(self, character):
-        """Get the character's current destination options.
 
-        Parameters
-        ----------
-        character : ave.game.Character
-            The character
-
-        Returns
-        -------
-        dict
-            The available destination options that the character could take
-        """
-        return {i: o for i, o in enumerate(self.options)
-                if o.has_requirements(character)}
-
-
-class CutsceneRoom:
+class CutsceneRoom(BaseRoom):
     """A cutscene."""
 
     def __init__(self, id=None, frames=[], options=[]):
         """Make the cutscene."""
+        self.room_type = "cutscene"
         self.id = id
         self.frames = frames
         self.options = options
@@ -322,7 +341,7 @@ class CutsceneRoom:
         """Return a string."""
         return "Cutscene with id " + self.id
 
-    def get_text(self, frames):
+    def get_frames(self, frames):
         """Get the cutscene frames.
 
         Parameters
@@ -335,21 +354,4 @@ class CutsceneRoom:
         str
             The room text
         """
-        return finalise(frames[f]" ".join([i for i in lines if i != ""]),
-                        character.numbers, currency)
-
-    def get_destination(self, character):
-        """Get the character's destination.
-
-        Parameters
-        ----------
-        character : ave.game.Character
-            The character
-
-        Returns
-        -------
-        string
-            The destination
-        """
-        return {i: o for i, o in enumerate(self.options)
-                if o.has_requirements(character)}
+        return [frames[f] for f in self.frames]
