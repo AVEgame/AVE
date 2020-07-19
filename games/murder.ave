@@ -244,14 +244,6 @@ Continue => g_bedroom_s
 "I met him in the Post Office last week," says Dom. "We got chatting and he invited me over for dinner."
 Continue => g_bedroom_s
 
-# dom:arg1
-"Gideon was drunk," says Dom. "He wasn't making any sense and got a bit shouty at me."
-Continue => g_bedroom_s
-
-# dom:arg2
-"We were arguing about the danger he put me in," says Scott, "but when he showed me the danger Harry was putting my father in, I understood why he sent me on the quest."
-Continue => g_bedroom_s
-
 # dom:convo1
 "Ava told me about her desire to go on quests," says Dom, "and asked me about my quest." + know_about_quest + know_about_ava_quest
 Continue => g_bedroom_s
