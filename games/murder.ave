@@ -316,6 +316,7 @@ Wake up the man => wakejeff + wakeupjeff ?! wakeupjeff
 Ask Jeff who killed Gideon => jeff:whokilled ? wakeupjeff
 Ask Jeff why he was asleep in the library => jeff:whysleep
 Ask Jeff about his son => jeff:son ? wakeupjeff ? know_about_son
+Ask Jeff about Ava => jeff:ava ? wakeupjeff
 Tell Jeff that Dom is his son => jeff:tellson ? wakeupjeff ? know_dom_is_son
 Ask Jeff about Dom Spuney => jeff:dom ? wakeupjeff
 Go back to the living room => g_livingroom
@@ -326,6 +327,10 @@ Continue => g_library
 
 # jeff:whokilled
 "I don't know," says Jeff, "but I did hear Gideon arguing with Ava before I fell asleep." + know_about_argument
+Continue => g_library
+
+# jeff:ava
+"Ava wanted to marry my son," says Jeff. "She was so sad when he went away." + know_about_son
 Continue => g_library
 
 # jeff:son
@@ -365,8 +370,8 @@ You are in Gideon's kitchen. The butler is making himself porridge. + butlerfoun
 "Thanks for finding my glasses," says the butler. "How can I help you?" ? butler_has_glasses
 Give the butler his glasses => g_kitchen + butler_has_glasses ? glasses ~ glasses ?! butler_has_glasses
 Ask the butler who was at dinner => ask_no ?! butler_has_glasses
-Ask the butler who was at dinner => who_was_at_dinner ? butler_has_glasses
-Ask the butler who killed Gideon => who_killed ? butler_has_glasses ?! ask1 + ask1
+Ask the butler who was at dinner => who_was_at_dinner ? butler_has_glasses + ask1 ?! ask1
+Ask the butler who killed Gideon => who_killed ? butler_has_glasses
 Ask the butler about Dom Spuney => ask_butler:dom ? butler_has_glasses ? ask1
 Ask the butler about Ava => ask_butler:ava ? butler_has_glasses ? ask1
 Ask the butler about Jeff Jones => ask_butler:jeff ? butler_has_glasses ? ask1
