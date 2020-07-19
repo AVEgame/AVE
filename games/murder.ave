@@ -127,9 +127,14 @@ Head upstairs => g_upstairs
 # g_upstairs
 You are at the top of Gideon's stairs. There are three bedrooms.
 Go into Gideon's bedroom => g_bedroom_g
-Go into Ava's bedroom => g_bedroom_a
+Go into Ava's bedroom => g_bedroom_a ?! ava_locked
+Go into Ava's bedroom => g_bedroom_a_locked ? ava_locked
 Go into Gideon's spare bedroom => g_bedroom_s
 Go downstairs => startsolving
+
+# g_bedroom_a_locked
+Ava's bedroom is locked.
+Continue => g_upstairs
 
 # g_bedroom_g
 You are in Gideon's bedroom.
@@ -165,7 +170,12 @@ Ask Ava about Scott Jones => ask_ava:scott ? know_about_quest
 Ask Ava about quests => ask_ava:quest ? know_about_ava_quest
 Ask Ava about her best friend => ask_ava:friend ? know_ava_friend
 Tell Ava that Dom Spuney is Scott Jones => tell_ava:friend ? know_dom_is_son
+Ask Ava if she killed Gideon => ava:confront ? know_ava_dom_is_son ? know_about_anger
 Leave the room => g_upstairs
+
+# ava:confront
+"How dare you accuse me?!" yells Ava. "Get out of my room." + ava_locked
+Continue => g_upstairs
 
 # ask_ava:scott
 "My best friend was Scott Jones," says Ava. "His dad, Jeff Jones, has been Dad's best friend for many years." + know_about_son
@@ -219,7 +229,7 @@ Continue => g_bedroom_s
 Continue => g_bedroom_s
 
 # dom:convo2
-"I told Ava that I am Scott," says Scott. "She was very angry at what Harry did to me, and wanted to confront Gideon, but I begged her to let me talk to him." + know_ava_dom_is_son
+"I told Ava that I am Scott," says Scott. "She was very angry at what Harry did to me, and wanted to confront Gideon, but I begged her to let me talk to him." + know_ava_dom_is_son + know_about_anger
 Continue => g_bedroom_s
 
 # dom:is_he_scott
