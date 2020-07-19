@@ -179,13 +179,6 @@ class Game:
 
         self.options = []
 
-    def room_type(self, id):
-        if id in self.rooms:
-            return "room"
-        if id in self.frames:
-            return "cutscene"
-        return None
-
     def load(self):
         """Load the full game from the file or url."""
         if config.version_tuple < self.ave_version:
