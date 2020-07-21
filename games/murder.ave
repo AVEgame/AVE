@@ -340,7 +340,7 @@ Continue => g_library
 Continue => g_library
 
 # jeff:tellson
-"I knew he seemed familar," says Jeff. "He face must have been changed by the evil wizards that injured him on his quest." + know_about_face
+"I knew he seemed familiar," says Jeff. "He face must have been changed by the evil wizards that injured him on his quest." + know_about_face
 Continue => g_library
 
 # jeff:dom
@@ -439,7 +439,7 @@ A pair of glasses
 
 # coat
 You look in the coat.
-There is a map inside one of the pocket, that has instuctions for guiding its owner on a quest. + map
+There is a map inside one of the pocket, that has instructions for guiding its owner on a quest. + map
 On the back of the map, it looks like someone has been trying to find anagrams of the word "pseudonym".
 Continue => g_table
 
