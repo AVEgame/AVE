@@ -48,3 +48,30 @@ def generate_json(game_folder=config.games_folder):
         "filename": game.filename,
         "number": game.number
     } for game in ave.games]
+
+
+def test_game():
+    """Test an AVE game for errors."""
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description='Test an AVE game for errors.')
+    parser.add_argument('file', metavar='file',
+                        help='A file to test')
+
+    args = parser.parse_args()
+
+    from ave import load_game_from_file
+    from ave.test import check_game
+
+    game = load_game_from_file(args.file)
+    game.load()
+
+    errors = check_game(game)
+
+    for i in range(5, 0, -1):
+        ls = [e for e in errors if e.error_value == i]
+        if len(ls) > 0:
+            print("")
+            for e in ls:
+                print(e)

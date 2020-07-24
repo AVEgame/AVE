@@ -1,0 +1,605 @@
+== T2: The Wonderful Mystery Journey ==
+-- You're ready to start your epic adventure. But first, whodunnit? --
+** Matthew Scroggs & Gin Grasso **
+@@ 1 @@
+vv 1 vv
+
+# start
+You feel ready for your adventure, now that you've had your lovely cup of tea.
+Look at the fridge => fridgeon ?! note
+Head into the hall => hall
+
+# hall
+You are standing in the hall.
+Go to the kitchen => start
+Go to the living room => livingroom
+Go back up the stairs => stairs
+Go out the front door => outside
+
+# livingroom
+There is a sofa in the living room. There is also a coffee table and a door to the outside world.
+Sit on the sofa => sofa
+Go to the coffee table => coffee_table
+Go through the door => gardendoor
+Go back to the hall => hall
+
+# bathroom
+You are in the bathroom.
+Use the toilet => pee ?! pee
+Leave the bathroom => stairs
+
+# pee
+You pee. + pee
+You really needed that. You wonder why you didn't go as soon as you got up.
+Continue => bathroom
+
+# stairs
+You are at the top of the stairs.
+You also see the door to the bathroom.
+Walk down the stairs => hall
+Head to the bathroom => bathroom
+Go back to your room => bedroom
+
+# sofa
+You sit on the sofa.
+Stand up => livingroom
+
+# coffee_table
+The coffee table is very tidy.
+Step away from the coffee table => livingroom
+
+# gardendoor
+The door is unlocked. There is smashed glass everywhere.
+Go back to the living room => livingroom
+Go out to the garden => garden
+
+# garden
+The garden is lovely.
+Go back inside => livingroom
+
+# fridge
+The portal is gone. How did that happen?
+Continue => fridgeon
+
+# fridgeon
+There is a note on the fridge in your handwriting.
+Read the note => note + note
+Look in the fridge => fridge
+Step away from the fridge cautiously => start
+
+# note
+You read the note. It says: <newline>
+"Once you are ready to start your epic adventure, visit Gideon to pick up the sword that he is enchanting for you."
+Continue => start
+
+# bedroom
+You are in your bedroom. The bed is calling you.
+What do you want to do?
+Lie down in the bed => bed
+Leave your room => stairs
+
+# bed
+You couldn't possible sleep, tea is coursing through your veins.
+Get up => bedroom
+
+# outside
+You head outside. It is bright. Thankfully you had that cup of tea so can bear it. ?! outside + outside
+You are outside your house. ? outside
+Go to Gideon's house => gideon
+Go back in into your house => hall
+
+# gideon
+You walk to your neighbour Gideon's house.
+Knock on the door => knockknock
+Burst through the door => burst
+Go home => outside
+
+# knockknock
+You knock on the door. There is no answer.
+Burst through the door => burst
+Go home => outside
+
+# burst
+You take five steps back. You brace yourself. You run at the door shoulder first.
+Continue => opendoor
+
+# opendoor
+The door opens with no effort. You stumble through.
+Continue => ingideonshouse
+
+# ingideonshouse
+You are in the hall of Gideon's house. Why is it so much bigger than your house?
+Continue => gideondead
+
+# gideondead
+Oh look, Gideon is lying on the floor. <newline> Oh no! He's dead! <newline> And your sword is sticking out of his chest.
+Continue => startsolving
+
+# startsolving
+You are in the hall of Gideon's house. There is a door to the dining room to your right, a door to the living room to your left, and stairs leading upstairs.
+Gideon's body is lying on the floor.
+Examine Gideon's body => body ?! lookedatbody + lookedatbody
+Call everyone into the hall to reveal who the murderer is => start_reveal ? policecalled ? jefffound ? butlerfound ? avafound ? domfound
+Head into the dining room => g_diningroom
+Head into the living room => g_livingroom
+Head upstairs => g_upstairs
+
+# g_upstairs
+You are at the top of Gideon's stairs. There are three bedrooms.
+Go into Gideon's bedroom => g_bedroom_g
+Go into Ava's bedroom => g_bedroom_a ?! ava_locked
+Go into Ava's bedroom => g_bedroom_a_locked ? ava_locked
+Go into Gideon's spare bedroom => g_bedroom_s
+Go downstairs => startsolving
+
+# g_bedroom_a_locked
+Ava's bedroom is locked.
+Continue => g_upstairs
+
+# g_bedroom_g
+You are in Gideon's bedroom.
+Look at the bed => gideon:bed
+Look at the desk => gideon:desk
+Leave the room => g_upstairs
+
+# gideon:bed
+Gideon's bed hasn't been slept in.
+Leave the bed => g_bedroom_g
+
+# gideon:desk
+There is a half-written letter in Gideon's typewriter, and a cup of tea on the table.
+Read the letter => gideon:letter
+Drink the tea => gideon:tea ?! drinktea + drinktea
+Leave the desk => g_bedroom_g
+
+# gideon:tea
+It's cold and disgusting. Thankfully you had a lovely cup of tea a couple of hours ago, so you can get through this.
+Continue => gideon:desk
+
+# gideon:letter
+The letter says: "Dearest Jeff,<newline>
+I do not wish to give you false hope, but I believe your son has returned. We must" + know_son_return
+<newline><newline>
+He can't have spent very long writing this yet.
+Continue => gideon:desk
+
+# g_bedroom_a
+You are in Ava's bedroom.
+Ava is sitting in bed reading. + avafound
+Ask Ava who killed Gideon => ava:whokilled
+Ask Ava what she's reading => ava:reading
+Ask Ava about Scott Jones => ask_ava:scott ? know_about_quest
+Ask Ava about quests => ask_ava:quest ? know_about_ava_quest
+Ask Ava about her best friend => ask_ava:friend ? know_ava_friend
+Tell Ava that Dom Spuney is Scott Jones => tell_ava:friend ? know_dom_is_son
+Ask Ava if she killed Gideon => ava:confront ? know_ava_dom_is_son ? know_about_argument
+Leave the room => g_upstairs
+
+# ava:whokilled
+"Dad's dead?!" says Ava. "Heavens above, what awful news. Who could have done this?"
+Continue => g_bedroom_a
+
+# ava:reading
+"I'm reading a The Mighty Ducks tie-in novel," says Ava.
+Continue => g_bedroom_a
+
+# ava:confront
+"How dare you accuse me?!" yells Ava. "Get out of my room." + ava_locked
+Continue => g_upstairs
+
+# ask_ava:scott
+"My best friend was Scott Jones," says Ava. "His dad, Jeff Jones, has been Dad's best friend for many years." + know_about_son
+Continue => g_bedroom_a
+
+# tell_ava:friend
+Ava doesn't look surprised.
+<newline>
+"Scott told me it was him last night," she says, "but made me promise not to tell anyone. Harry's got spies everywhere." + know_ava_dom_is_son + know_about_conversation + know_about_spies
+Continue => g_bedroom_a
+
+# ask_ava:friend
+"Ten years ago," says Ava, "Dad sent Scott Jones on a quest to defeat Harry, the evil wizard. Scott never returned from that quest." + know_about_harry
+Continue => g_bedroom_a
+
+# ask_ava:quest
+"I really want to go on a quest," says Ava sadly, "but Dad would never let me."
+<newline>
+"After my best friend never came back from his quest, I begged Dad to let me search for him, but he refused to let me. ?! know_about_son + know_ava_friend
+"After Scott Jones never came back from his quest, I begged Dad to let me search for him, but he refused to let me. ? know_about_son
+Dad wouldn't even enchant my sword so I had no chance of going on a quest."
+Continue => g_bedroom_a
+
+# g_bedroom_s
+You are in Gideon's spare room.
+There is a man asleep on the bed. ?! domwoken
+Dom Spuney ?! know_dom_is_son ? domwoken
+Scott Jones (aka Dom Spuney) ? know_dom_is_son ? domwoken
+is sitting on the bed. ? domwoken
+Wake up the man => wakedom + domwoken ?! domwoken
+Ask Dom Spuney who killed Gideon => dom:whokilled ? domwoken ?! know_dom_is_son
+Ask Scott Jones who killed Gideon => scott:whokilled ? domwoken ? know_dom_is_son
+Ask Dom Spuney how he knows Gideon => dom:knowsgideon ? domwoken
+Ask Dom Spuney about his quest => dom:quest ? know_about_quest + know_more_about_quest ?! know_dom_is_son ? domwoken
+Ask Dom Spuney who sent him on his quest => dom:quest2 ? know_more_about_quest + know_even_more_about_quest ?! know_dom_is_son ? domwoken
+Ask Dom Spuney if Gideon sent him on his quest => dom:quest3 ? know_even_more_about_quest ?! know_dom_is_son ? domwoken
+Ask Dom Spuney if he is Scott Jones => dom:is_he_scott ? know_even_more_about_quest ? know_about_son ?! know_dom_is_son ? know_son_return ? domwoken
+Ask Dom Spuney about his conversation with Ava => dom:convo1 ?! know_dom_is_son ? know_about_conversation ? domwoken
+Ask Scott Jones about his conversation with Ava => dom:convo2 ? know_dom_is_son ? know_about_conversation ? domwoken
+Ask Scott Jones why he risked coming back => dom:risk ? know_dom_is_son ? know_about_spies
+Leave the room => g_upstairs
+
+# dom:whokilled
+"It must have been..." Dom trails off. "I'm not sure."
+Continue => g_bedroom_s
+
+# scott:whokilled
+"It must have been..." Scott trails off. "I'm not sure."
+Continue => g_bedroom_s
+
+# dom:risk
+"I had to see Ava one last time," says Scott, "before I go into hiding forever. After we spoke last night, she headed downstairs to beg Gideon to let he come with me."
+Continue => g_bedroom_s
+
+# dom:knowsgideon
+"I met him in the Post Office last week," says Dom. "We got chatting and he invited me over for dinner."
+Continue => g_bedroom_s
+
+# dom:convo1
+"Ava told me about her desire to go on quests," says Dom, "and asked me about my quest." + know_about_quest + know_about_ava_quest
+Continue => g_bedroom_s
+
+# dom:convo2
+"I told Ava that I am Scott," says Scott. "She was very angry at what Harry did to me, and wanted to confront Gideon, but I begged her to let me talk to him." + know_ava_dom_is_son + know_about_anger
+Continue => g_bedroom_s
+
+# dom:is_he_scott
+"How did you know?" says Scott Jones. + know_dom_is_son
+"The injuries I received from Harry during my quest changed my appearance so no-one recognised me." + know_about_harry
+Continue => g_bedroom_s
+
+# dom:quest
+"Ten years ago," says Dom, "I went on a quest. It was a long time ago, I don't really remember the details. But I did have an epic fight against Harry, the evil Wizard." + know_about_harry
+Continue => g_bedroom_s
+
+# dom:quest2
+"Gid..." starts Dom. "Uh. I mean... You wouldn't know him."
+Continue => g_bedroom_s
+
+# dom:quest3
+"Ok," says Dom, angrily, "I admit it. Gideon sent me on my quest."
+Continue => g_bedroom_s
+
+# wakedom
+You wake up the man on the bed.
+He tells you that he is Dom Spuney. + domfound
+Continue => g_bedroom_s
+
+# body
+You look at Gideon's body. Your sword is in his chest.
+Continue => startsolving
+
+# g_diningroom
+You are in Gideon's dining room. The remains of a large dinner are on the dining table.
+Head into the kitchen => g_kitchen
+Examine the table => g_table
+Go back to the hall => startsolving
+
+# g_table
+You look at the table. Five places are set. There is a coat on one of the chairs.
+Look in the coat => coat ?! map
+Leave the table => g_diningroom
+
+# g_livingroom
+You are in Gideon's living room.
+Look on the coffee table => g_coffeetable
+Sit in an armchair => g_chair
+Go back to the hall => startsolving
+Go into the library => g_library
+
+# g_coffeetable
+There are some papers on the table.
+Examine the papers => g_lookatpapers
+Leave the table => g_livingroom
+
+# g_lookatpapers
+The papers on the table are about a quest that Gideon sent someone on ten years ago. ?! know_about_quest
+The papers on the table are about the quest that Gideon sent Scott Jones on. ? know_about_quest
+Could this be what Gideon and Ava were arguing about?! ? know_about_argument
++ know_about_papers
+Continue => g_livingroom
+
+# g_library
+You are in Gideon's library.
+There is a man asleep in a chair. ?! wakeupjeff
+Jeff Jones is sitting in a chair. ? wakeupjeff
+Wake up the man => wakejeff + wakeupjeff ?! wakeupjeff
+Ask Jeff who killed Gideon => jeff:whokilled ? wakeupjeff
+Ask Jeff why he was asleep in the library => jeff:whysleep
+Ask Jeff about his son => jeff:son ? wakeupjeff ? know_about_son
+Ask Jeff about Ava => jeff:ava ? wakeupjeff
+Tell Jeff that Dom is his son => jeff:tellson ? wakeupjeff ? know_dom_is_son
+Ask Jeff about Dom Spuney => jeff:dom ? wakeupjeff
+Go back to the living room => g_livingroom
+
+# jeff:whysleep
+"Gideon told me to wait here for him, as he wanted to talk to me," says Jeff, "but he never came. I must have dozed off while waiting."
+Continue => g_library
+
+# jeff:whokilled
+"I don't know," says Jeff, "but I did hear Gideon arguing with Ava before I fell asleep." + know_about_argument
+Continue => g_library
+
+# jeff:ava
+"Ava wanted to marry my son," says Jeff. "She was so sad when he went away." + know_about_son
+Continue => g_library
+
+# jeff:son
+"My son Scott was sent on a quest by Gideon ten years ago," says Jeff. "Scott never returned from that quest." + know_about_quest
+<newline>
+"I didn't talk to Gideon for a few years after that, but eventually I realised that he can't have known full extent of the danger he was putting Scott in."
+Continue => g_library
+
+# jeff:tellson
+"I knew he seemed familiar," says Jeff. "He face must have been changed by the evil wizards that injured him on his quest." + know_about_face
+Continue => g_library
+
+# jeff:dom
+"I first met Dom at dinner yesterday, although at first I really felt like I'd met him before. He was telling us about a quest he went on and the injuries he sustained."
+Continue => g_library
+
+# wakejeff
+You wake up the man.
+You realise that it's Jeff Jones, Gideon's oldest friend. + jefffound
+Continue => g_library
+
+# g_chair
+You are sitting in an armchair.
+There is something hard down the side of the chair. ?! glasses_found
+Reach down the side of the chair => get_glasses ?! glasses_found + glasses_found
+Get up => g_livingroom
+
+# get_glasses
+You find a pair of glasses down the side of the chair. + glasses
+Continue => g_chair
+
+# g_kitchen
+You are in Gideon's kitchen. The butler is making himself porridge. + butlerfound
+<newline>
+<newline>
+"Who's there?" asks the butler. "I've lost my glasses." ?! butler_has_glasses
+"Thanks for finding my glasses," says the butler. "How can I help you?" ? butler_has_glasses
+Give the butler his glasses => g_kitchen + butler_has_glasses ? glasses ~ glasses ?! butler_has_glasses
+Ask the butler who was at dinner => ask_no ?! butler_has_glasses
+Ask the butler who was at dinner => who_was_at_dinner ? butler_has_glasses + ask1 ?! ask1
+Ask the butler who killed Gideon => who_killed ? butler_has_glasses
+Ask the butler about Dom Spuney => ask_butler:dom ? butler_has_glasses ? ask1
+Ask the butler about Ava => ask_butler:ava ? butler_has_glasses ? ask1
+Ask the butler about Jeff Jones => ask_butler:jeff ? butler_has_glasses ? ask1
+Ask the butler about Harry => ask_butler:harry ? butler_has_glasses ? know_about_harry
+Ask the butler what his favourite film is => ask_film ? butler_has_glasses
+Ask the butler whose coat is in the dining room => ask_coat ? butler_has_glasses ? map
+Tell the butler to call the police => callthepolice ?! policecalled + policecalled
+Go back to the dining room => g_diningroom
+
+# callthepolice
+The butler calls the police. They'll be here in a while.
+Continue => g_kitchen
+
+# ask_butler:harry
+"I used to work for Harry before I came here," says the butler. "I quit after I saw the injuries that Harry inflicted on his enemies: he left them as twisted,
+unrecognisable versions of their former selves."
+Continue => g_kitchen
+
+# ask_butler:dom
+"I don't know much about Dom Spuney," says the butler. "I did hear him talking to Ava late last night though, maybe she knows more." + know_about_conversation
+Continue => g_kitchen
+
+# ask_butler:ava
+"Ava is Gideon's daughter," says the butler. "She really wants to go on a quest, but Gideon won't let her. They used to argue about this very often." + know_about_ava_quest
+Continue => g_kitchen
+
+# ask_butler:jeff
+"Jeff and Gideon have been friends since before I was born," says the butler. "They did fall out around ten years ago about Jeff's son." + know_about_son
+Continue => g_kitchen
+
+# ask_coat
+The butler looks through the door into the dining room.
+<newline>
+"That's Dom Spuney's coat," he says.
+Continue => g_kitchen
+
+# ask_film
+"I absolutely love The Mighty Ducks," says the butler.
+Continue => g_kitchen
+
+# who_killed
+"Gideon's dead!?" exclaims the butler. "I thought he was sleeping in the hall again when I passed, I couldn't make anything else out without my glasses."
+<newline>
+"I locked the door after dinner last night, so no-one could've left or entered the house until I unlocked the door a few minutes ago. One of the dinner guests must have done the murder."
+Continue => g_kitchen
+
+# who_was_at_dinner
+"There were five of us at dinner," says the butler.
+<newline>
+"Gideon's oldest friend Jeff Jones was at dinner. They've been friends for 200 years."
+<newline>
+"Gideon's newest friend Dom Spuney was at dinner. Gideon met him for the first time just a few days ago.
+<newline>
+"Gideon's daughter Ava was at dinner."
+<newline>
+"And I, Gideon's butler, was the fifth person present at dinner."
+Continue => g_kitchen
+
+# ask_no
+"I can't help you yet," says the butler. "I wrote this all down, but I can't read it without my glasses."
+Continue => g_kitchen
+
+% glasses
+A pair of glasses
+
+# coat
+You look in the coat.
+There is a map inside one of the pocket, that has instructions for guiding its owner on a quest. + map
+On the back of the map, it looks like someone has been trying to find anagrams of the word "pseudonym".
+Continue => g_table
+
+% map
+A quest map
+
+# start_reveal
+You call everyone into the hall. The doorbell rings.
+Answer the door => reveal2
+
+# reveal2
+The police are at the door. You tell them that Gideon is dead and you have solved the murder.
+Continue => reveal3
+
+# reveal3
+The police officer asks you who killed Gideon.
+"The butler did it." => accuse_butler
+"Jeff Jones did it." => accuse_oldfriend
+"Dom Spuney did it." => accuse_newfriend
+"Ava did it." => accuse_daughter
+"I did it." => accuse_myself
+"It was a ghost." => arrest_nonsense
+
+# accuse_myself
+The police officer arrests you and takes you to prison.
+Continue => __GAMEOVER__
+
+# accuse_butler
+The butler looks shocked. The police officer asks you why the butler killed Gideon.
+"He was fed up of Gideon ordering him around." => accuse_butler2 + reason=1
+"Gideon sent his son on a quest from which he never returned." => accuse_butler2 + reason=2
+"Gideon insulted his taste in fine wine." => accuse_butler2 + reason=3
+"Gideon wouldn't let him go on a quest." => accuse_butler2 + reason=4
+"A ghost told him to." => accuse_butler2 + reason=5
+"Gideon sent his friend on a quest during which he was injured." => accuse_butler2 + reason=6
+Change your mind => reveal3
+
+# accuse_oldfriend
+Jeff looks shocked. The police officer asks you why he killed Gideon.
+"He was fed up of Gideon ordering him around." => accuse_oldfriend2 + reason=1
+"Gideon sent his son on a quest from which he never returned." => accuse_oldfriend2 + reason=2
+"Gideon insulted his taste in fine wine." => accuse_oldfriend2 + reason=3
+"Gideon wouldn't let him go on a quest." => accuse_oldfriend2 + reason=4
+"A ghost told him to." => accuse_oldfriend2 + reason=5
+"Gideon sent his friend on a quest during which he was injured." => accuse_oldfriend2 + reason=6
+Change your mind => reveal3
+
+# accuse_newfriend
+Dom looks shocked. The police officer asks you why he killed Gideon.
+"He was fed up of Gideon ordering him around." => accuse_newfriend2 + reason=1
+"Gideon sent his son on a quest from which he never returned." => accuse_newfriend2 + reason=2
+"Gideon insulted his taste in fine wine." => accuse_newfriend2 + reason=3
+"Gideon wouldn't let him go on a quest." => accuse_newfriend2 + reason=4
+"A ghost told him to." => accuse_newfriend2 + reason=5
+"Gideon sent his friend on a quest during which he was injured." => accuse_newfriend2 + reason=6
+Change your mind => reveal3
+
+# accuse_daughter
+Ava looks shocked. The police officer asks you why she killed Gideon.
+"Gideon wouldn't let her marry Scott Jones." => accuse_daughter2 + reason=1
+"Gideon sent her on a quest from which she never returned." => accuse_daughter2 + reason=2
+"Gideon insulted her taste in fine wine." => accuse_daughter2 + reason=3
+"Gideon wouldn't let her go on a quest." => accuse_daughter2 + reason=4 + 4done
+"A ghost told her to." => accuse_daughter2 + reason=5
+"Gideon sent her friend on a quest during which he was injured." => accuse_daughter2 + reason=6 + 6done
+Change your mind => reveal3
+
+# more_reasons
+The police officer isn't convinced, and asks if you have a bigger reason.
+"Gideon wouldn't let her marry Scott Jones." => accuse_daughter2 + reason=1
+"Gideon sent her on a quest from which she never returned." => accuse_daughter2 + reason=2
+"Gideon insulted her taste in fine wine." => accuse_daughter2 + reason=3
+"Gideon wouldn't let her go on a quest." => accuse_daughter2 + reason=4 ?! 4done + 4done
+"A ghost told her to." => accuse_daughter2 + reason=5
+"Gideon sent her friend on a quest during which he was injured." => accuse_daughter2 + reason=6 ?! 6done + 6done
+Change your mind => reveal3
+
+# accuse_daughter2
+The police officer thinks for a moment.
+Continue => more_reasons ? (reason=4 reason=6) ?! (4done 6done)
+Continue => arrest_daughter ? reason=1
+Continue => arrest_nonsense ? (reason=2 reason=5 reason=3)
+Continue => noarrest2 ? (4done 6done)
+
+# accuse_oldfriend2
+The police officer thinks for a moment.
+Continue => arrest_oldfriend ? (reason=2 reason=3)
+Continue => arrest_nonsense ? reason=5
+Continue => noarrest ? (reason=1 reason=4 reason=6)
+
+# accuse_newfriend2
+The police officer thinks for a moment.
+Continue => arrest_newfriend ? (reason=3 reason=6)
+Continue => arrest_nonsense ? reason=5
+Continue => noarrest ? (reason=1 reason=2 reason=4)
+
+# accuse_butler2
+The police officer thinks for a moment.
+Continue => arrest_butler ? (reason=1 reason=4 reason=3)
+Continue => arrest_nonsense ? reason=5
+Continue => noarrest ? (reason=2 reason=6)
+
+# arrest_butler
+The police officer arrests the butler and takes him to prison.
+Continue => wrongarrest
+
+# arrest_oldfriend
+The police officer arrests Jeff Jones and takes him to prison.
+Continue => wrongarrest
+
+# arrest_newfriend
+The police officer arrests Dom Spuney and takes him to prison.
+Continue => wrongarrest
+
+# arrest_daughter
+The police officer walks over to Ava to arrest her but she runs away.
+Continue => arrest_d2
+
+# arrest_d2
+The police officer chases Ava and catches her. As she is being handcuffed she confesses to the murder.
+Continue => __WINNER__
+
+# wrongarrest
+You realise that it's finally time to go on your quest, you head to Gideon's hall to collect your sword.
+Continue => wrongarrest2
+
+# wrongarrest2
+You get to the hall. But... your sword is not there.
+<newline>
+<newline>
+A voice behind you says: "The police officer arrested the wrong suspect, and I'm going to get away."
+<newline>
+<newline>
+You feel a sharp pain as the murderer kills you with your sword.
+Continue => __GAMEOVER__
+
+# noarrest
+"That doesn't make any sense," says the police officer. "I'm going back to the police station."
+<newline>
+<newline>
+The police officer leaves. The murderer has gotten away with it despite the meddling kids.
+Continue => __GAMEOVER__
+
+# noarrest2
+"I'm not convinced," says the police officer. "I'm going back to the police station."
+<newline>
+<newline>
+The police officer leaves. The murderer has gotten away with it despite the meddling kids.
+Continue => __GAMEOVER__
+
+# arrest_nonsense
+"That sounds like nonsense," says the police officer. "I think you did it and are trying to put me off the scent. After all, Gideon was killed with your sword."
+<newline>
+<newline>
+The police officer arrests you and takes you to prison.
+Continue => __GAMEOVER__
+
+
+
+% reason
+__NUMBER__
+% note
+A note
